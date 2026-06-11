@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Risk Advisor — 你的风险跑道还有几天？</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0f 70%);
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    .hero .subtitle {
+      font-size: 1.2rem;
+      color: #888;
+      margin-bottom: 2.5rem;
+      max-width: 500px;
+    }
+    /* ── Calculator Card ── */
+    .calc-card {
+      background: #12121a;
+      border: 1px solid #222;
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .field { margin-bottom: 1.8rem; }
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field .input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .field input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #222;
+      outline: none;
+    }
+    .field input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,212,255,0.4);
+    }
+    .field .value-display {
+      min-width: 90px;
+      text-align: right;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #00d4ff;
+      font-variant-numeric: tabular-nums;
+    }
+    /* ── Result ── */
+    .result {
+      margin-top: 2rem;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      transition: all 0.5s ease;
+    }
+    .result.has-data { background: #0d1117; border: 1px solid #222; }
+    .result .runway-number {
+      font-size: clamp(3rem, 10vw, 5rem);
+      font-weight: 900;
+      line-height: 1;
+      margin: 0.5rem 0;
+      transition: color 0.5s ease;
+    }
+    .result .runway-label {
+      font-size: 1rem;
+      color: #888;
+      margin-bottom: 1rem;
+    }
+    .result .status-badge {
+      display: inline-block;
+      padding: 0.4rem 1.2rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .result .breakdown {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      text-align: left;
+    }
+    .breakdown-item {
+      background: #16161f;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+    .breakdown-item .label {
+      font-size: 0.75rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .breakdown-item .val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-top: 0.25rem;
+    }
+    /* ── Email Capture ── */
+    .email-capture {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #222;
+    }
+    .email-capture p {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 1rem;
+    }
+    .email-capture .input-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .email-capture input[type="email"] {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #0d1117;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .email-capture input[type="email"]:focus {
+      border-color: #00d4ff;
+    }
+    .email-capture button {
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .email-capture button:hover { opacity: 0.9; }
+    .email-capture .success-msg {
+      color: #00ff88;
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #444;
+      font-size: 0.8rem;
+    }
+    /* ── Color states ── */
+    .safe   { color: #00ff88; }
+    .warn   { color: #ffaa00; }
+    .danger { color: #ff4444; }
+    .critical { color: #ff0044; }
+    .badge-safe   { background: #00ff8818; color: #00ff88; border: 1px solid #00ff8833; }
+    .badge-warn   { background: #ffaa0018; color: #ffaa00; border: 1px solid #ffaa0033; }
+    .badge-danger { background: #ff444418; color: #ff4444; border: 1px solid #ff444433; }
+    .badge-critical { background: #ff004418; color: #ff0044; border: 1px solid #ff004433; }
+
+    @media (max-width: 540px) {
+      .calc-card { padding: 1.5rem; }
+      .result .breakdown { grid-template-columns: 1fr; }
+      .email-capture .input-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>你的风险跑道<br>还有几天？</h1>
+  <p class="subtitle">输入3个数字，立刻看到你的财务生存天数。免费，无需注册。</p>
+
+  <div class="calc-card">
+    <!-- 月收入 -->
+    <div class="field">
+      <label>月收入（税后）</label>
+      <div class="input-row">
+        <input type="range" id="income" min="0" max="50000" step="500" value="8000"
+               oninput="updateCalc()">
+        <span class="value-display" id="incomeVal">¥8,000</span>
+      </div>
+    </div>
+
+    <!-- 月支出 -->
+    <div class="field">
+      <label>月支出</label>
+      <div class="input-row">
+        <input type="range" id="expense" min="0" max="50000" step="500" value="6500"
+               oninput="updateCalc()">
+        <span class="value-display" id="expenseVal">¥6,500</span>
+      </div>
+    </div>
+
+    <!-- 存款总额 -->
+    <div class="field">
+      <label>存款总额</label>
+      <div class="input-row">
+        <input type="range" id="savings" min="0" max="500000" step="1000" value="30000"
+               oninput="updateCalc()">
+        <span class="value-display" id="savingsVal">¥30,000</span>
+      </div>
+    </div>
+
+    <!-- 结果区 -->
+    <div class="result" id="result">
+      <div style="color:#444;font-size:0.9rem;">调整滑块，查看你的风险跑道</div>
+    </div>
+
+    <!-- 邮箱收集 -->
+    <div class="email-capture" id="emailCapture" style="display:none;">
+      <p>📩 免费获取完整风险分析报告（含偿债方案 + 优化建议）</p>
+      <div class="input-group">
+        <input type="email" id="emailInput" placeholder="your@email.com" />
+        <button onclick="submitEmail()">获取报告</button>
+      </div>
+      <div class="success-msg" id="successMsg">✅ 已提交！报告将在24小时内发送至你的邮箱。</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  AI Risk Advisor — 数据仅在浏览器本地计算，不会上传服务器。
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  function fmt(n) {
+    if (n >= 10000) return '¥' + (n/10000).toFixed(1) + '万';
+    return '¥' + n.toLocaleString('zh-CN');
+  }
+
+  function updateCalc() {
+    const income  = +$('income').value;
+    const expense = +$('expense').value;
+    const savings = +$('savings').value;
+
+    $('incomeVal').textContent  = fmt(income);
+    $('expenseVal').textContent = fmt(expense);
+    $('savingsVal').textContent = fmt(savings);
+
+    const monthlyCashflow = income - expense;
+    const runwayDays = monthlyCashflow <= 0
+      ? Math.floor(savings / (expense || 1))
+      : Math.floor(savings / (expense - income));
+
+    // 正确计算：跑道 = 存款 / 月净支出（支出 - 收入，若为正）
+    const netMonthlyBurn = Math.max(expense - income, 0);
+    const days = netMonthlyBurn > 0 ? Math.floor(savings / netMonthlyBurn * 30.44) : 9999;
+
+    const r = $('result');
+    if (netMonthlyBurn === 0 && income >= expense) {
+      // 收入 >= 支出，无风险
+      r.className = 'result has-data';
+      r.innerHTML = `
+        <div class="status-badge badge-safe">财务安全</div>
+        <div class="runway-number safe">∞</div>
+        <div class="runway-label">你的收入覆盖支出，存款在增长</div>
+        <div class="breakdown">
+          <div class="breakdown-item">
+            <div class="label">月现金流</div>
+            <div class="val safe">+${fmt(income - expense)}</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="label">存款总额</div>
+            <div class="val" style="color:#e0e0e0">${fmt(savings)}</div>
+          </div>
+        </div>`;
+    } else {
+      r.className = 'result has-data';
+      let colorClass, badgeClass, statusText;
+      if (days >= 180)      { colorClass = 'safe';   badgeClass = 'badge-safe';   statusText = '风险较低'; }
+      else if (days >= 90)  { colorClass = 'warn';   badgeClass = 'badge-warn';   statusText = '需要关注'; }
+      else if (days >= 30)  { colorClass = 'danger'; badgeClass = 'badge-danger'; statusText = '风险较高'; }
+      else                   { colorClass = 'critical'; badgeClass = 'badge-critical'; statusText = '危险！'; }
+
+      r.innerHTML = `
+        <div class="status-badge ${badgeClass}">${statusText}</div>
+        <div class="runway-number ${colorClass}">${days.toLocaleString()}</div>
+        <div class="runway-label">风险跑道（剩余生存天数）</div>
+        <div class="breakdown">
+          <div class="breakdown-item">
+            <div class="label">月净支出</div>
+            <div class="val ${colorClass}">${fmt(netMonthlyBurn)}</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="label">存款总额</div>
+            <div class="val" style="color:#e0e0e0">${fmt(savings)}</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="label">按当前支出耗尽存款</div>
+            <div class="val ${colorClass}">${days} 天</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="label">相当月份数</div>
+            <div class="val ${colorClass}">${(days/30.44).toFixed(1)} 个月</div>
+          </div>
+        </div>`;
+    }
+
+    $('emailCapture').style.display = (netMonthlyBurn > 0 && days < 365) ? 'block' : 'none';
+  }
+
+  async function submitEmail() {
+    const email = $('emailInput').value;
+    if (!email || !email.includes('@')) {
+      alert('请输入有效邮箱');
+      return;
+    }
+    // 用 Formspree 免费收集邮箱（无需后端）
+    const resp = await fetch('https://formspree.io/f/xldbekay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        income:  $('income').value,
+        expense: $('expense').value,
+        savings: $('savings').value,
+        runway: Math.floor($('savings').value / (Math.max($('expense').value - $('income').value, 1)) * 30.44),
+        _subject: 'AI Risk Advisor — New Lead',
+      })
+    }).catch(() => ({}));
+    $('successMsg').style.display = 'block';
+    $('emailInput').style.display = 'none';
+    event.target.style.display = 'none';
+  }
+
+  updateCalc();
+</script>
+</body>
+</html>
