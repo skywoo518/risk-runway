@@ -1,446 +1,500 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>风险跑道 — 如果今天收入停止，你能撑几天？</title>
+<title>RunwayAI — How long can you survive?</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#1a1a1a;
-  --paper:#faf9f6;
-  --dim:#b0aca0;
-  --border:#e8e5de;
+  --ink:#0a0a0a;
+  --paper:#f5f4f0;
+  --dim:#b8b5ac;
+  --dimmer:#d4d1c8;
   --red:#c0392b;
-  --amber:#c0760a;
+  --red-soft:#fdf0ee;
+  --amber:#d4840a;
+  --amber-soft:#fdf6e8;
   --green:#1a7a4a;
-  --serif:'Georgia','Noto Serif SC',serif;
-  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;
+  --green-soft:#eaf5ef;
+  --border:#e2dfd8;
+  --serif:'Georgia','Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;min-height:100vh}
 
-/* NAV */
+/* ── NAV ── */
 nav{
   position:sticky;top:0;z-index:100;
   background:var(--paper);
   border-bottom:1px solid var(--border);
-  padding:.85rem 2rem;
+  padding:.9rem 2rem;
   display:flex;align-items:center;justify-content:space-between;
-  backdrop-filter:blur(12px);
-  background:rgba(250,249,246,.88);
 }
-.logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em;color:var(--ink)}
+.logo{font-family:var(--serif);font-size:1.15rem;letter-spacing:-.02em;color:var(--ink)}
 .logo b{color:var(--red);font-weight:normal}
-.nav-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);padding:.25rem .7rem;border-radius:2rem}
+.nav-tag{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);padding:.25rem .75rem;border-radius:2rem}
 
-/* HERO */
+/* ── HERO ── */
 .hero{
-  max-width:720px;margin:0 auto;
-  padding:4rem 2rem 2.5rem;
+  max-width:760px;margin:0 auto;
+  padding:4.5rem 2rem 2rem;
   text-align:center;
 }
 .pre-label{
-  font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--red);margin-bottom:1.2rem;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--red);margin-bottom:1.25rem;
 }
 h1{
   font-family:var(--serif);
-  font-size:clamp(1.8rem,5vw,3rem);
-  font-weight:normal;line-height:1.2;letter-spacing:-.03em;
-  margin-bottom:1.2rem;
+  font-size:clamp(2rem,5.5vw,3.25rem);
+  font-weight:normal;line-height:1.18;letter-spacing:-.03em;
+  margin-bottom:1rem;
 }
 h1 i{font-style:italic;color:var(--red)}
 .hero-p{
-  font-size:.95rem;color:#666;
-  max-width:500px;margin:0 auto;
-  line-height:1.75;
+  font-size:1rem;color:#555;max-width:520px;
+  margin:0 auto 2.5rem;line-height:1.75;
 }
 
-/* RUNWAY BOX */
+/* ── RUNWAY DISPLAY ── */
 .runway-box{
-  max-width:640px;margin:0 auto 2rem;
-  padding:0 2rem;
+  max-width:640px;margin:0 auto;
+  padding:2.5rem 2rem 3rem;
 }
 .runway-number-wrap{
   text-align:center;
-  padding:2.5rem 2rem 2rem;
+  padding:2.5rem 1.5rem;
   background:var(--ink);
-  border-radius:10px;
-  position:relative;overflow:hidden;
+  border-radius:12px;
+  margin-bottom:2rem;
+  position:relative;
+  overflow:hidden;
 }
 .runway-number-wrap::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(192,57,43,.15) 0%,transparent 60%);
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(192,57,43,.18) 0%,transparent 65%);
   pointer-events:none;
 }
 .runway-eyebrow{
-  font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(255,255,255,.35);margin-bottom:.6rem;position:relative;
+  font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-bottom:.75rem;
 }
 .runway-days{
   font-family:var(--serif);
-  font-size:clamp(3.5rem,12vw,6rem);
-  font-weight:normal;letter-spacing:-.05em;line-height:1;
-  color:#fff;transition:color .3s;position:relative;
+  font-size:clamp(4rem,14vw,7rem);
+  font-weight:normal;
+  letter-spacing:-.04em;
+  line-height:1;
+  color:#fff;
+  transition:color .25s;
 }
+.runway-days.danger{color:#e05c4a}
+.runway-days.warning{color:#e8a93a}
+.runway-days.safe{color:#4ec98a}
 .runway-unit{
-  font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(255,255,255,.3);margin-top:.4rem;position:relative;
+  font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-top:.5rem;
 }
 .runway-status{
   display:inline-flex;align-items:center;gap:.5rem;
-  margin-top:1.2rem;
-  padding:.3rem .9rem;border-radius:2rem;
-  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
-  border:1px solid rgba(255,255,255,.1);
-  color:rgba(255,255,255,.5);
-  background:rgba(255,255,255,.05);
-  transition:all .3s;position:relative;
+  margin-top:1.25rem;
+  padding:.35rem 1rem;
+  border-radius:2rem;
+  font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.55);
+  background:rgba(255,255,255,.06);
+  transition:all .25s;
 }
-.runway-status.danger{background:rgba(192,57,43,.18);border-color:rgba(192,57,43,.35);color:#e07060}
-.runway-status.warning{background:rgba(192,132,10,.15);border-color:rgba(192,132,10,.3);color:#d0a040}
-.runway-status.safe{background:rgba(26,122,74,.15);border-color:rgba(26,122,74,.3);color:#70c898}
-.status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block}
+.runway-status.danger{
+  background:rgba(192,57,43,.2);
+  border-color:rgba(192,57,43,.4);
+  color:#f0a09a;
+}
+.runway-status.warning{
+  background:rgba(212,132,10,.15);
+  border-color:rgba(212,132,10,.35);
+  color:#f0c06a;
+}
+.runway-status.safe{
+  background:rgba(26,122,74,.18);
+  border-color:rgba(26,122,74,.35);
+  color:#7de0a8;
+}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:currentColor;display:inline-block;
+}
 
-/* SLIDERS */
-.sliders{display:flex;flex-direction:column;gap:1.6rem;margin:2rem 0 1.5rem}
+/* ── SLIDERS ── */
+.sliders{display:flex;flex-direction:column;gap:1.5rem;margin-bottom:1.75rem}
 .slider-field{}
 .slider-top{
   display:flex;justify-content:space-between;align-items:baseline;
-  margin-bottom:.5rem;
+  margin-bottom:.6rem;
 }
-.slider-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
-.slider-value{font-family:var(--serif);font-size:1.2rem;letter-spacing:-.02em;color:var(--ink)}
-.slider-value span{font-size:.8rem;color:var(--dim);font-family:var(--sans)}
+.slider-label{
+  font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+}
+.slider-value{
+  font-family:var(--serif);font-size:1.3rem;letter-spacing:-.02em;color:var(--ink);
+}
+.slider-value span{font-size:.85rem;color:var(--dim);font-family:var(--sans)}
 input[type=range]{
-  width:100%;height:2px;
+  width:100%;height:3px;
   -webkit-appearance:none;appearance:none;
-  background:var(--border);border-radius:1px;outline:none;cursor:pointer;
+  background:var(--border);border-radius:2px;outline:none;cursor:pointer;
 }
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;
-  width:16px;height:16px;border-radius:50%;
+  width:18px;height:18px;border-radius:50%;
   background:var(--ink);border:2px solid var(--paper);
   box-shadow:0 0 0 1px var(--ink);
-  cursor:pointer;transition:transform .1s;
+  cursor:pointer;transition:transform .12s;
 }
-input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.2)}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.15)}
 input[type=range]::-moz-range-thumb{
   width:16px;height:16px;border-radius:50%;
-  background:var(--ink);border:2px solid var(--paper);cursor:pointer;
+  background:var(--ink);border:2px solid var(--paper);
+  cursor:pointer;
 }
 
-/* CONTEXT ROW */
+/* ── CONTEXT ROW ── */
 .context-row{
   display:grid;grid-template-columns:1fr 1fr 1fr;
   gap:1px;background:var(--border);
   border:1px solid var(--border);border-radius:8px;overflow:hidden;
-  margin-bottom:1.5rem;
+  margin-bottom:1.75rem;
 }
-.ctx-cell{background:var(--paper);padding:.8rem 1rem;text-align:center}
-.ctx-label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:.15rem}
-.ctx-val{font-family:var(--serif);font-size:1rem;letter-spacing:-.01em;color:var(--ink)}
+.ctx-cell{
+  background:var(--paper);padding:.85rem 1rem;text-align:center;
+}
+.ctx-label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:.2rem}
+.ctx-val{font-family:var(--serif);font-size:1.05rem;letter-spacing:-.01em;color:var(--ink)}
 .ctx-val.red{color:var(--red)}
 .ctx-val.amber{color:var(--amber)}
 .ctx-val.green{color:var(--green)}
 
-/* BUTTON */
+/* ── CTA BUTTON ── */
 .cta-btn{
-  width:100%;padding:.95rem 1.5rem;
+  width:100%;padding:1rem 1.5rem;
   background:var(--ink);color:#fff;
-  font-family:var(--sans);font-size:.9rem;
+  font-family:var(--sans);font-size:.95rem;
   border:none;border-radius:6px;cursor:pointer;
-  letter-spacing:.02em;transition:opacity .15s,transform .1s;
+  letter-spacing:.02em;
+  transition:opacity .15s,transform .1s;
 }
 .cta-btn:hover{opacity:.85}
-.cta-note{text-align:center;font-size:.7rem;color:var(--dim);margin-top:.7rem}
+.cta-btn:active{transform:scale(.99)}
+.cta-note{
+  text-align:center;font-size:.72rem;color:var(--dim);
+  margin-top:.75rem;
+}
 
-/* PHASE 2 */
-.phase2{display:none;padding:0 2rem 3rem}
+/* ── PHASE 2 ── */
+.phase2{
+  display:none;max-width:640px;margin:0 auto;
+  padding:0 2rem 3rem;
+}
 .phase2.visible{display:block}
-.divider{height:1px;background:var(--border);margin:2rem 0}
+.divider{
+  height:1px;background:var(--border);
+  margin:2rem 0;
+}
 .phase2-title{
-  font-family:var(--serif);font-size:1.4rem;font-weight:normal;
+  font-family:var(--serif);font-size:1.5rem;font-weight:normal;
   letter-spacing:-.02em;margin-bottom:.5rem;
 }
-.phase2-sub{font-size:.85rem;color:#666;line-height:1.65;margin-bottom:1.5rem}
+.phase2-sub{font-size:.88rem;color:#666;margin-bottom:1.5rem;line-height:1.65}
 
 .risk-cards{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem}
 .risk-card{
   background:var(--paper);
-  padding:1rem 1.2rem;
-  display:grid;grid-template-columns:32px 1fr;gap:.8rem;align-items:start;
+  padding:1.1rem 1.25rem;
+  display:grid;grid-template-columns:36px 1fr;gap:.9rem;align-items:start;
 }
 .risk-icon{
-  width:32px;height:32px;border-radius:50%;
+  width:36px;height:36px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:.85rem;flex-shrink:0;margin-top:.15rem;
+  font-size:.9rem;flex-shrink:0;
 }
-.risk-icon.red{background:#fdf0ee}.risk-icon.amber{background:#fdf6e8}
-.risk-card-label{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:.2rem}
-.risk-card-val{font-family:var(--serif);font-size:1.05rem;letter-spacing:-.01em;margin-bottom:.15rem}
+.risk-icon.red{background:var(--red-soft)}
+.risk-icon.amber{background:var(--amber-soft)}
+.risk-card-label{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:.25rem}
+.risk-card-val{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.01em;margin-bottom:.2rem}
 .risk-card-val b{color:var(--red)}
-.risk-card-sub{font-size:.78rem;color:#888;line-height:1.55}
+.risk-card-sub{font-size:.8rem;color:#777;line-height:1.55}
 
+/* blurred teaser */
 .blurred-card{
   background:var(--paper);
-  padding:1rem 1.2rem;
-  display:grid;grid-template-columns:32px 1fr;gap:.8rem;align-items:start;
+  padding:1.1rem 1.25rem;
+  display:grid;grid-template-columns:36px 1fr;gap:.9rem;align-items:start;
   position:relative;
 }
 .blurred-card::after{
-  content:'解锁完整报告查看 →';
+  content:'Unlock with full report →';
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  font-size:.75rem;letter-spacing:.06em;color:var(--dim);
-  background:rgba(250,249,246,.72);
+  font-size:.78rem;letter-spacing:.06em;color:var(--dim);
+  background:rgba(245,244,240,.7);
   backdrop-filter:blur(4px);
-  border-radius:0;cursor:default;
+  border-radius:0;
+  cursor:default;
 }
-.blurred-inner{filter:blur(4px);pointer-events:none;user-select:none}
+.blurred-inner{filter:blur(5px);pointer-events:none;user-select:none}
 
-/* PHASE 3 */
-.phase3{display:none;padding:0 2rem 5rem}
+/* ── PHASE 3 SMOKE TEST ── */
+.phase3{
+  display:none;max-width:640px;margin:0 auto;
+  padding:0 2rem 5rem;
+}
 .phase3.visible{display:block}
 .pay-card{
   border:1px solid var(--border);border-radius:12px;
-  padding:2rem 1.5rem;text-align:center;background:#fff;
+  padding:2rem;background:#fff;
+  text-align:center;
 }
 .pay-price{
-  font-family:var(--serif);font-size:2.8rem;font-weight:normal;
+  font-family:var(--serif);font-size:3rem;font-weight:normal;
   letter-spacing:-.04em;margin:.5rem 0;
 }
-.pay-price sup{font-size:1.3rem;vertical-align:.5rem}
-.pay-desc{font-size:.85rem;color:#666;max-width:380px;margin:0 auto 1.5rem;line-height:1.65}
+.pay-price sup{font-size:1.5rem;vertical-align:.5rem}
+.pay-desc{font-size:.88rem;color:#666;max-width:380px;margin:0 auto 1.5rem;line-height:1.65}
 .pay-features{
   list-style:none;text-align:left;
   max-width:320px;margin:0 auto 1.5rem;
   display:flex;flex-direction:column;gap:.5rem;
 }
 .pay-features li{
-  font-size:.82rem;color:#555;padding-left:1.2rem;position:relative;
-  line-height:1.5;
+  font-size:.85rem;color:#555;padding-left:1.25rem;position:relative;
 }
-.pay-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:.78rem}
+.pay-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:.8rem}
 .pay-btn{
   width:100%;max-width:320px;
-  padding:.95rem;background:var(--red);color:#fff;
-  font-family:var(--sans);font-size:.9rem;
+  padding:1rem;background:var(--red);color:#fff;
+  font-family:var(--sans);font-size:.95rem;
   border:none;border-radius:6px;cursor:pointer;
-  margin-bottom:.75rem;transition:opacity .15s;
+  margin-bottom:.75rem;
+  transition:opacity .15s;
 }
 .pay-btn:hover{opacity:.88}
-.pay-disclaimer{font-size:.68rem;color:var(--dim);line-height:1.55;max-width:380px;margin:0 auto}
+.pay-disclaimer{font-size:.7rem;color:var(--dim);line-height:1.55;max-width:380px;margin:0 auto}
 
-/* EMAIL GATE */
-.email-gate{display:none;padding-top:1.2rem}
+/* email capture after fake pay */
+.email-gate{display:none;padding-top:1rem}
 .email-gate.visible{display:block}
-.email-gate h3{font-family:var(--serif);font-size:1.1rem;font-weight:normal;margin-bottom:.4rem}
-.email-gate p{font-size:.82rem;color:#666;margin-bottom:1rem;line-height:1.6}
+.email-gate h3{font-family:var(--serif);font-size:1.2rem;font-weight:normal;margin-bottom:.4rem}
+.email-gate p{font-size:.85rem;color:#666;margin-bottom:1rem}
 .email-row{display:flex;gap:.6rem;flex-wrap:wrap}
 .email-row input{
-  flex:1;min-width:200px;padding:.7rem .9rem;
-  font-size:.88rem;font-family:var(--sans);
+  flex:1;min-width:200px;padding:.7rem 1rem;
+  font-size:.9rem;font-family:var(--sans);
   border:1px solid var(--border);border-radius:5px;
   color:var(--ink);background:#fff;outline:none;
 }
 .email-row input:focus{border-color:var(--ink)}
 .email-row button{
-  padding:.7rem 1.2rem;background:var(--ink);color:#fff;
-  font-size:.82rem;border:none;border-radius:5px;cursor:pointer;
+  padding:.7rem 1.25rem;background:var(--ink);color:#fff;
+  font-size:.85rem;border:none;border-radius:5px;cursor:pointer;
   transition:opacity .15s;white-space:nowrap;
 }
 .email-row button:hover{opacity:.85}
 .email-sent{display:none;text-align:center;padding:1rem 0}
-.email-sent p{font-family:var(--serif);font-size:.95rem;color:var(--green);font-style:italic}
+.email-sent p{font-family:var(--serif);font-size:1rem;color:var(--green);font-style:italic}
 
-/* HOW */
+/* ── HOW ── */
 .how-section{
   max-width:640px;margin:0 auto;
-  padding:2.5rem 2rem 4rem;
+  padding:3rem 2rem 5rem;
   border-top:1px solid var(--border);
 }
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.5rem}
-.how-n{font-family:var(--serif);font-size:2.2rem;color:#d5d0c0;letter-spacing:-.04em;line-height:1;margin-bottom:.5rem}
-.how-t{font-size:.85rem;font-weight:500;margin-bottom:.25rem}
-.how-d{font-size:.78rem;color:var(--dim);line-height:1.6}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:2rem}
+@media(max-width:520px){
+  .how-grid{grid-template-columns:1fr;gap:1.25rem}
+  .context-row{grid-template-columns:1fr}
+  h1{font-size:1.85rem}
+}
+.how-n{font-family:var(--serif);font-size:2.5rem;color:var(--dimmer);letter-spacing:-.04em;line-height:1;margin-bottom:.6rem}
+.how-t{font-size:.88rem;font-weight:500;margin-bottom:.3rem}
+.how-d{font-size:.8rem;color:var(--dim);line-height:1.6}
 
-/* FOOTER */
+/* ── FOOTER ── */
 footer{
   border-top:1px solid var(--border);
-  padding:1.2rem 2rem;text-align:center;
-  font-size:.7rem;color:var(--dim);
+  padding:1.25rem 2rem;text-align:center;
+  font-size:.72rem;color:var(--dim);
 }
-
-@media(max-width:540px){
-  .context-row{grid-template-columns:1fr}
-  .how-grid{grid-template-columns:1fr;gap:1rem}
-  h1{font-size:1.7rem}
-  nav{padding:.85rem 1rem}
-  .hero{padding:3rem 1.2rem 2rem}
-  .runway-box{padding:0 1.2rem}
-  .phase2,.phase3{padding:0 1.2rem 3rem}
-}
+footer a{color:var(--dim);text-decoration:underline}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">风险<b>跑道</b></div>
-  <span class="nav-tag">无需注册 · 数据不离开浏览器</span>
+  <div class="logo">Runway<b>AI</b></div>
+  <span class="nav-tag">No signup · No data stored</span>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <p class="pre-label">财务生存智能测算</p>
-  <h1>如果今天收入停止<br>你能撑<i>多少天</i>？</h1>
-  <p class="hero-p">拖动两个滑块，立刻看到你的风险跑道。大多数人看到数字都会沉默——不是因为他们挥霍，而是从来没有人这样算过给他们看。</p>
+  <p class="pre-label">Financial survival intelligence</p>
+  <h1>How long can you survive<br>if your income <i>stopped today?</i></h1>
+  <p class="hero-p">Move the sliders. See your number. Most people are shocked — not because they're reckless, but because no one ever showed them this before.</p>
 </section>
 
+<!-- RUNWAY BOX -->
 <div class="runway-box">
 
+  <!-- THE NUMBER -->
   <div class="runway-number-wrap">
-    <p class="runway-eyebrow">你的财务跑道</p>
+    <p class="runway-eyebrow">Your financial runway</p>
     <div class="runway-days safe" id="runway-days">—</div>
-    <p class="runway-unit">天生存窗口</p>
+    <p class="runway-unit">days of survival</p>
     <div class="runway-status" id="runway-status">
       <span class="status-dot"></span>
-      <span id="status-text">拖动滑块开始计算</span>
+      <span id="status-text">Move the sliders to calculate</span>
     </div>
   </div>
 
+  <!-- SLIDERS -->
   <div class="sliders">
     <div class="slider-field">
       <div class="slider-top">
-        <span class="slider-label">存款 / 可支配现金</span>
-        <span class="slider-value" id="savings-val">¥30,000 <span>存款</span></span>
+        <span class="slider-label">Monthly savings / cash on hand</span>
+        <span class="slider-value" id="savings-val">$5,000 <span>saved</span></span>
       </div>
-      <input type="range" id="savings" min="0" max="500000" step="1000" value="30000">
+      <input type="range" id="savings" min="0" max="100000" step="500" value="5000">
     </div>
     <div class="slider-field">
       <div class="slider-top">
-        <span class="slider-label">月必要支出</span>
-        <span class="slider-value" id="expenses-val">¥6,500 <span>/月</span></span>
+        <span class="slider-label">Monthly essential expenses</span>
+        <span class="slider-value" id="expenses-val">$3,500 <span>/mo</span></span>
       </div>
-      <input type="range" id="expenses" min="500" max="50000" step="500" value="6500">
+      <input type="range" id="expenses" min="500" max="20000" step="100" value="3500">
     </div>
   </div>
 
+  <!-- CONTEXT ROW -->
   <div class="context-row">
     <div class="ctx-cell">
-      <p class="ctx-label">储蓄率</p>
+      <p class="ctx-label">Savings rate</p>
       <p class="ctx-val" id="ctx-rate">—</p>
     </div>
     <div class="ctx-cell">
-      <p class="ctx-label">月净支出</p>
+      <p class="ctx-label">Monthly gap</p>
       <p class="ctx-val" id="ctx-gap">—</p>
     </div>
     <div class="ctx-cell">
-      <p class="ctx-label">风险区间</p>
+      <p class="ctx-label">Risk zone</p>
       <p class="ctx-val" id="ctx-zone">—</p>
     </div>
   </div>
 
-  <button class="cta-btn" id="reveal-btn" style="display:none" onclick="revealPhase2()">
-    查看这意味着什么 →
+  <button class="cta-btn" id="reveal-btn" onclick="revealPhase2()" style="display:none">
+    Show me what this really means →
   </button>
-  <p class="cta-note" id="cta-note" style="display:none">免费 · 10秒出结果 · 不需要账户</p>
+  <p class="cta-note" id="cta-note" style="display:none">Free · Takes 10 seconds · No account needed</p>
+
 </div>
 
-<!-- PHASE 2 -->
+<!-- PHASE 2: RISK BREAKDOWN -->
 <div class="phase2" id="phase2">
-  <div style="max-width:640px;margin:0 auto">
+  <div style="max-width:640px;margin:0 auto;padding:0 2rem">
     <div class="divider"></div>
     <h2 class="phase2-title" id="p2-headline"></h2>
     <p class="phase2-sub" id="p2-sub"></p>
+  </div>
 
+  <div style="max-width:640px;margin:0 auto;padding:0 2rem">
     <div class="risk-cards" id="risk-cards"></div>
 
-    <p style="font-size:.7rem;color:var(--dim);margin-bottom:1.5rem;line-height:1.55">
-      以上仅为数学推算，不构成财务建议。个人情况有差异，重大财务决策前请咨询持牌顾问。
+    <p style="font-size:.72rem;color:var(--dim);margin-bottom:1.5rem;line-height:1.55">
+      These are mathematical projections only. Not financial advice. Results vary by individual circumstances. Consult a licensed financial advisor before making major decisions.
     </p>
 
-    <button class="cta-btn" style="background:var(--red)" onclick="revealPhase3()">
-      获取我的完整决策报告 — ¥68 →
+    <button class="cta-btn" onclick="revealPhase3()">
+      Get my full decision report — $9.9 →
     </button>
-    <p class="cta-note" style="display:block;margin-top:.7rem">一次性付费 · 即时AI报告 · 无订阅</p>
+    <p class="cta-note" style="display:block;margin-top:.75rem">One-time · Instant AI report · No subscription</p>
   </div>
 </div>
 
-<!-- PHASE 3 -->
+<!-- PHASE 3: SMOKE TEST -->
 <div class="phase3" id="phase3">
-  <div style="max-width:640px;margin:0 auto">
+  <div style="max-width:640px;margin:0 auto;padding:0 2rem">
     <div class="divider"></div>
     <div class="pay-card">
-      <p style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:.25rem">完整AI风险报告</p>
-      <div class="pay-price"><sup>¥</sup>68</div>
-      <p class="pay-desc">针对你的财务数据深度生成——情景模拟、时间线、以及每个选择的真实代价。</p>
+      <p style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:.25rem">Full AI report</p>
+      <div class="pay-price"><sup>$</sup>9.9</div>
+      <p class="pay-desc">A personalized deep-dive into your financial risk profile — scenarios, timelines, and decision tools tailored to your numbers.</p>
       <ul class="pay-features">
-        <li>6种生活情景下的生存跑道推算</li>
-        <li>失业、降薪、大额支出冲击模拟</li>
-        <li>"我能辞职吗？"决策模拟器</li>
-        <li>逐月现金流预测</li>
-        <li>3条回到安全区的可执行路径</li>
+        <li>Survival runway under 6 life scenarios</li>
+        <li>Job loss, income cut, major expense shock</li>
+        <li>"Can I quit?" decision simulator</li>
+        <li>Month-by-month cash flow projection</li>
+        <li>3 concrete paths back to the green zone</li>
       </ul>
-      <button class="pay-btn" id="pay-btn" onclick="smokeTest()">立即获取报告</button>
-      <p class="pay-disclaimer">数学推算仅作参考 · 非投资建议 · 数据本地处理 · 绝不存储或分享</p>
+      <button class="pay-btn" onclick="smokeTest()">Get my report now</button>
+      <p class="pay-disclaimer">Mathematical projections only · Not investment advice · Data processed locally · Never stored or shared</p>
 
+      <!-- email gate after smoke test -->
       <div class="email-gate" id="email-gate">
-        <div class="divider" style="margin:1.5rem 0 1.2rem"></div>
-        <h3>你已加入早期访问名单</h3>
-        <p>我们分批开放报告生成。留下邮箱，通常在24小时内你会收到。</p>
+        <div class="divider" style="margin:1.5rem 0 1.25rem"></div>
+        <h3>You're on the early access list</h3>
+        <p>We're opening reports in batches. Drop your email and you'll be first in line — usually within 24 hours.</p>
         <div id="email-form-inner">
           <div class="email-row">
-            <input type="email" id="email-input" placeholder="your@email.com">
-            <button onclick="submitEmail()">通知我</button>
+            <input type="email" id="email-inp" placeholder="your@email.com">
+            <button onclick="submitEmail()">Notify me</button>
           </div>
-          <p style="font-size:.68rem;color:var(--dim);margin-top:.5rem">🔒 无垃圾邮件。随时可退订。</p>
+          <p style="font-size:.7rem;color:var(--dim);margin-top:.6rem">🔒 No spam. Unsubscribe any time.</p>
         </div>
         <div class="email-sent" id="email-sent">
-          <p>✓ 已登记。24小时内会与您联系。</p>
+          <p>✓ You're on the list. We'll be in touch within 24 hours.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- HOW -->
+<!-- HOW IT WORKS -->
 <section class="how-section">
-  <p style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:1.5rem">工作原理</p>
+  <p style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:2rem">How it works</p>
   <div class="how-grid">
     <div>
       <div class="how-n">1</div>
-      <p class="how-t">两个数字</p>
-      <p class="how-d">你的存款和月支出。仅此而已——不需要姓名、账户，也不需要连接银行。</p>
+      <p class="how-t">Two numbers</p>
+      <p class="how-d">Your savings and monthly expenses. Nothing else — no name, no account, no connection to your bank.</p>
     </div>
     <div>
       <div class="how-n">2</div>
-      <p class="how-t">即时跑道</p>
-      <p class="how-d">我们算出你的生存窗口，并揭示大多数人在太晚之前都看不到的隐藏风险。</p>
+      <p class="how-t">Instant runway</p>
+      <p class="how-d">We calculate your survival window and surface the hidden risks most people don't see until it's too late.</p>
     </div>
     <div>
       <div class="how-n">3</div>
-      <p class="how-t">清晰决策</p>
-      <p class="how-d">获取完整情景报告——辞职、买房、降薪——精确看到每个选择会让你付出什么代价。</p>
+      <p class="how-t">Decide clearly</p>
+      <p class="how-d">Get a full scenario report — quit your job, buy a house, take a pay cut — and see exactly what each choice costs you.</p>
     </div>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 风险跑道 · 仅供信息参考 · 非财务建议 · <a href="#" style="color:var(--dim)">隐私政策</a> · <a href="#" style="color:var(--dim)">使用条款</a></p>
+  <p>© 2026 RunwayAI &nbsp;·&nbsp; For informational purposes only &nbsp;·&nbsp; Not financial advice &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
 </footer>
 
 <script>
-var savings=30000,expenses=6500;
-var phase2shown=false;
+var savings=5000,expenses=3500;
+var phase2shown=false,phase3shown=false;
 
-function fmt(n){
-  if(n>=10000) return '¥'+(n/10000).toFixed(1)+'万';
-  return '¥'+n.toLocaleString('zh-CN');
-}
+function fmt(n){return'$'+Math.round(n).toLocaleString()}
 
 function calc(){
-  var days=expenses>0?Math.round(savings/expenses*30.44):9999;
+  var days=expenses>0?Math.round(savings/expenses*30.4):9999;
+  var savingsRate=expenses>0?Math.round((savings-expenses)/expenses*100):100;
   var gap=savings-expenses;
 
   var daysEl=document.getElementById('runway-days');
@@ -451,10 +505,10 @@ function calc(){
   statusEl.className='runway-status';
 
   var zone,statusMsg,color;
-  if(days<=30){zone='危险';statusMsg='危险 — 需立即行动';color='danger'}
-  else if(days<=90){zone='高风险';statusMsg='高风险 — 缓冲有限';color='warning'}
-  else if(days<=180){zone='需关注';statusMsg='需关注 — 低于安全建议';color='warning'}
-  else{zone='健康';statusMsg='跑道健康';color='safe'}
+  if(days<=30){zone='Critical';statusMsg='Critical — immediate action needed';color='danger'}
+  else if(days<=90){zone='At risk';statusMsg='At risk — limited buffer';color='warning'}
+  else if(days<=180){zone='Caution';statusMsg='Caution — below recommended safety';color='warning'}
+  else{zone='Healthy';statusMsg='Healthy runway';color='safe'}
 
   daysEl.textContent=days>=9999?'∞':days.toLocaleString();
   daysEl.classList.add(color);
@@ -466,14 +520,14 @@ function calc(){
   var zoneEl=document.getElementById('ctx-zone');
 
   if(savings>=expenses){
-    rateEl.textContent='+'+(Math.round((savings-expenses)/savings*100))+'%';
+    rateEl.textContent='+'+Math.round((savings-expenses)/savings*100)+'%';
     rateEl.className='ctx-val green';
-  }else{
+  } else {
     rateEl.textContent='-'+Math.round((expenses-savings)/expenses*100)+'%';
     rateEl.className='ctx-val red';
   }
 
-  gapEl.textContent=(gap>=0?'+':'')+fmt(Math.abs(gap))+'/月';
+  gapEl.textContent=(gap>=0?'+':'')+fmt(gap)+'/mo';
   gapEl.className='ctx-val '+(gap>=0?'green':'red');
 
   zoneEl.textContent=zone;
@@ -485,55 +539,56 @@ function calc(){
     btn.style.display='block';note.style.display='block';
   }
 
-  if(phase2shown) buildPhase2(days,gap);
+  if(phase2shown) buildPhase2(days,gap,savings,expenses);
 }
 
-function buildPhase2(days,gap){
-  var months=Math.round(days/30.44);
+function buildPhase2(days,gap,savings,expenses){
+  var months=Math.round(days/30.4);
   var headline,sub;
   if(days<=30){
-    headline='你撑不过一个月。';
-    sub='以你当前的支出水平，少发一次工资就入不敷出。下面的风险不是假设的——它们已经在发生。';
-  }else if(days<=90){
-    headline='你有'+months+'个月。听起来还行，其实不是。';
-    sub='90天是大多数人意识到自己有麻烦的临界点——但到那时，选择已经很有限了。下面是数学告诉你的真相。';
-  }else if(days<=180){
-    headline='你有'+months+'个月的跑道。';
-    sub='比大多数人好。但低于财务安全研究一致建议的6个月阈值。下面是裂缝在哪里。';
-  }else{
-    headline='你有'+(days>=9999?'健康的':months+'个月')+'跑道。';
-    sub='你比大多数美国人情况好。但完整报告会精确显示哪些生活事件可能改变这一点——以及有多快。';
+    headline='You have less than a month.';
+    sub='At your current expense level, one missed paycheck puts you in the red. The risks below are already active — not hypothetical.';
+  } else if(days<=90){
+    headline='You have '+months+' months. That sounds okay. It isn\'t.';
+    sub='90 days is the most common threshold where people realize they\'re in trouble — but by then, options are already limited. Here\'s what the math actually shows.';
+  } else if(days<=180){
+    headline='You have '+months+' months of runway.';
+    sub='Better than most. But below the 6-month threshold that financial safety research consistently recommends. Here\'s where the cracks are.';
+  } else {
+    headline='You have '+(days>=9999?'a healthy':months+'-month')+' runway.';
+    sub='You\'re in better shape than most Americans. But your full report will show exactly which life events could change that — and how fast.';
   }
 
   document.getElementById('p2-headline').textContent=headline;
   document.getElementById('p2-sub').textContent=sub;
 
+  var monthlyInterest=savings*0.0015;
   var annualCost=expenses*12;
 
   var cards=`
     <div class="risk-card">
       <div class="risk-icon red">⏱</div>
       <div>
-        <p class="risk-card-label">如果你今天失业</p>
-        <p class="risk-card-val">你可以支撑支出 <b>${days>=9999?'很长时间':Math.round(days)+'天'}</b></p>
-        <p class="risk-card-sub">之后，每个月消耗 ¥${expenses.toLocaleString()}。没有收入，时钟全速运转。</p>
+        <p class="risk-card-label">If you lost your job today</p>
+        <p class="risk-card-val">You could cover expenses for <b>${days>=9999?'a very long time':Math.round(days)+' days'}</b></p>
+        <p class="risk-card-sub">After that, every month costs you ${fmt(expenses)}. Without income, the clock runs at full speed.</p>
       </div>
     </div>
     <div class="risk-card">
       <div class="risk-icon amber">📊</div>
       <div>
-        <p class="risk-card-label">你的年度支出敞口</p>
-        <p class="risk-card-val">你每年花 <b>¥${annualCost.toLocaleString()}</b> 来维持当前生活方式</p>
-        <p class="risk-card-sub">这是基准线。任何收入中断、医疗事件或大额支出都叠加在这个数字之上。</p>
+        <p class="risk-card-label">Your annual expense exposure</p>
+        <p class="risk-card-val">You spend <b>${fmt(annualCost)} per year</b> just to maintain your current lifestyle</p>
+        <p class="risk-card-sub">That's the baseline. Any income disruption, medical event, or major expense hits on top of this number.</p>
       </div>
     </div>
     <div class="blurred-card">
       <div class="blurred-inner">
-        <div class="risk-icon amber">🚪</div>
+        <div class="risk-icon amber">🏠</div>
         <div>
-          <p class="risk-card-label">如果你辞职</p>
-          <p class="risk-card-val">你的盈亏平衡求职窗口是 <b>X 周</b></p>
-          <p class="risk-card-sub">基于你的跑道和所在行业平均再就业时间——这是你真正在赛跑的时钟。</p>
+          <p class="risk-card-label">If you quit your job</p>
+          <p class="risk-card-val">Your break-even job search window is <b>X weeks</b></p>
+          <p class="risk-card-sub">Based on your runway and average re-employment timelines in your sector — this is the real clock you're racing.</p>
         </div>
       </div>
     </div>
@@ -541,9 +596,9 @@ function buildPhase2(days,gap){
       <div class="blurred-inner">
         <div class="risk-icon red">💳</div>
         <div>
-          <p class="risk-card-label">债务风险乘数</p>
-          <p class="risk-card-val">典型债务水平下，你的真实跑道缩短至 <b>X 天</b></p>
-          <p class="risk-card-sub">大多数人低估了现有债务义务在收入停止时加速消耗现金的速度。</p>
+          <p class="risk-card-label">Debt risk multiplier</p>
+          <p class="risk-card-val">With typical American debt load, your real runway drops to <b>X days</b></p>
+          <p class="risk-card-sub">Most people underestimate how fast existing obligations accelerate cash burn when income stops.</p>
         </div>
       </div>
     </div>`;
@@ -553,45 +608,52 @@ function buildPhase2(days,gap){
 
 function revealPhase2(){
   phase2shown=true;
-  var days=Math.round(savings/expenses*30.44);
+  var days=Math.round(savings/expenses*30.4);
   var gap=savings-expenses;
-  buildPhase2(days,gap);
+  buildPhase2(days,gap,savings,expenses);
   document.getElementById('phase2').classList.add('visible');
-  setTimeout(function(){document.getElementById('phase2').scrollIntoView({behavior:'smooth',block:'start'})},100);
+  setTimeout(function(){
+    document.getElementById('phase2').scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
 }
 
 function revealPhase3(){
+  phase3shown=true;
   document.getElementById('phase3').classList.add('visible');
-  setTimeout(function(){document.getElementById('phase3').scrollIntoView({behavior:'smooth',block:'start'})},100);
+  setTimeout(function(){
+    document.getElementById('phase3').scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
 }
 
 function smokeTest(){
-  var btn=document.getElementById('pay-btn');
-  btn.textContent='处理中…';
-  btn.disabled=true;
+  document.querySelector('.pay-btn').textContent='Processing…';
+  document.querySelector('.pay-btn').disabled=true;
   setTimeout(function(){
-    btn.textContent='已加入队列 ✓';
+    document.querySelector('.pay-btn').textContent='You\'re in the queue ✓';
     document.getElementById('email-gate').classList.add('visible');
     document.getElementById('email-gate').scrollIntoView({behavior:'smooth',block:'nearest'});
   },1200);
 }
 
 function submitEmail(){
-  var v=document.getElementById('email-input').value;
-  if(!v||!v.includes('@')){alert('请输入有效邮箱');return}
+  var v=document.getElementById('email-inp').value;
+  if(!v||!v.includes('@')){alert('Please enter a valid email.');return}
   document.getElementById('email-form-inner').style.display='none';
   document.getElementById('email-sent').style.display='block';
 }
 
 // slider wiring
-document.getElementById('savings').addEventListener('input',function(){
+var savingsSlider=document.getElementById('savings');
+var expensesSlider=document.getElementById('expenses');
+
+savingsSlider.addEventListener('input',function(){
   savings=parseInt(this.value);
-  document.getElementById('savings-val').innerHTML=fmt(savings)+' <span>存款</span>';
+  document.getElementById('savings-val').innerHTML=fmt(savings)+' <span>saved</span>';
   calc();
 });
-document.getElementById('expenses').addEventListener('input',function(){
+expensesSlider.addEventListener('input',function(){
   expenses=parseInt(this.value);
-  document.getElementById('expenses-val').innerHTML=fmt(expenses)+' <span>/月</span>';
+  document.getElementById('expenses-val').innerHTML=fmt(expenses)+' <span>/mo</span>';
   calc();
 });
 
