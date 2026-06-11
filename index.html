@@ -1,376 +1,601 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Risk Advisor — 你的风险跑道还有几天？</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0a0a0f;
-      color: #e0e0e0;
-      min-height: 100vh;
-    }
-    /* ── Hero ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0f 70%);
-      text-align: center;
-    }
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      background: linear-gradient(135deg, #00d4ff, #7b2ff7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-    .hero .subtitle {
-      font-size: 1.2rem;
-      color: #888;
-      margin-bottom: 2.5rem;
-      max-width: 500px;
-    }
-    /* ── Calculator Card ── */
-    .calc-card {
-      background: #12121a;
-      border: 1px solid #222;
-      border-radius: 20px;
-      padding: 2.5rem;
-      width: 100%;
-      max-width: 520px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-    .field { margin-bottom: 1.8rem; }
-    .field label {
-      display: block;
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .field .input-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .field input[type="range"] {
-      flex: 1;
-      -webkit-appearance: none;
-      height: 6px;
-      border-radius: 3px;
-      background: #222;
-      outline: none;
-    }
-    .field input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00d4ff, #7b2ff7);
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(0,212,255,0.4);
-    }
-    .field .value-display {
-      min-width: 90px;
-      text-align: right;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #00d4ff;
-      font-variant-numeric: tabular-nums;
-    }
-    /* ── Result ── */
-    .result {
-      margin-top: 2rem;
-      padding: 2rem;
-      border-radius: 16px;
-      text-align: center;
-      transition: all 0.5s ease;
-    }
-    .result.has-data { background: #0d1117; border: 1px solid #222; }
-    .result .runway-number {
-      font-size: clamp(3rem, 10vw, 5rem);
-      font-weight: 900;
-      line-height: 1;
-      margin: 0.5rem 0;
-      transition: color 0.5s ease;
-    }
-    .result .runway-label {
-      font-size: 1rem;
-      color: #888;
-      margin-bottom: 1rem;
-    }
-    .result .status-badge {
-      display: inline-block;
-      padding: 0.4rem 1.2rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-    .result .breakdown {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      text-align: left;
-    }
-    .breakdown-item {
-      background: #16161f;
-      padding: 1rem;
-      border-radius: 10px;
-    }
-    .breakdown-item .label {
-      font-size: 0.75rem;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .breakdown-item .val {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-top: 0.25rem;
-    }
-    /* ── Email Capture ── */
-    .email-capture {
-      margin-top: 2rem;
-      padding-top: 2rem;
-      border-top: 1px solid #222;
-    }
-    .email-capture p {
-      font-size: 0.9rem;
-      color: #888;
-      margin-bottom: 1rem;
-    }
-    .email-capture .input-group {
-      display: flex;
-      gap: 0.5rem;
-    }
-    .email-capture input[type="email"] {
-      flex: 1;
-      padding: 0.8rem 1rem;
-      border-radius: 10px;
-      border: 1px solid #333;
-      background: #0d1117;
-      color: #e0e0e0;
-      font-size: 0.95rem;
-      outline: none;
-    }
-    .email-capture input[type="email"]:focus {
-      border-color: #00d4ff;
-    }
-    .email-capture button {
-      padding: 0.8rem 1.5rem;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(135deg, #00d4ff, #7b2ff7);
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .email-capture button:hover { opacity: 0.9; }
-    .email-capture .success-msg {
-      color: #00ff88;
-      font-size: 0.9rem;
-      margin-top: 0.75rem;
-      display: none;
-    }
-    /* ── Footer ── */
-    .footer {
-      text-align: center;
-      padding: 3rem 2rem;
-      color: #444;
-      font-size: 0.8rem;
-    }
-    /* ── Color states ── */
-    .safe   { color: #00ff88; }
-    .warn   { color: #ffaa00; }
-    .danger { color: #ff4444; }
-    .critical { color: #ff0044; }
-    .badge-safe   { background: #00ff8818; color: #00ff88; border: 1px solid #00ff8833; }
-    .badge-warn   { background: #ffaa0018; color: #ffaa00; border: 1px solid #ffaa0033; }
-    .badge-danger { background: #ff444418; color: #ff4444; border: 1px solid #ff444433; }
-    .badge-critical { background: #ff004418; color: #ff0044; border: 1px solid #ff004433; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风险跑道 — 如果今天收入停止，你能撑几天？</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1a1a;
+  --paper:#faf9f6;
+  --dim:#b0aca0;
+  --border:#e8e5de;
+  --red:#c0392b;
+  --amber:#c0760a;
+  --green:#1a7a4a;
+  --serif:'Georgia','Noto Serif SC',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;min-height:100vh}
 
-    @media (max-width: 540px) {
-      .calc-card { padding: 1.5rem; }
-      .result .breakdown { grid-template-columns: 1fr; }
-      .email-capture .input-group { flex-direction: column; }
-    }
-  </style>
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:var(--paper);
+  border-bottom:1px solid var(--border);
+  padding:.85rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(12px);
+  background:rgba(250,249,246,.88);
+}
+.logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em;color:var(--ink)}
+.logo b{color:var(--red);font-weight:normal}
+.nav-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);padding:.25rem .7rem;border-radius:2rem}
+
+/* HERO */
+.hero{
+  max-width:720px;margin:0 auto;
+  padding:4rem 2rem 2.5rem;
+  text-align:center;
+}
+.pre-label{
+  font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--red);margin-bottom:1.2rem;
+}
+h1{
+  font-family:var(--serif);
+  font-size:clamp(1.8rem,5vw,3rem);
+  font-weight:normal;line-height:1.2;letter-spacing:-.03em;
+  margin-bottom:1.2rem;
+}
+h1 i{font-style:italic;color:var(--red)}
+.hero-p{
+  font-size:.95rem;color:#666;
+  max-width:500px;margin:0 auto;
+  line-height:1.75;
+}
+
+/* RUNWAY BOX */
+.runway-box{
+  max-width:640px;margin:0 auto 2rem;
+  padding:0 2rem;
+}
+.runway-number-wrap{
+  text-align:center;
+  padding:2.5rem 2rem 2rem;
+  background:var(--ink);
+  border-radius:10px;
+  position:relative;overflow:hidden;
+}
+.runway-number-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(192,57,43,.15) 0%,transparent 60%);
+  pointer-events:none;
+}
+.runway-eyebrow{
+  font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);margin-bottom:.6rem;position:relative;
+}
+.runway-days{
+  font-family:var(--serif);
+  font-size:clamp(3.5rem,12vw,6rem);
+  font-weight:normal;letter-spacing:-.05em;line-height:1;
+  color:#fff;transition:color .3s;position:relative;
+}
+.runway-unit{
+  font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-top:.4rem;position:relative;
+}
+.runway-status{
+  display:inline-flex;align-items:center;gap:.5rem;
+  margin-top:1.2rem;
+  padding:.3rem .9rem;border-radius:2rem;
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.5);
+  background:rgba(255,255,255,.05);
+  transition:all .3s;position:relative;
+}
+.runway-status.danger{background:rgba(192,57,43,.18);border-color:rgba(192,57,43,.35);color:#e07060}
+.runway-status.warning{background:rgba(192,132,10,.15);border-color:rgba(192,132,10,.3);color:#d0a040}
+.runway-status.safe{background:rgba(26,122,74,.15);border-color:rgba(26,122,74,.3);color:#70c898}
+.status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block}
+
+/* SLIDERS */
+.sliders{display:flex;flex-direction:column;gap:1.6rem;margin:2rem 0 1.5rem}
+.slider-field{}
+.slider-top{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:.5rem;
+}
+.slider-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.slider-value{font-family:var(--serif);font-size:1.2rem;letter-spacing:-.02em;color:var(--ink)}
+.slider-value span{font-size:.8rem;color:var(--dim);font-family:var(--sans)}
+input[type=range]{
+  width:100%;height:2px;
+  -webkit-appearance:none;appearance:none;
+  background:var(--border);border-radius:1px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--ink);border:2px solid var(--paper);
+  box-shadow:0 0 0 1px var(--ink);
+  cursor:pointer;transition:transform .1s;
+}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;
+  background:var(--ink);border:2px solid var(--paper);cursor:pointer;
+}
+
+/* CONTEXT ROW */
+.context-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:8px;overflow:hidden;
+  margin-bottom:1.5rem;
+}
+.ctx-cell{background:var(--paper);padding:.8rem 1rem;text-align:center}
+.ctx-label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:.15rem}
+.ctx-val{font-family:var(--serif);font-size:1rem;letter-spacing:-.01em;color:var(--ink)}
+.ctx-val.red{color:var(--red)}
+.ctx-val.amber{color:var(--amber)}
+.ctx-val.green{color:var(--green)}
+
+/* BUTTON */
+.cta-btn{
+  width:100%;padding:.95rem 1.5rem;
+  background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:.9rem;
+  border:none;border-radius:6px;cursor:pointer;
+  letter-spacing:.02em;transition:opacity .15s,transform .1s;
+}
+.cta-btn:hover{opacity:.85}
+.cta-note{text-align:center;font-size:.7rem;color:var(--dim);margin-top:.7rem}
+
+/* PHASE 2 */
+.phase2{display:none;padding:0 2rem 3rem}
+.phase2.visible{display:block}
+.divider{height:1px;background:var(--border);margin:2rem 0}
+.phase2-title{
+  font-family:var(--serif);font-size:1.4rem;font-weight:normal;
+  letter-spacing:-.02em;margin-bottom:.5rem;
+}
+.phase2-sub{font-size:.85rem;color:#666;line-height:1.65;margin-bottom:1.5rem}
+
+.risk-cards{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem}
+.risk-card{
+  background:var(--paper);
+  padding:1rem 1.2rem;
+  display:grid;grid-template-columns:32px 1fr;gap:.8rem;align-items:start;
+}
+.risk-icon{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;flex-shrink:0;margin-top:.15rem;
+}
+.risk-icon.red{background:#fdf0ee}.risk-icon.amber{background:#fdf6e8}
+.risk-card-label{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:.2rem}
+.risk-card-val{font-family:var(--serif);font-size:1.05rem;letter-spacing:-.01em;margin-bottom:.15rem}
+.risk-card-val b{color:var(--red)}
+.risk-card-sub{font-size:.78rem;color:#888;line-height:1.55}
+
+.blurred-card{
+  background:var(--paper);
+  padding:1rem 1.2rem;
+  display:grid;grid-template-columns:32px 1fr;gap:.8rem;align-items:start;
+  position:relative;
+}
+.blurred-card::after{
+  content:'解锁完整报告查看 →';
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;letter-spacing:.06em;color:var(--dim);
+  background:rgba(250,249,246,.72);
+  backdrop-filter:blur(4px);
+  border-radius:0;cursor:default;
+}
+.blurred-inner{filter:blur(4px);pointer-events:none;user-select:none}
+
+/* PHASE 3 */
+.phase3{display:none;padding:0 2rem 5rem}
+.phase3.visible{display:block}
+.pay-card{
+  border:1px solid var(--border);border-radius:12px;
+  padding:2rem 1.5rem;text-align:center;background:#fff;
+}
+.pay-price{
+  font-family:var(--serif);font-size:2.8rem;font-weight:normal;
+  letter-spacing:-.04em;margin:.5rem 0;
+}
+.pay-price sup{font-size:1.3rem;vertical-align:.5rem}
+.pay-desc{font-size:.85rem;color:#666;max-width:380px;margin:0 auto 1.5rem;line-height:1.65}
+.pay-features{
+  list-style:none;text-align:left;
+  max-width:320px;margin:0 auto 1.5rem;
+  display:flex;flex-direction:column;gap:.5rem;
+}
+.pay-features li{
+  font-size:.82rem;color:#555;padding-left:1.2rem;position:relative;
+  line-height:1.5;
+}
+.pay-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:.78rem}
+.pay-btn{
+  width:100%;max-width:320px;
+  padding:.95rem;background:var(--red);color:#fff;
+  font-family:var(--sans);font-size:.9rem;
+  border:none;border-radius:6px;cursor:pointer;
+  margin-bottom:.75rem;transition:opacity .15s;
+}
+.pay-btn:hover{opacity:.88}
+.pay-disclaimer{font-size:.68rem;color:var(--dim);line-height:1.55;max-width:380px;margin:0 auto}
+
+/* EMAIL GATE */
+.email-gate{display:none;padding-top:1.2rem}
+.email-gate.visible{display:block}
+.email-gate h3{font-family:var(--serif);font-size:1.1rem;font-weight:normal;margin-bottom:.4rem}
+.email-gate p{font-size:.82rem;color:#666;margin-bottom:1rem;line-height:1.6}
+.email-row{display:flex;gap:.6rem;flex-wrap:wrap}
+.email-row input{
+  flex:1;min-width:200px;padding:.7rem .9rem;
+  font-size:.88rem;font-family:var(--sans);
+  border:1px solid var(--border);border-radius:5px;
+  color:var(--ink);background:#fff;outline:none;
+}
+.email-row input:focus{border-color:var(--ink)}
+.email-row button{
+  padding:.7rem 1.2rem;background:var(--ink);color:#fff;
+  font-size:.82rem;border:none;border-radius:5px;cursor:pointer;
+  transition:opacity .15s;white-space:nowrap;
+}
+.email-row button:hover{opacity:.85}
+.email-sent{display:none;text-align:center;padding:1rem 0}
+.email-sent p{font-family:var(--serif);font-size:.95rem;color:var(--green);font-style:italic}
+
+/* HOW */
+.how-section{
+  max-width:640px;margin:0 auto;
+  padding:2.5rem 2rem 4rem;
+  border-top:1px solid var(--border);
+}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.5rem}
+.how-n{font-family:var(--serif);font-size:2.2rem;color:#d5d0c0;letter-spacing:-.04em;line-height:1;margin-bottom:.5rem}
+.how-t{font-size:.85rem;font-weight:500;margin-bottom:.25rem}
+.how-d{font-size:.78rem;color:var(--dim);line-height:1.6}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:1.2rem 2rem;text-align:center;
+  font-size:.7rem;color:var(--dim);
+}
+
+@media(max-width:540px){
+  .context-row{grid-template-columns:1fr}
+  .how-grid{grid-template-columns:1fr;gap:1rem}
+  h1{font-size:1.7rem}
+  nav{padding:.85rem 1rem}
+  .hero{padding:3rem 1.2rem 2rem}
+  .runway-box{padding:0 1.2rem}
+  .phase2,.phase3{padding:0 1.2rem 3rem}
+}
+</style>
 </head>
 <body>
 
-<div class="hero">
-  <h1>你的风险跑道<br>还有几天？</h1>
-  <p class="subtitle">输入3个数字，立刻看到你的财务生存天数。免费，无需注册。</p>
+<nav>
+  <div class="logo">风险<b>跑道</b></div>
+  <span class="nav-tag">无需注册 · 数据不离开浏览器</span>
+</nav>
 
-  <div class="calc-card">
-    <!-- 月收入 -->
-    <div class="field">
-      <label>月收入（税后）</label>
-      <div class="input-row">
-        <input type="range" id="income" min="0" max="50000" step="500" value="8000"
-               oninput="updateCalc()">
-        <span class="value-display" id="incomeVal">¥8,000</span>
-      </div>
+<section class="hero">
+  <p class="pre-label">财务生存智能测算</p>
+  <h1>如果今天收入停止<br>你能撑<i>多少天</i>？</h1>
+  <p class="hero-p">拖动两个滑块，立刻看到你的风险跑道。大多数人看到数字都会沉默——不是因为他们挥霍，而是从来没有人这样算过给他们看。</p>
+</section>
+
+<div class="runway-box">
+
+  <div class="runway-number-wrap">
+    <p class="runway-eyebrow">你的财务跑道</p>
+    <div class="runway-days safe" id="runway-days">—</div>
+    <p class="runway-unit">天生存窗口</p>
+    <div class="runway-status" id="runway-status">
+      <span class="status-dot"></span>
+      <span id="status-text">拖动滑块开始计算</span>
     </div>
+  </div>
 
-    <!-- 月支出 -->
-    <div class="field">
-      <label>月支出</label>
-      <div class="input-row">
-        <input type="range" id="expense" min="0" max="50000" step="500" value="6500"
-               oninput="updateCalc()">
-        <span class="value-display" id="expenseVal">¥6,500</span>
+  <div class="sliders">
+    <div class="slider-field">
+      <div class="slider-top">
+        <span class="slider-label">存款 / 可支配现金</span>
+        <span class="slider-value" id="savings-val">¥30,000 <span>存款</span></span>
       </div>
+      <input type="range" id="savings" min="0" max="500000" step="1000" value="30000">
     </div>
-
-    <!-- 存款总额 -->
-    <div class="field">
-      <label>存款总额</label>
-      <div class="input-row">
-        <input type="range" id="savings" min="0" max="500000" step="1000" value="30000"
-               oninput="updateCalc()">
-        <span class="value-display" id="savingsVal">¥30,000</span>
+    <div class="slider-field">
+      <div class="slider-top">
+        <span class="slider-label">月必要支出</span>
+        <span class="slider-value" id="expenses-val">¥6,500 <span>/月</span></span>
       </div>
+      <input type="range" id="expenses" min="500" max="50000" step="500" value="6500">
     </div>
+  </div>
 
-    <!-- 结果区 -->
-    <div class="result" id="result">
-      <div style="color:#444;font-size:0.9rem;">调整滑块，查看你的风险跑道</div>
+  <div class="context-row">
+    <div class="ctx-cell">
+      <p class="ctx-label">储蓄率</p>
+      <p class="ctx-val" id="ctx-rate">—</p>
     </div>
+    <div class="ctx-cell">
+      <p class="ctx-label">月净支出</p>
+      <p class="ctx-val" id="ctx-gap">—</p>
+    </div>
+    <div class="ctx-cell">
+      <p class="ctx-label">风险区间</p>
+      <p class="ctx-val" id="ctx-zone">—</p>
+    </div>
+  </div>
 
-    <!-- 邮箱收集 -->
-    <div class="email-capture" id="emailCapture" style="display:none;">
-      <p>📩 免费获取完整风险分析报告（含偿债方案 + 优化建议）</p>
-      <div class="input-group">
-        <input type="email" id="emailInput" placeholder="your@email.com" />
-        <button onclick="submitEmail()">获取报告</button>
+  <button class="cta-btn" id="reveal-btn" style="display:none" onclick="revealPhase2()">
+    查看这意味着什么 →
+  </button>
+  <p class="cta-note" id="cta-note" style="display:none">免费 · 10秒出结果 · 不需要账户</p>
+</div>
+
+<!-- PHASE 2 -->
+<div class="phase2" id="phase2">
+  <div style="max-width:640px;margin:0 auto">
+    <div class="divider"></div>
+    <h2 class="phase2-title" id="p2-headline"></h2>
+    <p class="phase2-sub" id="p2-sub"></p>
+
+    <div class="risk-cards" id="risk-cards"></div>
+
+    <p style="font-size:.7rem;color:var(--dim);margin-bottom:1.5rem;line-height:1.55">
+      以上仅为数学推算，不构成财务建议。个人情况有差异，重大财务决策前请咨询持牌顾问。
+    </p>
+
+    <button class="cta-btn" style="background:var(--red)" onclick="revealPhase3()">
+      获取我的完整决策报告 — ¥68 →
+    </button>
+    <p class="cta-note" style="display:block;margin-top:.7rem">一次性付费 · 即时AI报告 · 无订阅</p>
+  </div>
+</div>
+
+<!-- PHASE 3 -->
+<div class="phase3" id="phase3">
+  <div style="max-width:640px;margin:0 auto">
+    <div class="divider"></div>
+    <div class="pay-card">
+      <p style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:.25rem">完整AI风险报告</p>
+      <div class="pay-price"><sup>¥</sup>68</div>
+      <p class="pay-desc">针对你的财务数据深度生成——情景模拟、时间线、以及每个选择的真实代价。</p>
+      <ul class="pay-features">
+        <li>6种生活情景下的生存跑道推算</li>
+        <li>失业、降薪、大额支出冲击模拟</li>
+        <li>"我能辞职吗？"决策模拟器</li>
+        <li>逐月现金流预测</li>
+        <li>3条回到安全区的可执行路径</li>
+      </ul>
+      <button class="pay-btn" id="pay-btn" onclick="smokeTest()">立即获取报告</button>
+      <p class="pay-disclaimer">数学推算仅作参考 · 非投资建议 · 数据本地处理 · 绝不存储或分享</p>
+
+      <div class="email-gate" id="email-gate">
+        <div class="divider" style="margin:1.5rem 0 1.2rem"></div>
+        <h3>你已加入早期访问名单</h3>
+        <p>我们分批开放报告生成。留下邮箱，通常在24小时内你会收到。</p>
+        <div id="email-form-inner">
+          <div class="email-row">
+            <input type="email" id="email-input" placeholder="your@email.com">
+            <button onclick="submitEmail()">通知我</button>
+          </div>
+          <p style="font-size:.68rem;color:var(--dim);margin-top:.5rem">🔒 无垃圾邮件。随时可退订。</p>
+        </div>
+        <div class="email-sent" id="email-sent">
+          <p>✓ 已登记。24小时内会与您联系。</p>
+        </div>
       </div>
-      <div class="success-msg" id="successMsg">✅ 已提交！报告将在24小时内发送至你的邮箱。</div>
     </div>
   </div>
 </div>
 
-<div class="footer">
-  AI Risk Advisor — 数据仅在浏览器本地计算，不会上传服务器。
-</div>
+<!-- HOW -->
+<section class="how-section">
+  <p style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:1.5rem">工作原理</p>
+  <div class="how-grid">
+    <div>
+      <div class="how-n">1</div>
+      <p class="how-t">两个数字</p>
+      <p class="how-d">你的存款和月支出。仅此而已——不需要姓名、账户，也不需要连接银行。</p>
+    </div>
+    <div>
+      <div class="how-n">2</div>
+      <p class="how-t">即时跑道</p>
+      <p class="how-d">我们算出你的生存窗口，并揭示大多数人在太晚之前都看不到的隐藏风险。</p>
+    </div>
+    <div>
+      <div class="how-n">3</div>
+      <p class="how-t">清晰决策</p>
+      <p class="how-d">获取完整情景报告——辞职、买房、降薪——精确看到每个选择会让你付出什么代价。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 风险跑道 · 仅供信息参考 · 非财务建议 · <a href="#" style="color:var(--dim)">隐私政策</a> · <a href="#" style="color:var(--dim)">使用条款</a></p>
+</footer>
 
 <script>
-  const $ = id => document.getElementById(id);
+var savings=30000,expenses=6500;
+var phase2shown=false;
 
-  function fmt(n) {
-    if (n >= 10000) return '¥' + (n/10000).toFixed(1) + '万';
-    return '¥' + n.toLocaleString('zh-CN');
+function fmt(n){
+  if(n>=10000) return '¥'+(n/10000).toFixed(1)+'万';
+  return '¥'+n.toLocaleString('zh-CN');
+}
+
+function calc(){
+  var days=expenses>0?Math.round(savings/expenses*30.44):9999;
+  var gap=savings-expenses;
+
+  var daysEl=document.getElementById('runway-days');
+  var statusEl=document.getElementById('runway-status');
+  var statusTxt=document.getElementById('status-text');
+
+  daysEl.className='runway-days';
+  statusEl.className='runway-status';
+
+  var zone,statusMsg,color;
+  if(days<=30){zone='危险';statusMsg='危险 — 需立即行动';color='danger'}
+  else if(days<=90){zone='高风险';statusMsg='高风险 — 缓冲有限';color='warning'}
+  else if(days<=180){zone='需关注';statusMsg='需关注 — 低于安全建议';color='warning'}
+  else{zone='健康';statusMsg='跑道健康';color='safe'}
+
+  daysEl.textContent=days>=9999?'∞':days.toLocaleString();
+  daysEl.classList.add(color);
+  statusEl.classList.add(color);
+  statusTxt.textContent=statusMsg;
+
+  var rateEl=document.getElementById('ctx-rate');
+  var gapEl=document.getElementById('ctx-gap');
+  var zoneEl=document.getElementById('ctx-zone');
+
+  if(savings>=expenses){
+    rateEl.textContent='+'+(Math.round((savings-expenses)/savings*100))+'%';
+    rateEl.className='ctx-val green';
+  }else{
+    rateEl.textContent='-'+Math.round((expenses-savings)/expenses*100)+'%';
+    rateEl.className='ctx-val red';
   }
 
-  function updateCalc() {
-    const income  = +$('income').value;
-    const expense = +$('expense').value;
-    const savings = +$('savings').value;
+  gapEl.textContent=(gap>=0?'+':'')+fmt(Math.abs(gap))+'/月';
+  gapEl.className='ctx-val '+(gap>=0?'green':'red');
 
-    $('incomeVal').textContent  = fmt(income);
-    $('expenseVal').textContent = fmt(expense);
-    $('savingsVal').textContent = fmt(savings);
+  zoneEl.textContent=zone;
+  zoneEl.className='ctx-val '+(color==='safe'?'green':color==='danger'?'red':'amber');
 
-    const monthlyCashflow = income - expense;
-    const runwayDays = monthlyCashflow <= 0
-      ? Math.floor(savings / (expense || 1))
-      : Math.floor(savings / (expense - income));
-
-    // 正确计算：跑道 = 存款 / 月净支出（支出 - 收入，若为正）
-    const netMonthlyBurn = Math.max(expense - income, 0);
-    const days = netMonthlyBurn > 0 ? Math.floor(savings / netMonthlyBurn * 30.44) : 9999;
-
-    const r = $('result');
-    if (netMonthlyBurn === 0 && income >= expense) {
-      // 收入 >= 支出，无风险
-      r.className = 'result has-data';
-      r.innerHTML = `
-        <div class="status-badge badge-safe">财务安全</div>
-        <div class="runway-number safe">∞</div>
-        <div class="runway-label">你的收入覆盖支出，存款在增长</div>
-        <div class="breakdown">
-          <div class="breakdown-item">
-            <div class="label">月现金流</div>
-            <div class="val safe">+${fmt(income - expense)}</div>
-          </div>
-          <div class="breakdown-item">
-            <div class="label">存款总额</div>
-            <div class="val" style="color:#e0e0e0">${fmt(savings)}</div>
-          </div>
-        </div>`;
-    } else {
-      r.className = 'result has-data';
-      let colorClass, badgeClass, statusText;
-      if (days >= 180)      { colorClass = 'safe';   badgeClass = 'badge-safe';   statusText = '风险较低'; }
-      else if (days >= 90)  { colorClass = 'warn';   badgeClass = 'badge-warn';   statusText = '需要关注'; }
-      else if (days >= 30)  { colorClass = 'danger'; badgeClass = 'badge-danger'; statusText = '风险较高'; }
-      else                   { colorClass = 'critical'; badgeClass = 'badge-critical'; statusText = '危险！'; }
-
-      r.innerHTML = `
-        <div class="status-badge ${badgeClass}">${statusText}</div>
-        <div class="runway-number ${colorClass}">${days.toLocaleString()}</div>
-        <div class="runway-label">风险跑道（剩余生存天数）</div>
-        <div class="breakdown">
-          <div class="breakdown-item">
-            <div class="label">月净支出</div>
-            <div class="val ${colorClass}">${fmt(netMonthlyBurn)}</div>
-          </div>
-          <div class="breakdown-item">
-            <div class="label">存款总额</div>
-            <div class="val" style="color:#e0e0e0">${fmt(savings)}</div>
-          </div>
-          <div class="breakdown-item">
-            <div class="label">按当前支出耗尽存款</div>
-            <div class="val ${colorClass}">${days} 天</div>
-          </div>
-          <div class="breakdown-item">
-            <div class="label">相当月份数</div>
-            <div class="val ${colorClass}">${(days/30.44).toFixed(1)} 个月</div>
-          </div>
-        </div>`;
-    }
-
-    $('emailCapture').style.display = (netMonthlyBurn > 0 && days < 365) ? 'block' : 'none';
+  var btn=document.getElementById('reveal-btn');
+  var note=document.getElementById('cta-note');
+  if(savings>0&&expenses>0){
+    btn.style.display='block';note.style.display='block';
   }
 
-  async function submitEmail() {
-    const email = $('emailInput').value;
-    if (!email || !email.includes('@')) {
-      alert('请输入有效邮箱');
-      return;
-    }
-    // 用 Formspree 免费收集邮箱（无需后端）
-    const resp = await fetch('https://formspree.io/f/xldbekay', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        income:  $('income').value,
-        expense: $('expense').value,
-        savings: $('savings').value,
-        runway: Math.floor($('savings').value / (Math.max($('expense').value - $('income').value, 1)) * 30.44),
-        _subject: 'AI Risk Advisor — New Lead',
-      })
-    }).catch(() => ({}));
-    $('successMsg').style.display = 'block';
-    $('emailInput').style.display = 'none';
-    event.target.style.display = 'none';
+  if(phase2shown) buildPhase2(days,gap);
+}
+
+function buildPhase2(days,gap){
+  var months=Math.round(days/30.44);
+  var headline,sub;
+  if(days<=30){
+    headline='你撑不过一个月。';
+    sub='以你当前的支出水平，少发一次工资就入不敷出。下面的风险不是假设的——它们已经在发生。';
+  }else if(days<=90){
+    headline='你有'+months+'个月。听起来还行，其实不是。';
+    sub='90天是大多数人意识到自己有麻烦的临界点——但到那时，选择已经很有限了。下面是数学告诉你的真相。';
+  }else if(days<=180){
+    headline='你有'+months+'个月的跑道。';
+    sub='比大多数人好。但低于财务安全研究一致建议的6个月阈值。下面是裂缝在哪里。';
+  }else{
+    headline='你有'+(days>=9999?'健康的':months+'个月')+'跑道。';
+    sub='你比大多数美国人情况好。但完整报告会精确显示哪些生活事件可能改变这一点——以及有多快。';
   }
 
-  updateCalc();
+  document.getElementById('p2-headline').textContent=headline;
+  document.getElementById('p2-sub').textContent=sub;
+
+  var annualCost=expenses*12;
+
+  var cards=`
+    <div class="risk-card">
+      <div class="risk-icon red">⏱</div>
+      <div>
+        <p class="risk-card-label">如果你今天失业</p>
+        <p class="risk-card-val">你可以支撑支出 <b>${days>=9999?'很长时间':Math.round(days)+'天'}</b></p>
+        <p class="risk-card-sub">之后，每个月消耗 ¥${expenses.toLocaleString()}。没有收入，时钟全速运转。</p>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon amber">📊</div>
+      <div>
+        <p class="risk-card-label">你的年度支出敞口</p>
+        <p class="risk-card-val">你每年花 <b>¥${annualCost.toLocaleString()}</b> 来维持当前生活方式</p>
+        <p class="risk-card-sub">这是基准线。任何收入中断、医疗事件或大额支出都叠加在这个数字之上。</p>
+      </div>
+    </div>
+    <div class="blurred-card">
+      <div class="blurred-inner">
+        <div class="risk-icon amber">🚪</div>
+        <div>
+          <p class="risk-card-label">如果你辞职</p>
+          <p class="risk-card-val">你的盈亏平衡求职窗口是 <b>X 周</b></p>
+          <p class="risk-card-sub">基于你的跑道和所在行业平均再就业时间——这是你真正在赛跑的时钟。</p>
+        </div>
+      </div>
+    </div>
+    <div class="blurred-card">
+      <div class="blurred-inner">
+        <div class="risk-icon red">💳</div>
+        <div>
+          <p class="risk-card-label">债务风险乘数</p>
+          <p class="risk-card-val">典型债务水平下，你的真实跑道缩短至 <b>X 天</b></p>
+          <p class="risk-card-sub">大多数人低估了现有债务义务在收入停止时加速消耗现金的速度。</p>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('risk-cards').innerHTML=cards;
+}
+
+function revealPhase2(){
+  phase2shown=true;
+  var days=Math.round(savings/expenses*30.44);
+  var gap=savings-expenses;
+  buildPhase2(days,gap);
+  document.getElementById('phase2').classList.add('visible');
+  setTimeout(function(){document.getElementById('phase2').scrollIntoView({behavior:'smooth',block:'start'})},100);
+}
+
+function revealPhase3(){
+  document.getElementById('phase3').classList.add('visible');
+  setTimeout(function(){document.getElementById('phase3').scrollIntoView({behavior:'smooth',block:'start'})},100);
+}
+
+function smokeTest(){
+  var btn=document.getElementById('pay-btn');
+  btn.textContent='处理中…';
+  btn.disabled=true;
+  setTimeout(function(){
+    btn.textContent='已加入队列 ✓';
+    document.getElementById('email-gate').classList.add('visible');
+    document.getElementById('email-gate').scrollIntoView({behavior:'smooth',block:'nearest'});
+  },1200);
+}
+
+function submitEmail(){
+  var v=document.getElementById('email-input').value;
+  if(!v||!v.includes('@')){alert('请输入有效邮箱');return}
+  document.getElementById('email-form-inner').style.display='none';
+  document.getElementById('email-sent').style.display='block';
+}
+
+// slider wiring
+document.getElementById('savings').addEventListener('input',function(){
+  savings=parseInt(this.value);
+  document.getElementById('savings-val').innerHTML=fmt(savings)+' <span>存款</span>';
+  calc();
+});
+document.getElementById('expenses').addEventListener('input',function(){
+  expenses=parseInt(this.value);
+  document.getElementById('expenses-val').innerHTML=fmt(expenses)+' <span>/月</span>';
+  calc();
+});
+
+calc();
 </script>
 </body>
 </html>
