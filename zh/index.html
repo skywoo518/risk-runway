@@ -73,8 +73,7 @@ h1 i{font-style:italic;color:var(--red)}
   overflow:hidden;
 }
 .runway-number-wrap::before{
-  content:'';
-  position:absolute;inset:0;
+  content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse at 50% 0%,rgba(192,57,43,.18) 0%,transparent 65%);
   pointer-events:none;
 }
@@ -109,25 +108,10 @@ h1 i{font-style:italic;color:var(--red)}
   background:rgba(255,255,255,.06);
   transition:all .25s;
 }
-.runway-status.danger{
-  background:rgba(192,57,43,.2);
-  border-color:rgba(192,57,43,.4);
-  color:#f0a09a;
-}
-.runway-status.warning{
-  background:rgba(212,132,10,.15);
-  border-color:rgba(212,132,10,.35);
-  color:#f0c06a;
-}
-.runway-status.safe{
-  background:rgba(26,122,74,.18);
-  border-color:rgba(26,122,74,.35);
-  color:#7de0a8;
-}
-.status-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:currentColor;display:inline-block;
-}
+.runway-status.danger{background:rgba(192,57,43,.2);border-color:rgba(192,57,43,.4);color:#f0a09a}
+.runway-status.warning{background:rgba(212,132,10,.15);border-color:rgba(212,132,10,.35);color:#f0c06a}
+.runway-status.safe{background:rgba(26,122,74,.18);border-color:rgba(26,122,74,.35);color:#7de0a8}
+.status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
 
 /* ── SLIDERS ── */
 .sliders{display:flex;flex-direction:column;gap:1.5rem;margin-bottom:1.75rem}
@@ -136,12 +120,8 @@ h1 i{font-style:italic;color:var(--red)}
   display:flex;justify-content:space-between;align-items:baseline;
   margin-bottom:.6rem;
 }
-.slider-label{
-  font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
-}
-.slider-value{
-  font-family:var(--serif);font-size:1.3rem;letter-spacing:-.02em;color:var(--ink);
-}
+.slider-label{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.slider-value{font-family:var(--serif);font-size:1.3rem;letter-spacing:-.02em;color:var(--ink)}
 .slider-value span{font-size:.85rem;color:var(--dim);font-family:var(--sans)}
 input[type=range]{
   width:100%;height:3px;
@@ -169,217 +149,49 @@ input[type=range]::-moz-range-thumb{
   border:1px solid var(--border);border-radius:8px;overflow:hidden;
   margin-bottom:1.75rem;
 }
-.ctx-cell{
-  background:var(--paper);padding:.85rem 1rem;text-align:center;
-}
+.ctx-cell{background:var(--paper);padding:.85rem 1rem;text-align:center}
 .ctx-label{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:.2rem}
 .ctx-val{font-family:var(--serif);font-size:1.05rem;letter-spacing:-.01em;color:var(--ink)}
 .ctx-val.red{color:var(--red)}
 .ctx-val.amber{color:var(--amber)}
 .ctx-val.green{color:var(--green)}
 
+/* ── FREE SCENARIO CARDS ── */
+.free-scenarios{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1rem;margin-bottom:1.75rem;
+}
+@media(max-width:480px){.free-scenarios{grid-template-columns:1fr}}
+.free-card{
+  border:1px solid var(--border);border-radius:10px;
+  padding:1.25rem;background:#fff;
+  text-align:left;
+}
+.free-card-icon{
+  font-size:.9rem;margin-bottom:.5rem;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:50%;
+}
+.free-card-icon.red{background:var(--red-soft)}
+.free-card-icon.amber{background:var(--amber-soft)}
+.free-card-label{font-size:.68rem;letter-spacing:.08em;color:var(--dim);margin-bottom:.2rem}
+.free-card-val{font-family:var(--serif);font-size:1.5rem;letter-spacing:-.02em;margin-bottom:.2rem}
+.free-card-val b{color:var(--red)}
+.free-card-sub{font-size:.78rem;color:#777;line-height:1.55}
+
 /* ── CTA BUTTON ── */
 .cta-btn{
   width:100%;padding:1rem 1.5rem;
-  background:var(--ink);color:#fff;
+  background:var(--red);color:#fff;
   font-family:var(--sans);font-size:.95rem;
   border:none;border-radius:6px;cursor:pointer;
   letter-spacing:.02em;
   transition:opacity .15s,transform .1s;
-}
-.cta-btn:hover{opacity:.85}
-.cta-btn:active{transform:scale(.99)}
-.cta-note{
-  text-align:center;font-size:.72rem;color:var(--dim);
-  margin-top:.75rem;
-}
-
-/* ── PHASE 2 ── */
-.phase2{
-  display:none;max-width:640px;margin:0 auto;
-  padding:0 2rem 3rem;
-}
-.phase2.visible{display:block}
-.divider{
-  height:1px;background:var(--border);
-  margin:2rem 0;
-}
-.phase2-title{
-  font-family:var(--serif);font-size:1.5rem;font-weight:normal;
-  letter-spacing:-.02em;margin-bottom:.5rem;
-}
-.phase2-sub{font-size:.88rem;color:#666;margin-bottom:1.5rem;line-height:1.65}
-
-.risk-cards{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem}
-.risk-card{
-  background:var(--paper);
-  padding:1.1rem 1.25rem;
-  display:grid;grid-template-columns:36px 1fr;gap:.9rem;align-items:start;
-}
-.risk-icon{
-  width:36px;height:36px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.9rem;flex-shrink:0;
-}
-.risk-icon.red{background:var(--red-soft)}
-.risk-icon.amber{background:var(--amber-soft)}
-.risk-card-label{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:.25rem}
-.risk-card-val{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.01em;margin-bottom:.2rem}
-.risk-card-val b{color:var(--red)}
-.risk-card-sub{font-size:.8rem;color:#777;line-height:1.55}
-
-/* blurred teaser */
-.blurred-card{
-  background:var(--paper);
-  padding:1.1rem 1.25rem;
-  display:grid;grid-template-columns:36px 1fr;gap:.9rem;align-items:start;
-  position:relative;
-}
-.blurred-card::after{
-  content:'解锁完整报告 →';
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.78rem;letter-spacing:.06em;color:var(--dim);
-  background:rgba(245,244,240,.7);
-  backdrop-filter:blur(4px);
-  border-radius:0;
-  cursor:default;
-}
-.blurred-inner{filter:blur(5px);pointer-events:none;user-select:none}
-
-/* ── PHASE 3 SMOKE TEST ── */
-.phase3{
-  display:none;max-width:640px;margin:0 auto;
-  padding:0 2rem 5rem;
-}
-.phase3.visible{display:block}
-.pay-card{
-  border:1px solid var(--border);border-radius:12px;
-  padding:2rem;background:#fff;
-  text-align:center;
-}
-.pay-price{
-  font-family:var(--serif);font-size:3rem;font-weight:normal;
-  letter-spacing:-.04em;margin:.5rem 0;
-}
-.pay-price sup{font-size:1.5rem;vertical-align:.5rem}
-.pay-desc{font-size:.88rem;color:#666;max-width:380px;margin:0 auto 1.5rem;line-height:1.65}
-.pay-features{
-  list-style:none;text-align:left;
-  max-width:320px;margin:0 auto 1.5rem;
-  display:flex;flex-direction:column;gap:.5rem;
-}
-.pay-features li{
-  font-size:.85rem;color:#555;padding-left:1.25rem;position:relative;
-}
-.pay-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:.8rem}
-
-/* ── DUAL PRICING ── */
-.pricing-grid{
-  display:grid;grid-template-columns:1fr 1.1fr;gap:.75rem;
-  margin-bottom:1.5rem;
-}
-@media(max-width:480px){.pricing-grid{grid-template-columns:1fr}}
-.pricing-card{
-  border:1.5px solid var(--border);border-radius:10px;
-  padding:1.25rem 1rem;text-align:center;
-  background:#fff;transition:all .15s;
-  cursor:pointer;position:relative;
-}
-.pricing-card:hover{border-color:var(--dim)}
-.pricing-card.selected{border-color:var(--ink);box-shadow:0 0 0 1.5px var(--ink)}
-.pricing-card.selected .pricing-check{opacity:1}
-.pricing-check{
-  position:absolute;top:.5rem;right:.5rem;
-  width:16px;height:16px;border-radius:50%;
-  background:var(--ink);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.6rem;opacity:0;transition:opacity .15s;
-}
-.pricing-tier{font-size:.62rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.35rem}
-.pricing-price{font-family:var(--serif);font-size:1.6rem;letter-spacing:-.03em;margin-bottom:.15rem}
-.pricing-price sup{font-size:.9rem;vertical-align:.35rem}
-.pricing-accuracy{
-  font-size:.65rem;letter-spacing:.06em;
-  padding:.18rem .55rem;border-radius:2rem;
-  display:inline-block;margin-bottom:.5rem;
-}
-.pricing-accuracy.amber{background:var(--amber-soft);color:var(--amber)}
-.pricing-accuracy.green{background:var(--green-soft);color:var(--green)}
-.pricing-features-list{
-  font-size:.75rem;color:#666;line-height:1.5;
-  text-align:left;list-style:none;
-  max-width:240px;margin:0 auto;
-  display:flex;flex-direction:column;gap:.25rem;
-}
-.pricing-features-list li{padding-left:1rem;position:relative}
-.pricing-features-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:.7rem}
-.pricing-upgrade-note{
-  font-size:.68rem;color:var(--green);margin-top:.45rem;
-  padding:.2rem .7rem;border-radius:2rem;
-  background:var(--green-soft);border:1px solid #b8e8ce;
-  display:inline-block;
-}
-.pricing-best{
-  font-size:.62rem;letter-spacing:.08em;
-  background:var(--ink);color:#fff;
-  padding:.15rem .5rem;border-radius:2rem;
-  position:absolute;top:-.5rem;left:50%;transform:translateX(-50%);
-}
-.pay-btn{
-  width:100%;max-width:320px;
-  padding:1rem;background:var(--red);color:#fff;
-  font-family:var(--sans);font-size:.95rem;
-  border:none;border-radius:6px;cursor:pointer;
   margin-bottom:.75rem;
-  transition:opacity .15s;
 }
-.pay-btn:hover{opacity:.88}
-.pay-disclaimer{font-size:.7rem;color:var(--dim);line-height:1.55;max-width:380px;margin:0 auto}
-
-/* email capture after fake pay */
-.email-gate{display:none;padding-top:1rem}
-.email-gate.visible{display:block}
-.email-gate h3{font-family:var(--serif);font-size:1.2rem;font-weight:normal;margin-bottom:.4rem}
-.email-gate p{font-size:.85rem;color:#666;margin-bottom:1rem}
-.email-row{display:flex;gap:.6rem;flex-wrap:wrap}
-.email-row input{
-  flex:1;min-width:200px;padding:.7rem 1rem;
-  font-size:.9rem;font-family:var(--sans);
-  border:1px solid var(--border);border-radius:5px;
-  color:var(--ink);background:#fff;outline:none;
-}
-.email-row input:focus{border-color:var(--ink)}
-.email-row button{
-  padding:.7rem 1.25rem;background:var(--ink);color:#fff;
-  font-size:.85rem;border:none;border-radius:5px;cursor:pointer;
-  transition:opacity .15s;white-space:nowrap;
-}
-.email-row button:hover{opacity:.85}
-.email-sent{display:none;text-align:center;padding:1rem 0}
-.email-sent p{font-family:var(--serif);font-size:1rem;color:var(--green);font-style:italic}
-
-/* ── HOW ── */
-.how-section{
-  max-width:640px;margin:0 auto;
-  padding:3rem 2rem 5rem;
-  border-top:1px solid var(--border);
-}
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:2rem}
-@media(max-width:520px){
-  .how-grid{grid-template-columns:1fr;gap:1.25rem}
-  .context-row{grid-template-columns:1fr}
-  h1{font-size:1.85rem}
-  .hero{padding:2.5rem 1.25rem 1.5rem}
-  .runway-box{padding:1.5rem 1.25rem 2rem}
-  .runway-number-wrap{padding:2rem 1rem}
-  nav{padding:.7rem 1rem}
-  .nav-tag{display:none}
-  .slider-value{font-size:1.1rem}
-}
-.how-n{font-family:var(--serif);font-size:2.5rem;color:var(--dimmer);letter-spacing:-.04em;line-height:1;margin-bottom:.6rem}
-.how-t{font-size:.88rem;font-weight:500;margin-bottom:.3rem}
-.how-d{font-size:.8rem;color:var(--dim);line-height:1.6}
+.cta-btn:hover{opacity:.88}
+.cta-btn:active{transform:scale(.99)}
+.cta-note{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:2rem}
 
 /* ── SAMPLE REPORT ── */
 .sample-toggle{
@@ -402,37 +214,15 @@ input[type=range]::-moz-range-thumb{
 }
 .sample-preview.visible{display:block}
 
-.sample-header{
-  background:var(--ink);color:#fff;
-  padding:1.25rem 1.5rem;
-}
-.sample-header-top{
-  display:flex;justify-content:space-between;align-items:flex-start;
-  margin-bottom:.75rem;
-}
-.sample-badge{
-  font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
-  background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);
-  padding:.25rem .65rem;border-radius:2rem;
-}
-.sample-tag{
-  font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(255,255,255,.35);
-}
-.sample-title{
-  font-family:var(--serif);font-size:1.1rem;font-weight:normal;
-  letter-spacing:-.01em;color:#fff;margin-bottom:.25rem;
-}
+.sample-header{background:var(--ink);color:#fff;padding:1.25rem 1.5rem}
+.sample-header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem}
+.sample-badge{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:.25rem .65rem;border-radius:2rem}
+.sample-tag{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.sample-title{font-family:var(--serif);font-size:1.1rem;font-weight:normal;letter-spacing:-.01em;color:#fff;margin-bottom:.25rem}
 .sample-date{font-size:.72rem;color:rgba(255,255,255,.35)}
 
-.sample-vitals{
-  display:grid;grid-template-columns:1fr 1fr;gap:1px;
-  background:rgba(255,255,255,.08);
-  border-top:1px solid rgba(255,255,255,.08);
-}
-.sample-vital{
-  padding:.8rem 1.2rem;
-}
+.sample-vitals{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.08);border-top:1px solid rgba(255,255,255,.08)}
+.sample-vital{padding:.8rem 1.2rem}
 .sample-vital-label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.2rem}
 .sample-vital-val{font-family:var(--serif);font-size:1.2rem;letter-spacing:-.02em}
 .sample-vital-val.danger{color:#e05c4a}
@@ -440,65 +230,92 @@ input[type=range]::-moz-range-thumb{
 .sample-vital-val.safe{color:#4ec98a}
 .sample-vital-status{font-size:.68rem;color:rgba(255,255,255,.35);margin-top:.1rem}
 
-.sample-runway-row{
-  display:flex;align-items:baseline;gap:.75rem;
-  padding:.75rem 1.5rem;
-  background:rgba(255,255,255,.04);
-  border-bottom:1px solid var(--border);
-}
-.sample-runway-num{
-  font-family:var(--serif);font-size:2.2rem;letter-spacing:-.03em;
-}
-.sample-runway-num.danger{color:#e05c4a}
-.sample-runway-num.warning{color:#e8a93a}
-.sample-runway-num.safe{color:#4ec98a}
-.sample-runway-label{font-size:.78rem;color:var(--dim)}
-
 .sample-section{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);background:#fff}
 .sample-section:last-child{border-bottom:none}
-.sample-section-label{
-  font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--dim);margin-bottom:.6rem;
-}
-.sample-scenario{
-  display:grid;grid-template-columns:1fr auto;
-  align-items:start;gap:.5rem;margin-bottom:.75rem;
-}
+.sample-section-label{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:.6rem}
+.sample-scenario{display:grid;grid-template-columns:1fr auto;align-items:start;gap:.5rem;margin-bottom:.75rem}
 .sample-scenario:last-child{margin-bottom:0}
 .sample-scenario-name{font-size:.88rem;color:var(--ink);font-weight:500}
 .sample-scenario-sub{font-size:.78rem;color:#888;margin-top:.15rem}
-.sample-scenario-val{
-  font-family:var(--serif);font-size:1rem;
-  letter-spacing:-.01em;text-align:right;white-space:nowrap;
-}
+.sample-scenario-val{font-family:var(--serif);font-size:1rem;letter-spacing:-.01em;text-align:right;white-space:nowrap}
 .sample-scenario-val.red{color:var(--red)}
 .sample-scenario-val.green{color:var(--green)}
 .sample-scenario-val.amber{color:var(--amber)}
 
-.sample-locked{
-  padding:1.1rem 1.5rem;
-  background:#fff;
-  position:relative;overflow:hidden;
+.sample-locked{padding:1.1rem 1.5rem;background:#fff;position:relative;overflow:hidden;border-top:1px solid var(--border)}
+.sample-locked-inner{filter:blur(4px);pointer-events:none;user-select:none}
+.sample-locked-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.75);backdrop-filter:blur(2px)}
+.sample-locked-msg{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--dim);border:1px solid var(--border);background:#fff;padding:.4rem 1rem;border-radius:2rem}
+.sample-note{font-size:.7rem;color:var(--dim);text-align:center;padding:.75rem 1.5rem;background:var(--paper);border-top:1px solid var(--border)}
+
+/* ── MODAL ── */
+.modal-overlay{
+  display:none;
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;
+  padding:1rem;
+}
+.modal-overlay.visible{display:flex}
+.modal-box{
+  background:var(--paper);
+  border-radius:12px;
+  max-width:480px;width:100%;
+  padding:2rem;
+  position:relative;
+  animation:modalIn .2s ease;
+}
+@keyframes modalIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-close{
+  position:absolute;top:1rem;right:1rem;
+  font-size:1.3rem;color:var(--dim);cursor:pointer;
+  line-height:1;border:none;background:none;
+  transition:color .15s;
+}
+.modal-close:hover{color:var(--ink)}
+.modal-banner{
+  background:var(--green-soft);border:1px solid #b8e8ce;
+  border-radius:8px;padding:.75rem 1rem;margin-bottom:1.5rem;
+  text-align:center;font-size:.82rem;color:var(--green);
+  line-height:1.5;
+}
+.modal-title{font-family:var(--serif);font-size:1.2rem;font-weight:normal;margin-bottom:.5rem}
+.modal-subtitle{font-size:.85rem;color:#666;margin-bottom:1.5rem;line-height:1.6}
+.modal-field{margin-bottom:1rem}
+.modal-field label{font-size:.75rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.3rem;display:block}
+.modal-field input,.modal-field select{
+  width:100%;padding:.65rem 1rem;
+  font-size:.9rem;font-family:var(--sans);
+  border:1px solid var(--border);border-radius:6px;
+  color:var(--ink);background:#fff;outline:none;
+  transition:border-color .15s;
+}
+.modal-field input:focus,.modal-field select:focus{border-color:var(--ink)}
+.modal-field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23b8b5ac' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem}
+.modal-submit{
+  width:100%;padding:1rem;
+  background:var(--ink);color:#fff;
+  font-family:var(--sans);font-size:.95rem;
+  border:none;border-radius:6px;cursor:pointer;
+  transition:opacity .15s;margin-top:.5rem;
+}
+.modal-submit:hover{opacity:.85}
+.modal-submit:disabled{opacity:.5;cursor:default}
+.modal-optional-label{font-size:.72rem;color:var(--dim);margin-top:1.5rem;margin-bottom:1rem;border-top:1px solid var(--border);padding-top:1rem;display:flex;align-items:center;gap:.5rem}
+.modal-optional-label::before{content:'可选';font-size:.65rem;letter-spacing:.06em;background:var(--paper);border:1px solid var(--border);padding:.15rem .5rem;border-radius:2rem;color:var(--dim)}
+.modal-disclaimer{font-size:.68rem;color:var(--dim);margin-top:1rem;text-align:center;line-height:1.55}
+
+/* ── HOW ── */
+.how-section{
+  max-width:640px;margin:0 auto;
+  padding:3rem 2rem 5rem;
   border-top:1px solid var(--border);
 }
-.sample-locked-inner{filter:blur(4px);pointer-events:none;user-select:none}
-.sample-locked-overlay{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.75);
-  backdrop-filter:blur(2px);
-}
-.sample-locked-msg{
-  display:flex;align-items:center;gap:.5rem;
-  font-size:.78rem;color:var(--dim);
-  border:1px solid var(--border);
-  background:#fff;padding:.4rem 1rem;border-radius:2rem;
-}
-.sample-note{
-  font-size:.7rem;color:var(--dim);
-  text-align:center;padding:.75rem 1.5rem;
-  background:var(--paper);border-top:1px solid var(--border);
-}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:2rem}
+.how-n{font-family:var(--serif);font-size:2.5rem;color:var(--dimmer);letter-spacing:-.04em;line-height:1;margin-bottom:.6rem}
+.how-t{font-size:.88rem;font-weight:500;margin-bottom:.3rem}
+.how-d{font-size:.8rem;color:var(--dim);line-height:1.6}
 
 /* ── FOOTER ── */
 footer{
@@ -507,6 +324,20 @@ footer{
   font-size:.72rem;color:var(--dim);
 }
 footer a{color:var(--dim);text-decoration:underline}
+
+/* ── MOBILE ── */
+@media(max-width:520px){
+  .how-grid{grid-template-columns:1fr;gap:1.25rem}
+  .context-row{grid-template-columns:1fr}
+  h1{font-size:1.85rem}
+  .hero{padding:2.5rem 1.25rem 1.5rem}
+  .runway-box{padding:1.5rem 1.25rem 2rem}
+  .runway-number-wrap{padding:2rem 1rem}
+  nav{padding:.7rem 1rem}
+  .nav-tag{display:none}
+  .slider-value{font-size:1.1rem}
+  .modal-box{padding:1.5rem}
+}
 </style>
 </head>
 <body>
@@ -571,106 +402,103 @@ footer a{color:var(--dim);text-decoration:underline}
     </div>
   </div>
 
-  <button class="cta-btn" id="reveal-btn" onclick="revealPhase2()" style="display:none">
-    告诉我这到底意味着什么 →
-  </button>
-  <p class="cta-note" id="cta-note" style="display:none">免费 · 10秒出结果 · 不需要注册</p>
-
-</div>
-
-<!-- PHASE 2: RISK BREAKDOWN -->
-<div class="phase2" id="phase2">
-  <div style="max-width:640px;margin:0 auto;padding:0 2rem">
-    <div class="divider"></div>
-    <h2 class="phase2-title" id="p2-headline"></h2>
-    <p class="phase2-sub" id="p2-sub"></p>
-  </div>
-
-  <div style="max-width:640px;margin:0 auto;padding:0 2rem">
-    <div class="risk-cards" id="risk-cards"></div>
-
-    <p style="font-size:.72rem;color:var(--dim);margin-bottom:1.5rem;line-height:1.55">
-      以上均为数学推算，不构成财务建议。个人情况各有不同，重大财务决策前请咨询持牌财务顾问。
-    </p>
-
-    <button class="cta-btn" onclick="revealPhase3()">
-      获取我的决策报告 →
-    </button>
-    <p class="cta-note" style="display:block;margin-top:.75rem">一次性付费 · AI即时生成报告 · 无订阅</p>
-  </div>
-</div>
-
-<!-- PHASE 3: SMOKE TEST -->
-<div class="phase3" id="phase3">
-  <div style="max-width:640px;margin:0 auto;padding:0 2rem">
-    <div class="divider"></div>
-    <div class="pay-card">
-      <p style="font-size:.72rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.75rem">选择你的报告版本</p>
-
-      <div class="pricing-grid">
-        <!-- 基础版 -->
-        <div class="pricing-card" id="tier-basic" onclick="selectTier('basic')">
-          <div class="pricing-check">✓</div>
-          <p class="pricing-tier">基础版</p>
-          <div class="pricing-price"><sup>¥</sup>9.9</div>
-          <span class="pricing-accuracy amber">准确度 71%</span>
-          <ul class="pricing-features-list">
-            <li>2个数据点（存款+支出）</li>
-            <li>3个核心场景模拟</li>
-            <li>2条风险洞察</li>
-            <li>3条回绿路径（概数）</li>
-          </ul>
-        </div>
-
-        <!-- 深度版 -->
-        <div class="pricing-card selected" id="tier-deep" onclick="selectTier('deep')">
-          <span class="pricing-best">推荐</span>
-          <div class="pricing-check">✓</div>
-          <p class="pricing-tier">深度版</p>
-          <div class="pricing-price"><sup>¥</sup>13.99</div>
-          <span class="pricing-accuracy green">准确度 94%</span>
-          <ul class="pricing-features-list">
-            <li>7个数据点（含收入/债务/职业）</li>
-            <li>6个完整场景模拟</li>
-            <li>12个月现金流时间轴</li>
-            <li>4条个性化洞察</li>
-            <li>3条回绿路径（含精确数字）</li>
-          </ul>
-          <div class="pricing-upgrade-note">多5个数据点，准确度从71%→94%</div>
-        </div>
-      </div>
-
-      <p class="pay-desc">基于你的真实数字，生成个性化财务风险深度报告——场景模拟、时间线、决策工具，全部为你量身定制。</p>
-
-      <!-- 报告样本（JS动态渲染） -->
-      <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
-        <span id="sample-toggle-text">查看深度版报告样本</span>
-        <span class="arrow">↓</span>
-      </button>
-
-      <div class="sample-preview" id="sample-preview"></div>
-      <!-- END SAMPLE -->
-
-      <button class="pay-btn" onclick="smokeTest()">获取深度版报告 — ¥13.99</button>
-      <p class="pay-disclaimer">数学推算仅供参考 · 不构成投资建议 · 数据仅在本地处理 · 绝不存储或分享</p>
-
-      <!-- email gate after smoke test -->
-      <div class="email-gate" id="email-gate">
-        <div class="divider" style="margin:1.5rem 0 1.25rem"></div>
-        <h3>你已加入早鸟名单</h3>
-        <p>报告正在分批开放中。留下你的邮箱，我们会优先通知你——通常24小时内。</p>
-        <div id="email-form-inner">
-          <div class="email-row">
-            <input type="email" id="email-inp" placeholder="your@email.com">
-            <button onclick="submitEmail()">通知我</button>
-          </div>
-          <p style="font-size:.7rem;color:var(--dim);margin-top:.6rem">🔒 无垃圾邮件。随时可退订。</p>
-        </div>
-        <div class="email-sent" id="email-sent">
-          <p>✓ 已加入名单。我们会在24小时内联系你。</p>
-        </div>
-      </div>
+  <!-- FREE SCENARIO CARDS (shown directly, no click needed) -->
+  <div class="free-scenarios" id="free-scenarios">
+    <div class="free-card" id="card-unemployed">
+      <div class="free-card-icon red">⏱</div>
+      <p class="free-card-label">如果今天失业</p>
+      <p class="free-card-val" id="card-unemployed-val">—</p>
+      <p class="free-card-sub" id="card-unemployed-sub">之后每月消耗你的存款，没有收入时钟全速运转。</p>
     </div>
+    <div class="free-card" id="card-emergency">
+      <div class="free-card-icon amber">⚡</div>
+      <p class="free-card-label">突发大额支出</p>
+      <p class="free-card-val" id="card-emergency-val">—</p>
+      <p class="free-card-sub" id="card-emergency-sub">一次意外就可能让跑道大幅缩短。</p>
+    </div>
+  </div>
+
+  <!-- CTA BUTTON -->
+  <button class="cta-btn" onclick="openModal()">获取深度分析报告 — ¥13.99 →</button>
+  <p class="cta-note">内测期间免费开放 · 8个数据点 · 94%准确度 · 即时生成</p>
+
+  <!-- SAMPLE PREVIEW (only deep version) -->
+  <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
+    <span id="sample-toggle-text">预览深度报告样本</span>
+    <span class="arrow">↓</span>
+  </button>
+  <div class="sample-preview" id="sample-preview"></div>
+
+</div>
+
+<!-- MODAL: DATA COLLECTION -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">×</button>
+
+    <div class="modal-banner">🎉 内测期间免费开放，无需支付。填写信息即可获得完整深度报告。</div>
+
+    <p class="modal-title">生成你的深度风险报告</p>
+    <p class="modal-subtitle">补充以下信息，报告将从「概算」升级为「精确」——准确度从71%提升至94%。</p>
+
+    <!-- Core fields (5 required) -->
+    <div class="modal-field">
+      <label>月收入（税前）</label>
+      <input type="number" id="m-income" placeholder="如 12000" min="0" step="100" required>
+    </div>
+    <div class="modal-field">
+      <label>年龄段</label>
+      <select id="m-age" required>
+        <option value="">请选择</option>
+        <option value="18-25">18-25岁（起步期）</option>
+        <option value="26-35">26-35岁（上升期）</option>
+        <option value="36-45">36-45岁（巅峰期）</option>
+        <option value="46-55">46-55岁（稳定期）</option>
+        <option value="56+">56岁+（退休准备期）</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>家庭状况</label>
+      <select id="m-family" required>
+        <option value="">请选择</option>
+        <option value="single">单身无负担</option>
+        <option value="married-no-kids">已婚无子女</option>
+        <option value="married-1kid">已婚有子女（1个）</option>
+        <option value="married-2kids">已婚有子女（2+）</option>
+        <option value="single-parent">单亲家庭</option>
+        <option value="elderly-care">赡养老人</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>职业类型</label>
+      <select id="m-career" required>
+        <option value="">请选择</option>
+        <option value="fulltime">全职稳定</option>
+        <option value="parttime">兼职</option>
+        <option value="self-employed">自雇/创业</option>
+        <option value="freelance">自由职业</option>
+        <option value="unemployed">目前失业</option>
+        <option value="retired">退休</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>总负债（房贷+车贷+信用卡+其他，可填0）</label>
+      <input type="number" id="m-debt" placeholder="如 200000，无负债填0" min="0" step="1000" required>
+    </div>
+
+    <!-- Optional fields -->
+    <div class="modal-optional-label">以下信息可进一步提升报告精度</div>
+    <div class="modal-field" id="m-dp-field">
+      <label>月还款额（每月需要还的债务总额）</label>
+      <input type="number" id="m-dp" placeholder="如 3000，无负债填0" min="0" step="100">
+    </div>
+    <div class="modal-field">
+      <label>邮箱（可选，用于接收报告提醒）</label>
+      <input type="email" id="m-email" placeholder="your@email.com">
+    </div>
+
+    <button class="modal-submit" onclick="submitModal()">立即生成报告 →</button>
+    <p class="modal-disclaimer">数据仅在本地浏览器处理 · 绝不存储或分享 · 数学推算不构成财务建议</p>
   </div>
 </div>
 
@@ -685,13 +513,13 @@ footer a{color:var(--dim);text-decoration:underline}
     </div>
     <div>
       <div class="how-n">2</div>
-      <p class="how-t">即时跑道</p>
-      <p class="how-d">我们算出你的生存窗口，并揭示大多数人直到为时已晚才看到的风险。</p>
+      <p class="how-t">补充信息</p>
+      <p class="how-d">填写收入、年龄、家庭、职业、负债等8个字段，让报告从概算升级为精确。</p>
     </div>
     <div>
       <div class="how-n">3</div>
-      <p class="how-t">清晰决策</p>
-      <p class="how-d">获取完整场景报告——辞职、买房、降薪——精确看到每个选择会让你付出多少代价。</p>
+      <p class="how-t">深度报告</p>
+      <p class="how-d">获取6个场景模拟、12月现金流、债务侵蚀分析、含精确数字的3条回绿路径。</p>
     </div>
   </div>
 </section>
@@ -702,8 +530,6 @@ footer a{color:var(--dim);text-decoration:underline}
 
 <script>
 var savings=50000,expenses=8000;
-var phase2shown=false,phase3shown=false;
-var selectedTier='deep'; // 默认推荐深度版
 
 function fmt(n){
   return '¥' + Math.round(n).toLocaleString('zh-CN')
@@ -750,137 +576,97 @@ function calc(){
   zoneEl.textContent=zone;
   zoneEl.className='ctx-val ' + (color==='safe'?'green':color==='danger'?'red':'amber');
 
-  var btn=document.getElementById('reveal-btn');
-  var note=document.getElementById('cta-note');
-  if(savings>0 && expenses>0){
-    btn.style.display='block';note.style.display='block';
-  }
-
-  if(phase2shown) buildPhase2(days,gap,savings,expenses);
+  // Update free scenario cards
+  updateFreeCards(days, expenses, savings);
 }
 
-function buildPhase2(days,gap,savings,expenses){
-  var months=Math.round(days/30.4);
-  var headline,sub;
-  if(days<=30){
-    headline='你连一个月都撑不到。';
-    sub='以你当前的支出水平，一次工资中断就会让你陷入赤字。下面的风险不是假设——它们已经在发挥作用。';
-  } else if(days<=90){
-    headline='你有' + months + '个月。听起来还行。其实不是。';
-    sub='90天是人们意识到自己有麻烦的最常见阈值——但到那时候，选择已经很有限了。数学告诉我们的真实情况是：';
-  } else if(days<=180){
-    headline='你有' + months + '个月的跑道。';
-    sub='比大多数人好。但低于财务安全研究一致建议的6个月阈值。下面是裂缝所在。';
+function updateFreeCards(days, expenses, savings){
+  // Card 1: Unemployed
+  var unemployedVal = document.getElementById('card-unemployed-val');
+  unemployedVal.innerHTML = '可支撑 <b>' + (days>=9999?'很长时间':days+'天') + '</b>';
+  document.getElementById('card-unemployed-sub').textContent =
+    '之后每月消耗你' + fmt(expenses) + '，没有收入时钟全速运转。';
+
+  // Card 2: Emergency expense (dynamic based on expense level)
+  var shockAmount = getShockAmount(expenses);
+  var daysAfterShock = Math.max(0, Math.round((savings - shockAmount) / expenses * 30.4));
+  var emergencyVal = document.getElementById('card-emergency-val');
+  if(savings <= shockAmount){
+    emergencyVal.innerHTML = '突发' + fmt(shockAmount) + ' → <b>跑道归零</b>';
   } else {
-    headline='你有' + (days>=9999?'充足的':'约' + months + '个月') + '的跑道。';
-    sub='你比大多数国人状况好。但完整报告会精确展示哪些生活事件可能改变这一点——以及改变得有多快。';
+    emergencyVal.innerHTML = '突发' + fmt(shockAmount) + ' → 跑道缩短至 <b>' + daysAfterShock + '天</b>';
   }
-
-  document.getElementById('p2-headline').textContent=headline;
-  document.getElementById('p2-sub').textContent=sub;
-
-  var annualCost=expenses*12;
-
-  var cards=`
-    <div class="risk-card">
-      <div class="risk-icon red">⏱</div>
-      <div>
-        <p class="risk-card-label">如果你今天失业</p>
-        <p class="risk-card-val">你可以支撑支出 <b>${days>=9999?'很长时间':Math.round(days)+' 天'}</b></p>
-        <p class="risk-card-sub">之后，每个月会消耗你 ${fmt(expenses)}。没有收入，时钟全速运转。</p>
-      </div>
-    </div>
-    <div class="risk-card">
-      <div class="risk-icon amber">📊</div>
-      <div>
-        <p class="risk-card-label">你的年度支出敞口</p>
-        <p class="risk-card-val">你每年仅维持当前生活方式就需 <b>${fmt(annualCost)}</b></p>
-        <p class="risk-card-sub">这是基准线。任何收入中断、医疗事件或大额支出都会在这个数字之上叠加。</p>
-      </div>
-    </div>
-    <div class="blurred-card">
-      <div class="blurred-inner">
-        <div class="risk-icon amber">🏠</div>
-        <div>
-          <p class="risk-card-label">如果你辞掉工作</p>
-          <p class="risk-card-val">你的收支平衡求职窗口是 <b>X 周</b></p>
-          <p class="risk-card-sub">基于你的跑道和你所在行业的平均再就业时间——这是你真正在赛跑的时钟。</p>
-        </div>
-      </div>
-    </div>
-    <div class="blurred-card">
-      <div class="blurred-inner">
-        <div class="risk-icon red">💳</div>
-        <div>
-          <p class="risk-card-label">债务风险倍增器</p>
-          <p class="risk-card-val">典型中国家庭负债情况下，你的真实跑道缩短至 <b>X 天</b></p>
-          <p class="risk-card-sub">大多数人低估了现有债务义务在收入中断时加速消耗现金的速度。</p>
-        </div>
-      </div>
-    </div>`;
-
-  document.getElementById('risk-cards').innerHTML=cards;
+  document.getElementById('card-emergency-sub').textContent =
+    '一次意外（医疗/维修/家庭紧急）就可能让跑道大幅缩短。';
 }
 
-function revealPhase2(){
-  phase2shown=true;
-  var days=Math.round(savings/expenses*30.4);
-  var gap=savings-expenses;
-  buildPhase2(days,gap,savings,expenses);
-  document.getElementById('phase2').classList.add('visible');
-  setTimeout(function(){
-    document.getElementById('phase2').scrollIntoView({behavior:'smooth',block:'start'});
-  },100);
+// Dynamic shock amount based on monthly expenses level
+function getShockAmount(expenses){
+  if(expenses < 5000) return 10000;
+  if(expenses < 15000) return 30000;
+  if(expenses < 30000) return 50000;
+  return 80000;
 }
 
-function revealPhase3(){
-  phase3shown=true;
-  document.getElementById('phase3').classList.add('visible');
-  updateSampleReport(); // 确保样本数据用最新滑块值
-  setTimeout(function(){
-    document.getElementById('phase3').scrollIntoView({behavior:'smooth',block:'start'});
-  },100);
+// ── MODAL ──
+function openModal(){
+  // Pre-fill savings/expenses info (visible to user but not editable in modal)
+  document.getElementById('modal-overlay').classList.add('visible');
+  // If debt is 0, auto-fill dp as 0
+  document.getElementById('m-debt').addEventListener('input', function(){
+    if(parseInt(this.value) === 0){
+      document.getElementById('m-dp').value = '0';
+    }
+  });
 }
 
-function smokeTest(){
-  var btnText=selectedTier==='deep'?'获取深度版报告 ¥13.99':'获取基础版报告 ¥9.9';
-  document.querySelector('.pay-btn').textContent='处理中…';
-  document.querySelector('.pay-btn').disabled=true;
-  setTimeout(function(){
-    document.querySelector('.pay-btn').textContent='已加入队列 ✓';
-    document.getElementById('email-gate').classList.add('visible');
-    document.getElementById('email-gate').scrollIntoView({behavior:'smooth',block:'nearest'});
-  },1200);
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('visible');
 }
 
-function selectTier(tier){
-  selectedTier=tier;
-  var basic=document.getElementById('tier-basic');
-  var deep=document.getElementById('tier-deep');
-  basic.classList.toggle('selected',tier==='basic');
-  deep.classList.toggle('selected',tier==='deep');
-  var btn=document.querySelector('.pay-btn');
-  if(tier==='deep'){
-    btn.textContent='获取深度版报告 — ¥13.99';
-  } else {
-    btn.textContent='获取基础版报告 — ¥9.9';
-  }
-  // 更新样本按钮文案
-  var toggleText=document.getElementById('sample-toggle-text');
-  toggleText.textContent=tier==='deep'?'查看深度版报告样本':'查看基础版报告样本';
-  // 如果样本已展开，立即重新渲染
-  if(document.getElementById('sample-preview').classList.contains('visible')){
-    updateSampleReport();
-  }
+// Close modal on overlay click (not on box)
+document.getElementById('modal-overlay').addEventListener('click', function(e){
+  if(e.target === this) closeModal();
+});
+
+function submitModal(){
+  var income = parseInt(document.getElementById('m-income').value) || 0;
+  var age = document.getElementById('m-age').value;
+  var family = document.getElementById('m-family').value;
+  var career = document.getElementById('m-career').value;
+  var debt = parseInt(document.getElementById('m-debt').value) || 0;
+  var dp = parseInt(document.getElementById('m-dp').value) || 0;
+  var email = document.getElementById('m-email').value || '';
+
+  // Validation: require core 5 fields
+  if(!income || income <= 0){alert('请填写月收入');return}
+  if(!age){alert('请选择年龄段');return}
+  if(!family){alert('请选择家庭状况');return}
+  if(!career){alert('请选择职业类型');return}
+
+  // If debt > 0, dp should be > 0
+  if(debt > 0 && dp <= 0){alert('您有负债，请填写月还款额');return}
+
+  // Store all data in localStorage
+  var userData = {
+    s: savings,
+    e: expenses,
+    i: income,
+    age: age,
+    family: family,
+    career: career,
+    d: debt,
+    dp: dp,
+    email: email,
+    timestamp: Date.now()
+  };
+  localStorage.setItem('riskRunwayData', JSON.stringify(userData));
+
+  // Redirect to deep report
+  window.location.href = 'report-deep.html';
 }
 
-function submitEmail(){
-  var v=document.getElementById('email-inp').value;
-  if(!v||!v.includes('@')){alert('请输入有效的邮箱地址。');return}
-  document.getElementById('email-form-inner').style.display='none';
-  document.getElementById('email-sent').style.display='block';
-}
-
+// ── SAMPLE REPORT ──
 function toggleSample(){
   var preview=document.getElementById('sample-preview');
   var btn=document.getElementById('sample-toggle');
@@ -889,7 +675,7 @@ function toggleSample(){
     preview.classList.remove('visible');
     preview.innerHTML='';
     btn.classList.remove('open');
-    document.getElementById('sample-toggle-text').textContent=selectedTier==='deep'?'查看深度版报告样本':'查看基础版报告样本';
+    document.getElementById('sample-toggle-text').textContent='预览深度报告样本';
   } else {
     updateSampleReport();
     preview.classList.add('visible');
@@ -906,322 +692,212 @@ function updateSampleReport(){
   var months=days/30.4;
   var annualCost=expenses*12;
   var target6m=expenses*6;
+  var shockAmount=getShockAmount(expenses);
 
-  // 风险等级
+  // risk level
   var color=days<=30?'danger':days<=180?'warning':'safe';
   var colorCss=color==='safe'?'green':color==='danger'?'red':'amber';
   var zoneText=days<=30?'🔴 极度危险':days<=90?'🟡 高风险':days<=180?'🟡 警戒':'🟢 健康';
 
-  // 财务压力指数
-  var stressScore=Math.max(10,Math.min(95,Math.round(100 - days/3.65)));
+  // stress index
+  var stressScore=Math.max(10,Math.min(95,Math.round(100-days/3.65)));
   var stressColor=stressScore>=70?'danger':stressScore>=45?'warning':'safe';
-  var stressColorCss=stressColor==='safe'?'green':stressColor==='danger'?'red':'amber';
   var stressText=stressScore>=70?'🔴 高压':stressScore>=45?'🟡 中等':'🟢 健康';
 
   var coverageMonths=(months>=9999?'∞':months.toFixed(1))+'个月';
   var coverageStatus=months<6?'低于6个月安全线':'已超安全线';
   var daysStr=days>=9999?'∞':days.toLocaleString();
-  var monthsStr=months>=9999?'∞':Math.ceil(months);
   var zeroMonth=days>=9999?'不会归零':'第'+Math.ceil(months)+'个月';
 
   var now=new Date();
-  var dateStr='生成时间：'+now.getFullYear()+'年'+(now.getMonth()+1)+'月 · 基于你输入的数据';
+  var dateStr='生成时间：'+now.getFullYear()+'/'+(now.getMonth()+1)+' · 基于你输入的数据';
 
-  // 基础版路径概数
-  var needed=Math.max(0,target6m-savings);
-  var monthsToSafe=needed>0?Math.ceil(needed/(expenses*0.85)*2):'已达标';
-  var reduceAmt=Math.round(expenses*0.15/500)*500;
+  // Estimated data for sample (landing page only has 2 sliders)
+  var estIncome=Math.round(expenses*2.5/100)*100;
+  var estDebt=Math.round(estIncome*1.5/10000)*10000;
+  var estDp=Math.round(expenses*0.1/100)*100;
+  var dti=estIncome>0?Math.round(estDp/estIncome*100):0;
 
-  var html='';
+  var reduceAmt=Math.max(500,Math.round(expenses*0.12/100)*100);
 
-  if(selectedTier==='basic'){
-    // ══════ 基础版样本 ══════
-    html=`
-    <div class="sample-header" style="background:var(--ink)">
-      <div class="sample-header-top">
-        <span class="sample-badge">基于你的数据</span>
-        <span class="sample-tag" style="color:rgba(255,255,255,.35)">基础版 · 准确度 71%</span>
+  // ── DEEP VERSION SAMPLE ONLY ──
+  var html=`
+  <div class="sample-header" style="background:#1a3a2a">
+    <div class="sample-header-top">
+      <span class="sample-badge">基于你的数据</span>
+      <span class="sample-tag">深度版 · 准确度 94%</span>
+    </div>
+    <p class="sample-title">财务风险深度分析报告</p>
+    <p class="sample-date">${dateStr}</p>
+    <div class="sample-vitals">
+      <div class="sample-vital">
+        <p class="sample-vital-label">生存跑道</p>
+        <p class="sample-vital-val ${color}">${daysStr}天</p>
+        <p class="sample-vital-status">${zoneText}</p>
       </div>
-      <p class="sample-title">财务生存分析报告</p>
-      <p class="sample-date">${dateStr}</p>
-      <div class="sample-vitals">
-        <div class="sample-vital">
-          <p class="sample-vital-label">生存跑道</p>
-          <p class="sample-vital-val ${color}">${daysStr}天</p>
-          <p class="sample-vital-status">${zoneText}</p>
+      <div class="sample-vital">
+        <p class="sample-vital-label">储蓄覆盖率</p>
+        <p class="sample-vital-val ${color}">${coverageMonths}</p>
+        <p class="sample-vital-status">${coverageStatus}</p>
+      </div>
+      <div class="sample-vital">
+        <p class="sample-vital-label">负债收入比</p>
+        <p class="sample-vital-val ${dti>50?'danger':dti>30?'warning':'safe'}">${dti}%</p>
+        <p class="sample-vital-status">${dti>50?'🔴 过高':dti>30?'🟡 适中':'🟢 健康'}</p>
+      </div>
+      <div class="sample-vital">
+        <p class="sample-vital-label">财务压力指数</p>
+        <p class="sample-vital-val ${stressColor}">${stressScore}/100</p>
+        <p class="sample-vital-status">${stressText}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 场景一：失业 — 完整展示 -->
+  <div class="sample-section">
+    <p class="sample-section-label">场景一 — 如果今天失业</p>
+    <div class="sample-scenario">
+      <div><p class="sample-scenario-name">生存窗口</p><p class="sample-scenario-sub">基于月支出 ${fmt(expenses)}</p></div>
+      <p class="sample-scenario-val ${colorCss}">${daysStr}天</p>
+    </div>
+    <div class="sample-scenario">
+      <div><p class="sample-scenario-name">每月现金消耗</p><p class="sample-scenario-sub">仅计必要支出</p></div>
+      <p class="sample-scenario-val red">-${fmt(expenses)}/月</p>
+    </div>
+    <div class="sample-scenario">
+      <div><p class="sample-scenario-name">储蓄归零月份</p><p class="sample-scenario-sub">无收入情况下</p></div>
+      <p class="sample-scenario-val red">${zeroMonth}</p>
+    </div>
+    <div class="sample-scenario">
+      <div><p class="sample-scenario-name">推荐安全储备目标</p><p class="sample-scenario-sub">6个月生存线标准</p></div>
+      <p class="sample-scenario-val green">${fmt(target6m)}</p>
+    </div>
+  </div>
+
+  <!-- 场景二：突发支出 — 完整展示 -->
+  <div class="sample-section">
+    <p class="sample-section-label">场景二 — 突发大额支出${fmt(shockAmount)}</p>
+    <div class="sample-scenario">
+      <div><p class="sample-scenario-name">一次性跑道损失</p><p class="sample-scenario-sub">医疗/维修/家庭紧急</p></div>
+      <p class="sample-scenario-val red">${Math.round(shockAmount/expenses*30.4)}天</p>
+    </div>
+    <div class="sample-scenario">
+      <div><p class="sample-scenario-name">剩余跑道</p><p class="sample-scenario-sub">扣除${fmt(shockAmount)}后</p></div>
+      <p class="sample-scenario-val ${Math.max(0,savings-shockAmount)/expenses*30.4<=90?'red':'amber'}">${Math.max(0,savings-shockAmount)<=0?'0天':Math.round(Math.max(0,savings-shockAmount)/expenses*30.4)+'天'}</p>
+    </div>
+  </div>
+
+  <!-- 场景三：债务侵蚀 — 🔒模糊 -->
+  <div class="sample-locked">
+    <div class="sample-locked-inner">
+      <div style="padding:0">
+        <p class="sample-section-label">场景三 — 债务侵蚀分析</p>
+        <div class="sample-scenario">
+          <div><p class="sample-scenario-name">含债务的真实跑道</p><p class="sample-scenario-sub">扣除月还款后的精确天数</p></div>
+          <p class="sample-scenario-val red">X天</p>
         </div>
-        <div class="sample-vital">
-          <p class="sample-vital-label">储蓄覆盖率</p>
-          <p class="sample-vital-val ${color}">${coverageMonths}</p>
-          <p class="sample-vital-status">${coverageStatus}</p>
-        </div>
-        <div class="sample-vital">
-          <p class="sample-vital-label">年度支出总额</p>
-          <p class="sample-vital-val warning">${fmt(annualCost)}</p>
-          <p class="sample-vital-status">需持续覆盖</p>
-        </div>
-        <div class="sample-vital">
-          <p class="sample-vital-label">财务压力指数</p>
-          <p class="sample-vital-val ${stressColor}">${stressScore}/100</p>
-          <p class="sample-vital-status">${stressText}</p>
+        <div class="sample-scenario">
+          <div><p class="sample-scenario-name">最小还款陷阱</p><p class="sample-scenario-sub">只还最低，利息吞噬跑道</p></div>
+          <p class="sample-scenario-val red">债务失控倒计时</p>
         </div>
       </div>
     </div>
+    <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 解锁查看您的债务影响分析</span></div>
+  </div>
 
-    <!-- 场景一：失业 — 解锁 -->
-    <div class="sample-section">
-      <p class="sample-section-label">场景一 — 如果今天失业</p>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">生存窗口</p><p class="sample-scenario-sub">基于月均支出 ${fmt(expenses)}</p></div>
-        <p class="sample-scenario-val ${colorCss}">${daysStr}天</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">每月现金消耗</p><p class="sample-scenario-sub">仅计必要支出</p></div>
-        <p class="sample-scenario-val red">-${fmt(expenses)}/月</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">储蓄归零月份</p><p class="sample-scenario-sub">无收入情况下</p></div>
-        <p class="sample-scenario-val red">${zeroMonth}</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">推荐安全储备目标</p><p class="sample-scenario-sub">6个月生存线标准</p></div>
-        <p class="sample-scenario-val green">${fmt(target6m)}</p>
-      </div>
-    </div>
-
-    <!-- 场景二：收入降20% — 锁定 -->
-    <div class="sample-locked">
-      <div class="sample-locked-inner">
-        <div style="padding:0">
-          <p class="sample-section-label">场景二 — 如果收入降20%</p>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">每月缺口</p><p class="sample-scenario-sub">收入减少后的现金缺口</p></div>
-            <p class="sample-scenario-val red">-${fmt(expenses*0.2)}/月</p>
-          </div>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">跑道缩短</p><p class="sample-scenario-sub">比当前缩短多少</p></div>
-            <p class="sample-scenario-val amber">约30%</p>
-          </div>
-        </div>
-      </div>
-      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 基础版报告中解锁</span></div>
-    </div>
-
-    <!-- 场景三：突发¥30,000 — 锁定 -->
-    <div class="sample-locked">
-      <div class="sample-locked-inner">
-        <div style="padding:0">
-          <p class="sample-section-label">场景三 — 突发¥30,000支出</p>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">跑道损失</p><p class="sample-scenario-sub">医疗/维修/家庭紧急</p></div>
-            <p class="sample-scenario-val red">-${fmt(30000)}一次性</p>
-          </div>
-        </div>
-      </div>
-      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 基础版报告中解锁</span></div>
-    </div>
-
-    <!-- 3条路径 — 全部锁定（基础版只有概数） -->
-    <div class="sample-locked">
-      <div class="sample-locked-inner">
-        <div style="padding:0">
-          <p class="sample-section-label">回到安全区的3条路径</p>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">路径A：减少支出</p><p class="sample-scenario-sub">月减${fmt(reduceAmt)}，约${monthsToSafe}个月达安全线</p></div>
-            <p class="sample-scenario-val green">低难度</p>
-          </div>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">路径B：增加收入</p><p class="sample-scenario-sub">月增${fmt(Math.round(expenses*0.2/500)*500)}，12个月达标</p></div>
-            <p class="sample-scenario-val amber">中等难度</p>
-          </div>
-        </div>
-      </div>
-      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 基础版报告中解锁</span></div>
-    </div>
-
-    <p class="sample-note">以上为基础版（¥9.9）样本预览，基于你的真实数据计算。完整基础版报告包含3个场景、2条洞察、3条回绿路径概数。<br><span style="color:var(--green);font-weight:500">升级至深度版（¥13.99）→ 准确度从71%提升至94%，获得6个场景+12月时间轴+精确路径</span></p>`;
-  } else {
-    // ══════ 深度版样本 ══════
-    // 深度版用假定的收入/债务数据（落地页只有2个滑块）
-    var income=Math.round(expenses*2.5/100)*100; // 估算收入
-    var debt=Math.round(income*1.5/10000)*10000; // 估算总债务
-    var dp=Math.round(expenses*0.1/100)*100; // 估算月还款
-    var dti=Math.round(dp/income*100);
-    var runwayWithDebt=Math.round((savings-debt)/(expenses+dp)*30.4);
-    runwayWithDebt=Math.max(0,runwayWithDebt);
-
-    html=`
-    <div class="sample-header" style="background:#1a3a2a">
-      <div class="sample-header-top">
-        <span class="sample-badge">基于你的数据</span>
-        <span class="sample-tag" style="color:rgba(255,255,255,.35)">深度版 · 准确度 94%</span>
-      </div>
-      <p class="sample-title">财务风险深度分析报告</p>
-      <p class="sample-date">${dateStr}</p>
-      <div class="sample-vitals">
-        <div class="sample-vital">
-          <p class="sample-vital-label">生存跑道</p>
-          <p class="sample-vital-val ${color}">${daysStr}天</p>
-          <p class="sample-vital-status">${zoneText}</p>
-        </div>
-        <div class="sample-vital">
-          <p class="sample-vital-label">储蓄覆盖率</p>
-          <p class="sample-vital-val ${color}">${coverageMonths}</p>
-          <p class="sample-vital-status">${coverageStatus}</p>
-        </div>
-        <div class="sample-vital">
-          <p class="sample-vital-label">负债收入比</p>
-          <p class="sample-vital-val ${dti>50?'danger':dti>30?'warning':'safe'}">${dti}%</p>
-          <p class="sample-vital-status">${dti>50?'🔴 过高':dti>30?'🟡 适中':'🟢 健康'}</p>
-        </div>
-        <div class="sample-vital">
-          <p class="sample-vital-label">财务压力指数</p>
-          <p class="sample-vital-val ${stressColor}">${stressScore}/100</p>
-          <p class="sample-vital-status">${stressText}</p>
+  <!-- 场景四：辞职 — 🔒模糊 -->
+  <div class="sample-locked">
+    <div class="sample-locked-inner">
+      <div style="padding:0">
+        <p class="sample-section-label">场景四 — 如果你辞掉工作</p>
+        <div class="sample-scenario">
+          <div><p class="sample-scenario-name">安全求职窗口</p><p class="sample-scenario-sub">基于您的年龄和职业类型</p></div>
+          <p class="sample-scenario-val amber">X个月</p>
         </div>
       </div>
     </div>
+    <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 解锁查看您的安全求职窗口</span></div>
+  </div>
 
-    <!-- 场景一：失业 — 解锁 -->
-    <div class="sample-section">
-      <p class="sample-section-label">场景一 — 如果今天失业</p>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">生存窗口</p><p class="sample-scenario-sub">基于月均支出 ${fmt(expenses)} + 债务还款 ${fmt(dp)}</p></div>
-        <p class="sample-scenario-val ${colorCss}">${daysStr}天</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">含债务的真实月消耗</p><p class="sample-scenario-sub">支出+还款</p></div>
-        <p class="sample-scenario-val red">-${fmt(expenses+dp)}/月</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">储蓄归零月份</p><p class="sample-scenario-sub">无收入情况下</p></div>
-        <p class="sample-scenario-val red">${zeroMonth}</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">推荐安全储备目标</p><p class="sample-scenario-sub">6个月生存线标准</p></div>
-        <p class="sample-scenario-val green">${fmt(target6m)}</p>
-      </div>
-    </div>
-
-    <!-- 场景二：医疗¥50,000 — 解锁 -->
-    <div class="sample-section">
-      <p class="sample-section-label">场景二 — 突发医疗支出¥50,000</p>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">一次性跑道损失</p><p class="sample-scenario-sub">医疗紧急/手术/住院</p></div>
-        <p class="sample-scenario-val red">${fmt(Math.round(50000/expenses*30.4))}天</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">剩余跑道</p><p class="sample-scenario-sub">扣除¥50,000后</p></div>
-        <p class="sample-scenario-val ${Math.max(0,savings-50000)/expenses*30.4<=90?'red':'amber'}">${Math.max(0,savings-50000)<=0?'0天':Math.round(Math.max(0,savings-50000)/expenses*30.4)+'天'}</p>
-      </div>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">恢复至安全线需要</p><p class="sample-scenario-sub">每月存${fmt(Math.round((target6m-Math.max(0,savings-50000))/6))}</p></div>
-        <p class="sample-scenario-val amber">6个月</p>
-      </div>
-    </div>
-
-    <!-- 场景三：辞职 — 锁定 -->
-    <div class="sample-locked">
-      <div class="sample-locked-inner">
-        <div style="padding:0">
-          <p class="sample-section-label">场景三 — 如果你辞掉工作</p>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">安全求职窗口</p><p class="sample-scenario-sub">财务压力临界前</p></div>
-            <p class="sample-scenario-val amber">约${Math.round(days/7)}周</p>
-          </div>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">收入替代紧迫度</p><p class="sample-scenario-sub">基于你所在行业再就业周期</p></div>
-            <p class="sample-scenario-val red">高</p>
-          </div>
+  <!-- 场景五~六：家庭+降薪 — 🔒模糊 -->
+  <div class="sample-locked">
+    <div class="sample-locked-inner">
+      <div style="padding:0">
+        <p class="sample-section-label">场景五~六 — 家庭支出影响 / 降薪20%</p>
+        <div class="sample-scenario">
+          <div><p class="sample-scenario-name">家庭状况额外支出</p><p class="sample-scenario-sub">基于您的家庭类型</p></div>
+          <p class="sample-scenario-val amber">月增¥X</p>
+        </div>
+        <div class="sample-scenario">
+          <div><p class="sample-scenario-name">降薪20%</p><p class="sample-scenario-sub">基于您的真实收入计算</p></div>
+          <p class="sample-scenario-val red">月缺口¥X</p>
         </div>
       </div>
-      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 深度版报告中解锁</span></div>
     </div>
+    <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 解锁查看个性化家庭和收入场景</span></div>
+  </div>
 
-    <!-- 场景四~六 — 锁定 -->
-    <div class="sample-locked">
-      <div class="sample-locked-inner">
-        <div style="padding:0">
-          <p class="sample-section-label">场景四~六 — 生活成本+15% / 降薪20% / 育儿</p>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">换城市生活成本+15%</p><p class="sample-scenario-sub">月支出增至${fmt(Math.round(expenses*1.15))}</p></div>
-            <p class="sample-scenario-val amber">跑道缩短${Math.round(1-1/1.15*100)}%</p>
-          </div>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">降薪20%</p><p class="sample-scenario-sub">收入降至${fmt(Math.round(income*0.8))}</p></div>
-            <p class="sample-scenario-val red">月缺口${fmt(Math.round(expenses-income*0.8))}</p>
-          </div>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">育儿额外支出</p><p class="sample-scenario-sub">月增¥5,000~¥10,000</p></div>
-            <p class="sample-scenario-val red">跑道大幅缩短</p>
-          </div>
+  <!-- 12月时间轴 — 🔒模糊 -->
+  <div class="sample-locked">
+    <div class="sample-locked-inner">
+      <div style="padding:0;padding-top:.4rem;padding-bottom:.4rem">
+        <p class="sample-section-label">12个月现金流时间轴</p>
+        <div style="display:flex;align-items:end;gap:4px;padding:.5rem 0;height:50px">
+          ${[0,1,2,3,4,5,6,7,8,9,10,11].map(m=>{
+            var bal=Math.max(0,savings-expenses*(m+1));
+            var h=Math.round(bal/savings*40)+8;
+            return '<div style="flex:1;height:'+h+'px;background:'+((m+1)*expenses>=savings?'#e05c4a':'#4ec98a')+';border-radius:2px 2px 0 0;min-width:12px"></div>';
+          }).join('')}
+        </div>
+        <div style="display:flex;font-size:.6rem;color:rgba(0,0,0,.3)">
+          ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>'<div style="flex:1;text-align:center">'+m+'月</div>').join('')}
         </div>
       </div>
-      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 深度版报告中解锁</span></div>
     </div>
+    <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 解锁查看月度现金流时间轴</span></div>
+  </div>
 
-    <!-- 12月时间轴 — 锁定 -->
-    <div class="sample-locked">
-      <div class="sample-locked-inner">
-        <div style="padding:0;padding-top:.4rem;padding-bottom:.4rem">
-          <p class="sample-section-label">12个月现金流时间轴</p>
-          <div style="display:flex;align-items:end;gap:4px;padding:.5rem 0;height:50px">
-            ${[0,1,2,3,4,5,6,7,8,9,10,11].map(m=>{
-              var bal=Math.max(0,savings-expenses*(m+1));
-              var h=Math.round(bal/savings*40)+8;
-              return '<div style="flex:1;height:'+h+'px;background:'+((m+1)*expenses>=savings?'#e05c4a':'#4ec98a')+';border-radius:2px 2px 0 0;min-width:12px"></div>';
-            }).join('')}
-          </div>
-          <div style="display:flex;font-size:.6rem;color:rgba(0,0,0,.3)">
-            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>'<div style="flex:1;text-align:center">'+m+'月</div>').join('')}
-          </div>
+  <!-- 3条精确路径 — 第1条解锁展示，后2条🔒 -->
+  <div class="sample-section">
+    <p class="sample-section-label">3条回到安全区的路径（含精确数字）</p>
+    <div class="sample-scenario">
+      <div><p class="sample-scenario-name">路径A：减少支出${fmt(reduceAmt)}/月</p><p class="sample-scenario-sub">跑道从${daysStr}天延长至${Math.round(savings/(expenses-reduceAmt)*30.4)}天</p></div>
+      <p class="sample-scenario-val green">低难度</p>
+    </div>
+  </div>
+  <div class="sample-locked">
+    <div class="sample-locked-inner">
+      <div style="padding:0">
+        <div class="sample-scenario">
+          <div><p class="sample-scenario-name">路径B：增加收入</p><p class="sample-scenario-sub">基于您的真实收入计算增收目标</p></div>
+          <p class="sample-scenario-val amber">中等难度</p>
+        </div>
+        <div class="sample-scenario">
+          <div><p class="sample-scenario-name">路径C：双管齐下</p><p class="sample-scenario-sub">最快到达安全线</p></div>
+          <p class="sample-scenario-val green">推荐</p>
         </div>
       </div>
-      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 深度版报告中解锁</span></div>
     </div>
+    <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 解锁查看含精确数字的回绿路径</span></div>
+  </div>
 
-    <!-- 3条路径 — 第1条解锁，后2条锁定 -->
-    <div class="sample-section">
-      <p class="sample-section-label">回到安全区的3条路径（精确数字）</p>
-      <div class="sample-scenario">
-        <div><p class="sample-scenario-name">路径A：减少支出</p><p class="sample-scenario-sub">月减${fmt(reduceAmt)}，${monthsToSafe==='已达标'?'已达标':monthsToSafe+'个月'}达安全线，跑道延长至${Math.round((savings)/(expenses-reduceAmt)*30.4)}天</p></div>
-        <p class="sample-scenario-val green">低难度</p>
-      </div>
-    </div>
-    <div class="sample-locked">
-      <div class="sample-locked-inner">
-        <div style="padding:0">
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">路径B：增加收入</p><p class="sample-scenario-sub">月增${fmt(Math.round(expenses*0.2/500)*500)}，12个月达标，压力指数从${stressScore}降至${Math.max(10,Math.round(stressScore-25))}</p></div>
-            <p class="sample-scenario-val amber">中等难度</p>
-          </div>
-          <div class="sample-scenario">
-            <div><p class="sample-scenario-name">路径C：双管齐下</p><p class="sample-scenario-sub">最快路径，5个月达安全线</p></div>
-            <p class="sample-scenario-val green">推荐</p>
-          </div>
-        </div>
-      </div>
-      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 深度版报告中解锁</span></div>
-    </div>
-
-    <p class="sample-note">以上为深度版（¥13.99）样本预览，基于你的真实数据计算。完整深度版报告包含6个场景、12个月现金流时间轴、4条个性化洞察、3条含精确数字的回绿路径。<br><span style="color:var(--amber)">基础版（¥9.9）仅含3个场景+概数路径，准确度71%</span></p>`;
-  }
+  <p class="sample-note">以上为深度版（¥13.99）报告样本预览，基于你的真实数据计算。失业和突发支出场景免费可见——深度版解锁债务侵蚀、辞职窗口、家庭场景、12月时间轴和3条精确路径。</p>`;
 
   document.getElementById('sample-preview').innerHTML=html;
 }
 
-// slider wiring
+// ── SLIDER WIRING ──
 var savingsSlider=document.getElementById('savings');
 var expensesSlider=document.getElementById('expenses');
 
 savingsSlider.addEventListener('input',function(){
   savings=parseInt(this.value);
-  document.getElementById('savings-val').innerHTML=fmt(savings) + ' <span>存款</span>';
+  document.getElementById('savings-val').innerHTML=fmt(savings)+' <span>存款</span>';
   calc();
 });
 expensesSlider.addEventListener('input',function(){
   expenses=parseInt(this.value);
-  document.getElementById('expenses-val').innerHTML=fmt(expenses) + ' <span>/月</span>';
+  document.getElementById('expenses-val').innerHTML=fmt(expenses)+' <span>/月</span>';
   calc();
 });
 

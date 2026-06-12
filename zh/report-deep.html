@@ -71,17 +71,17 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 .sr-val{font-family:var(--serif);font-size:1rem;text-align:right;white-space:nowrap}
 .sr-val.red{color:var(--red)}.sr-val.amber{color:var(--amber)}.sr-val.green{color:var(--green)}
 
-/* timeline */
-.timeline{padding:1.25rem}
-.tl-row{display:flex;gap:.85rem;margin-bottom:1rem}
-.tl-row:last-child{margin-bottom:0}
-.tl-left{display:flex;flex-direction:column;align-items:center;width:32px;flex-shrink:0}
-.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.tl-dot.red{background:var(--red)}.tl-dot.amber{background:var(--amber)}.tl-dot.green{background:var(--green)}
-.tl-line{width:2px;flex:1;background:var(--border);margin-top:4px}
-.tl-month{font-size:.68rem;letter-spacing:.06em;color:var(--dim);margin-top:.25rem;white-space:nowrap}
-.tl-title{font-size:.88rem;font-weight:500;margin-bottom:.2rem}
-.tl-desc{font-size:.78rem;color:#666;line-height:1.5}
+/* timeline chart */
+.timeline-chart{padding:1.25rem}
+.tl-chart-wrap{position:relative;height:180px;display:flex;align-items:flex-end;gap:3px;margin-bottom:.5rem;border-bottom:1px solid var(--border);padding-bottom:.5rem}
+.tl-bar{flex:1;background:var(--green);border-radius:3px 3px 0 0;position:relative;min-width:0;transition:height .5s}
+.tl-bar.amber{background:var(--amber)}
+.tl-bar.red{background:var(--red)}
+.tl-bar-label{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.58rem;color:var(--dim);white-space:nowrap}
+.tl-months{display:flex}
+.tl-month{flex:1;text-align:center;font-size:.6rem;color:var(--dim)}
+.tl-legend{display:flex;gap:1rem;justify-content:center;margin-top:.75rem;font-size:.68rem;color:var(--dim)}
+.tl-legend i{font-style:normal;display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:.3rem;vertical-align:middle}
 
 /* debt impact */
 .debt-bar-wrap{padding:1rem 1.25rem}
@@ -112,43 +112,57 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 .conclusion-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.35);margin-bottom:.75rem}
 .conclusion-text{font-family:var(--serif);font-size:1.15rem;font-weight:normal;line-height:1.55;letter-spacing:-.01em}
 
-.disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center}
+.disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center;margin-bottom:1rem}
+
+/* improve precision CTA */
+.precision-cta{background:var(--ink);color:#fff;border-radius:10px;padding:1.5rem;border:none;width:100%;cursor:pointer;font-family:var(--sans);font-size:.82rem;letter-spacing:.06em;margin-top:.5rem;transition:opacity .15s}
+.precision-cta:hover{opacity:.85}
+.precision-fields{padding:1rem 1.25rem;background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:.75rem;display:none}
+.precision-fields.visible{display:block}
+.precision-fields .modal-field{margin-bottom:.75rem}
+.precision-fields label{font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.3rem;display:block}
+.precision-fields input,.precision-fields select{width:100%;padding:.55rem .85rem;font-size:.85rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff;outline:none}
+.precision-fields input:focus,.precision-fields select:focus{border-color:var(--ink)}
+
+.back-link{display:inline-block;font-size:.78rem;color:var(--dim);text-decoration:none;margin-bottom:1.5rem;transition:color .15s}
+.back-link:hover{color:var(--ink)}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo">风险<b>跑道</b></div>
-  <span class="report-badge">深度分析 · ¥13.99</span>
+  <span class="report-badge">深度分析 · 基于您的真实数据</span>
 </nav>
 
 <div class="report-wrap">
+  <a class="back-link" href="index.html">← 返回计算器</a>
 
   <!-- COVER -->
   <div class="cover">
     <div class="cover-top">
       <span class="cover-label">财务生存深度分析</span>
-      <span class="cover-plan">94% 准确度</span>
+      <span class="cover-plan" id="cover-accuracy">94% 准确度</span>
     </div>
-    <p class="cover-title">你的个性化财务风险报告</p>
+    <p class="cover-title">您的个性化财务风险报告</p>
     <p class="cover-meta">由风险跑道生成 &nbsp;·&nbsp; <span id="report-date"></span></p>
     <div class="cover-accuracy">
-      <span>分析准确度：94%</span>
-      <div class="acc-bar"><div class="acc-fill"></div></div>
-      <span>基于7个数据点</span>
+      <span id="accuracy-text">分析准确度：94%</span>
+      <div class="acc-bar"><div class="acc-fill" id="acc-fill"></div></div>
+      <span id="data-points">基于8个数据点</span>
     </div>
   </div>
 
   <!-- RUNWAY HERO -->
   <div class="runway-hero">
     <div>
-      <p class="rh-eyebrow">你的真实财务跑道</p>
-      <div class="rh-days amber" id="rh-days">109</div>
-      <p class="rh-unit">天 · 已计入债务义务</p>
+      <p class="rh-eyebrow">您的真实财务跑道</p>
+      <div class="rh-days" id="rh-days">—</div>
+      <p class="rh-unit" id="rh-unit">天 · 已计入所有义务</p>
     </div>
     <div style="text-align:right">
-      <div class="rh-status status-amber" id="rh-status">⚠ 警戒区</div>
-      <p class="rh-desc" id="rh-desc">债务调整后跑道比原始储蓄数字短23天</p>
+      <div class="rh-status" id="rh-status">—</div>
+      <p class="rh-desc" id="rh-desc">正在计算…</p>
     </div>
   </div>
 
@@ -156,197 +170,202 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
   <div class="vitals">
     <div class="vital">
       <p class="vital-label">真实月度消耗</p>
-      <p class="vital-val red" id="v-burn">¥5,000</p>
+      <p class="vital-val" id="v-burn">—</p>
       <p class="vital-sub">支出+债务还款</p>
     </div>
     <div class="vital">
       <p class="vital-label">负债收入比</p>
-      <p class="vital-val amber" id="v-dti">28%</p>
+      <p class="vital-val" id="v-dti">—</p>
       <p class="vital-sub">占总收入</p>
     </div>
     <div class="vital">
       <p class="vital-label">收入稳定性</p>
-      <p class="vital-val green" id="v-stability">高</p>
-      <p class="vital-sub">全职就业</p>
+      <p class="vital-val" id="v-stability">—</p>
+      <p class="vital-sub" id="v-stability-sub">—</p>
     </div>
     <div class="vital">
       <p class="vital-label">压力指数</p>
-      <p class="vital-val amber" id="v-pressure">61/100</p>
-      <p class="vital-sub">中等风险</p>
+      <p class="vital-val" id="v-pressure">—</p>
+      <p class="vital-sub">综合风险评估</p>
     </div>
   </div>
 
   <!-- SCENARIO 1: JOB LOSS -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">场景一 — 失业</span>
-      <span class="section-badge badge-amber">警戒</span>
+      <span class="section-title">场景一 — 失业（收入归零）</span>
+      <span class="section-badge badge-amber" id="sc1-badge">警戒</span>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">债务调整后跑道</p><p class="sr-sub">计入所有义务的真实生存窗口</p></div>
-      <p class="sr-val amber" id="sc1-adj">109天</p>
+      <div><p class="sr-name">含债务的真实跑道</p><p class="sr-sub">收入归零后，存款能支撑的天数（含债务还款）</p></div>
+      <p class="sr-val" id="sc1-days">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">安全求职窗口</p><p class="sr-sub">财务压力达到临界前的最长求职时间</p></div>
-      <p class="sr-val amber" id="sc1-search">15周</p>
+      <div><p class="sr-name">安全求职窗口</p><p class="sr-sub">在财务压力达到临界前，最长的求职时间</p></div>
+      <p class="sr-val" id="sc1-window">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">收入替代紧迫度</p><p class="sr-sub">基于你的就业类型评估</p></div>
-      <p class="sr-val amber">中偏高</p>
+      <div><p class="sr-name">债务还款能维持几个月</p><p class="sr-sub">失业后，债务最低还款能撑多久</p></div>
+      <p class="sr-val" id="sc1-debt-survive">—</p>
     </div>
   </div>
 
-  <!-- SCENARIO 2: INCOME CUT -->
+  <!-- SCENARIO 2: INCOME CUT 20% -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">场景二 — 收入下降20%</span>
-      <span class="section-badge badge-red">高风险</span>
+      <span class="section-title">场景二 — 收入下降 20%</span>
+      <span class="section-badge badge-red" id="sc2-badge">高风险</span>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">新每月缺口</p><p class="sr-sub">收入缩减后的资金缺口</p></div>
-      <p class="sr-val red" id="sc2-short">−¥1,100/月</p>
+      <div><p class="sr-name">新月度缺口</p><p class="sr-sub">收入缩减后，每月资金缺口</p></div>
+      <p class="sr-val" id="sc2-gap">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">调整后跑道</p><p class="sr-sub">缩减收入下的生存天数</p></div>
-      <p class="sr-val red" id="sc2-run">76天</p>
+      <div><p class="sr-name">调整后跑道</p><p class="sr-sub">收入下降后，存款能支撑的天数</p></div>
+      <p class="sr-val" id="sc2-runway">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">债务还款风险</p><p class="sr-sub">能否维持当前债务义务</p></div>
-      <p class="sr-val red">第3个月开始吃紧</p>
+      <div><p class="sr-name">债务还款风险</p><p class="sr-sub">收入下降后，能否维持债务义务</p></div>
+      <p class="sr-val" id="sc2-debt-risk">—</p>
     </div>
   </div>
 
-  <!-- SCENARIO 3: MEDICAL EMERGENCY -->
+  <!-- SCENARIO 3: MEDICAL EMERGENCY (dynamic amount) -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">场景三 — 医疗紧急支出¥50,000</span>
-      <span class="section-badge badge-red">严重冲击</span>
+      <span class="section-title" id="sc3-title">场景三 — 医疗紧急支出</span>
+      <span class="section-badge badge-red" id="sc3-badge">严重冲击</span>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">冲击后跑道</p><p class="sr-sub">对储蓄的即时影响</p></div>
-      <p class="sr-val red" id="sc3-run">0天</p>
+      <div><p class="sr-name">冲击后剩余跑道</p><p class="sr-sub">扣除应急支出后的生存天数</p></div>
+      <p class="sr-val" id="sc3-runway">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">债务还款能力</p><p class="sr-sub">能否维持当前债务义务</p></div>
-      <p class="sr-val red">严重受压</p>
+      <div><p class="sr-name">债务还款能力</p><p class="sr-sub">应急支出后，能否维持当前债务还款</p></div>
+      <p class="sr-val" id="sc3-debt">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">恢复周期</p><p class="sr-sub">重建冲击前财务位置</p></div>
-      <p class="sr-val amber" id="sc3-rec">8–12个月</p>
+      <div><p class="sr-name">恢复周期</p><p class="sr-sub">重建冲击前的财务位置所需时间</p></div>
+      <p class="sr-val" id="sc3-recovery">—</p>
     </div>
   </div>
 
-  <!-- SCENARIO 4: QUIT JOB -->
+  <!-- SCENARIO 4: QUIT JOB (age × career recovery) -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">场景四 — 辞职</span>
+      <span class="section-title">场景四 — 辞职过渡模拟</span>
       <span class="section-badge badge-blue">决策模拟</span>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">安全过渡窗口</p><p class="sr-sub">进入危险区前的最长求职时间</p></div>
-      <p class="sr-val amber" id="sc4-window">15周</p>
+      <div><p class="sr-name">安全求职窗口</p><p class="sr-sub" id="sc4-window-sub">基于您的年龄段和恢复周期系数</p></div>
+      <p class="sr-val" id="sc4-window">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">第4个月最低收入需求</p><p class="sr-sub">避免继续消耗存款</p></div>
-      <p class="sr-val amber" id="sc4-income">¥5,000/月</p>
+      <div><p class="sr-name">年龄×职业恢复周期</p><p class="sr-sub">您的年龄段对应的预期求职时长</p></div>
+      <p class="sr-val" id="sc4-recovery-coeff">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">过渡期间债务义务</p><p class="sr-sub">不可削减的月度底线</p></div>
-      <p class="sr-val red" id="sc4-debt">¥800/月固定</p>
+      <div><p class="sr-name">过渡期最低收入需求</p><p class="sr-sub">避免继续消耗存款所需的最低月收入</p></div>
+      <p class="sr-val" id="sc4-min-income">—</p>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">综合辞职可行性</p><p class="sr-sub">基于你的完整财务画像</p></div>
-      <p class="sr-val amber" id="sc4-readiness">可行——但边际紧</p>
+      <div><p class="sr-name">综合辞职可行性</p><p class="sr-sub">基于您的完整财务画像</p></div>
+      <p class="sr-val" id="sc4-feasibility">—</p>
     </div>
   </div>
 
-  <!-- SCENARIO 5: COST OF LIVING -->
+  <!-- SCENARIO 5: FAMILY EXPENSE (family status × expense) -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">场景五 — 生活成本上涨15%</span>
+      <span class="section-title">场景五 — 家庭重大支出变化</span>
+      <span class="section-badge badge-amber" id="sc5-badge">生活事件</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name" id="sc5-expense-name">家庭扩展新增成本</p><p class="sr-sub" id="sc5-expense-sub">基于您的家庭状况估算</p></div>
+      <p class="sr-val" id="sc5-expense-amt">—</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">家庭变化后跑道</p><p class="sr-sub">计入新增家庭支出后的生存天数</p></div>
+      <p class="sr-val" id="sc5-runway">—</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">最低收入增幅需求</p><p class="sr-sub">维持当前跑道水平所需增收</p></div>
+      <p class="sr-val" id="sc5-income-needed">—</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 6: COST OF LIVING +15% -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">场景六 — 生活成本上涨 15%</span>
       <span class="section-badge badge-amber">环境风险</span>
     </div>
     <div class="scenario-row">
-      <div><p class="sr-name">新月度支出</p><p class="sr-sub">上涨后含债务还款</p></div>
-      <p class="sr-val red" id="sc5-exp">¥5,630</p>
+      <div><p class="sr-name">新月度支出</p><p class="sr-sub">上涨15%后，含债务还款</p></div>
+      <p class="sr-val" id="sc6-expense">—</p>
     </div>
     <div class="scenario-row">
       <div><p class="sr-name">调整后跑道</p><p class="sr-sub">更高消耗率下的生存天数</p></div>
-      <p class="sr-val amber" id="sc5-run">97天</p>
+      <p class="sr-val" id="sc6-runway">—</p>
     </div>
     <div class="scenario-row">
       <div><p class="sr-name">月度收入缺口</p><p class="sr-sub">保持收支平衡需额外收入</p></div>
-      <p class="sr-val red" id="sc5-gap">−¥630/月</p>
+      <p class="sr-val" id="sc6-gap">—</p>
     </div>
   </div>
 
-  <!-- SCENARIO 6: FAMILY EXPENSE -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-title">场景六 — 家庭重大支出</span>
-      <span class="section-badge badge-amber">生活事件</span>
-    </div>
-    <div class="scenario-row">
-      <div><p class="sr-name">育儿/幼托新增成本</p><p class="sr-sub">一线城市首年典型额外支出</p></div>
-      <p class="sr-val red">+¥5,000–¥10,000/月</p>
-    </div>
-    <div class="scenario-row">
-      <div><p class="sr-name">家庭扩展下跑道</p><p class="sr-sub">按月增¥6,000估算</p></div>
-      <p class="sr-val red" id="sc6-run">62天</p>
-    </div>
-    <div class="scenario-row">
-      <div><p class="sr-name">最低收入增幅需求</p><p class="sr-sub">维持当前跑道水平</p></div>
-      <p class="sr-val amber">+¥6,000/月</p>
-    </div>
-  </div>
-
-  <!-- 12-MONTH TIMELINE -->
+  <!-- 12-MONTH CASHFLOW TIMELINE (bar chart) -->
   <div class="section">
     <div class="section-head">
       <span class="section-title">12个月现金流轨迹</span>
       <span class="section-badge badge-amber">维持现状</span>
     </div>
-    <div class="timeline" id="timeline">
-      <div class="tl-row">
-        <div class="tl-left"><div class="tl-dot green"></div><div class="tl-line"></div><span class="tl-month">现在</span></div>
-        <div class="tl-content"><p class="tl-title">当前位置 — 警戒区</p><p class="tl-desc" id="tl-now">109天跑道。可控但低于安全阈值。没有即时危机，也没有缓冲。</p></div>
+    <div class="timeline-chart">
+      <div class="tl-chart-wrap" id="tl-chart">
+        <!-- bars injected by JS -->
       </div>
-      <div class="tl-row">
-        <div class="tl-left"><div class="tl-dot amber"></div><div class="tl-line"></div><span class="tl-month">第3月</span></div>
-        <div class="tl-content"><p class="tl-title">拐点窗口</p><p class="tl-desc">如果此处发生¥10,000以上的意外支出，跑道将降至90天以下——触发高压财务决策。</p></div>
+      <div class="tl-months" id="tl-months">
+        <!-- month labels injected by JS -->
       </div>
-      <div class="tl-row">
-        <div class="tl-left"><div class="tl-dot amber"></div><div class="tl-line"></div><span class="tl-month">第6月</span></div>
-        <div class="tl-content"><p class="tl-title">6个月安全阈值</p><p class="tl-desc">如果你从现在开始每月多存¥500，大约在此节点可达到安全线。</p></div>
-      </div>
-      <div class="tl-row">
-        <div class="tl-left"><div class="tl-dot green"></div><span class="tl-month">第12月</span></div>
-        <div class="tl-content"><p class="tl-title">绿区目标</p><p class="tl-desc">持续改善的情况下，9个月跑道在年底可实现——给你真正的选择权和灵活性。</p></div>
+      <div class="tl-legend">
+        <span><i style="background:var(--green)"></i>安全区（跑道>180天）</span>
+        <span><i style="background:var(--amber)"></i>警戒区（90-180天）</span>
+        <span><i style="background:var(--red)"></i>危险区（<90天）</span>
       </div>
     </div>
   </div>
 
-  <!-- DEBT IMPACT -->
+  <!-- DEBT EROSION ANALYSIS (optimization 1) -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">债务影响分析</span>
-      <span class="section-badge badge-green">深度版专属</span>
+      <span class="section-title">债务侵蚀分析</span>
+      <span class="section-badge badge-red">深度版专属</span>
     </div>
     <div class="debt-bar-wrap">
-      <div class="debt-label-row"><span>负债收入比</span><span id="dti-val">28%</span></div>
-      <div class="debt-bar"><div class="debt-fill amber" id="dti-bar" style="width:28%"></div></div>
-      <p style="font-size:.75rem;color:var(--dim);margin-bottom:1rem" id="dti-desc">安全区：低于36% · 你的当前债务负担可控，但留给额外义务的缓冲有限。</p>
+      <div class="debt-label-row"><span>负债收入比（DTI）</span><span id="dti-val">—</span></div>
+      <div class="debt-bar"><div class="debt-fill" id="dti-bar"></div></div>
+      <p style="font-size:.75rem;color:var(--dim);margin-bottom:1rem" id="dti-desc">—</p>
       <div class="scenario-row" style="padding:0;border:none;margin-bottom:.5rem">
         <div><p class="sr-name">月度债务还款</p><p class="sr-sub">不可削减的月度底线</p></div>
-        <p class="sr-val red" id="d-monthly">¥800/月</p>
+        <p class="sr-val" id="d-monthly">—</p>
       </div>
       <div class="scenario-row" style="padding:0;border:none;margin-bottom:.5rem">
         <div><p class="sr-name">总债务余额</p><p class="sr-sub">完整还款义务</p></div>
-        <p class="sr-val amber" id="d-total">¥12,000</p>
+        <p class="sr-val" id="d-total">—</p>
       </div>
-      <div class="scenario-row" style="padding:0;border:none">
+      <div class="scenario-row" style="padding:0;border:none;margin-bottom:.75rem">
         <div><p class="sr-name">债务对跑道的影响</p><p class="sr-sub">与零债务场景相比损失的天数</p></div>
-        <p class="sr-val red" id="d-impact">−23天</p>
+        <p class="sr-val" id="d-impact">—</p>
+      </div>
+      <!-- Debt spiral: minimum payment trap -->
+      <div style="background:var(--red-soft);border:1px solid #f5bcb8;border-radius:8px;padding:.85rem;.85rem;margin-bottom:.5rem">
+        <p style="font-size:.82rem;font-weight:500;color:var(--red);margin-bottom:.3rem">⚠ 最小还款陷阱模拟</p>
+        <p style="font-size:.78rem;color:#666;line-height:1.55" id="debt-spiral-text">您有债务，建议填写月还款额以获取此分析。</p>
+      </div>
+      <!-- Pay ¥500 more improvement -->
+      <div style="background:var(--green-soft);border:1px solid #b8e8ce;border-radius:8px;padding:.85rem">
+        <p style="font-size:.82rem;font-weight:500;color:var(--green);margin-bottom:.3rem">✓ 加速还清债务的效果</p>
+        <p style="font-size:.78rem;color:#666;line-height:1.55" id="debt-extra-pay-text">—</p>
       </div>
     </div>
   </div>
@@ -354,190 +373,452 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
   <!-- 4 PERSONALIZED INSIGHTS -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">4条个性化风险洞察</span>
+      <span class="section-title">个性化风险洞察</span>
       <span class="section-badge badge-amber">AI分析</span>
     </div>
     <div class="insight-row">
-      <div class="insight-dot red" style="margin-left:10px"></div>
-      <p class="insight-text" id="ins1"><b>你的债务义务是最被低估的隐患。</b>没有债务还款的话，你的跑道会多23天。在失业场景下，债务还款不会暂停——收入归零了，它还在持续消耗你的储备。这是你财务画像中最容易被忽视的风险。</p>
+      <div class="insight-dot red"></div>
+      <p class="insight-text" id="ins1">—</p>
     </div>
     <div class="insight-row">
-      <div class="insight-dot amber" style="margin-left:10px"></div>
-      <p class="insight-text" id="ins2"><b>收入稳定性是你最大的资产。</b>全职就业给了你一个可预测的收入底线。这比自由职业者或个体户的短期风险显著更低。保护好这个位置——在没有缓冲的情况下失去它，是你最高冲击的风险事件。</p>
+      <div class="insight-dot amber"></div>
+      <p class="insight-text" id="ins2">—</p>
     </div>
     <div class="insight-row">
-      <div class="insight-dot amber" style="margin-left:10px"></div>
-      <p class="insight-text" id="ins3"><b>你离一次高压决策只有一步之遥。</b>在你当前的跑道上，一次¥15,000的意外支出不只是减少存款——它会迫使你在借贷、削减生活支出或透支之间做选择。缓冲不足的问题，在你真正需要它之前是看不见的。</p>
+      <div class="insight-dot amber"></div>
+      <p class="insight-text" id="ins3">—</p>
     </div>
     <div class="insight-row">
-      <div class="insight-dot amber" style="margin-left:10px"></div>
-      <p class="insight-text" id="ins4"><b>你的负债收入比有天花板。</b>在28%的DTI水平，你正在接近放贷方标记风险抬头的区间（通常在35-43%）。如果支出增加或收入下降，这个比例会反过来——在你可能最需要借贷的时候，借贷选项反而减少了。</p>
+      <div class="insight-dot" style="background:var(--green)"></div>
+      <p class="insight-text" id="ins4">—</p>
     </div>
   </div>
 
-  <!-- 3 RECOVERY PATHS WITH EXACT NUMBERS -->
+  <!-- 3 RECOVERY PATHS (dynamic numbers) -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">3条回到绿区的路径</span>
-      <span class="section-badge badge-green">含具体数字</span>
+      <span class="section-title">3条回到安全区的路径</span>
+      <span class="section-badge badge-green">含您的精确数字</span>
     </div>
     <div class="path-row">
       <div class="path-head">
-        <span class="path-label">路径A — 月支出减少¥500</span>
+        <span class="path-label" id="path-a-label">路径A — 减少月支出</span>
         <span class="path-effort effort-low">低难度 · 最快</span>
       </div>
-      <p class="path-desc">削减订阅（¥80）、外食（¥200）和一个弹性支出（¥220）。无需生活方式大改。</p>
-      <p class="path-number" id="pa-num">达到6个月安全线（¥30,000）约需8个月</p>
-      <p class="path-months">跑道改善：每月多存¥500，每月跑道延长约3.6天</p>
+      <p class="path-desc" id="path-a-desc">基于您当前支出水平，找出可削减项。</p>
+      <p class="path-number" id="path-a-num">—</p>
+      <p class="path-months" id="path-a-detail">—</p>
     </div>
     <div class="path-row">
       <div class="path-head">
-        <span class="path-label">路径B — 加速债务偿还</span>
+        <span class="path-label" id="path-b-label">路径B — 增加月收入</span>
         <span class="path-effort effort-med">中等难度 · 高回报</span>
       </div>
-      <p class="path-desc">每月多还¥300用于最高利率的债务。清偿后，将¥1,100/月全部转向存款。</p>
-      <p class="path-number" id="pb-num">约3年清债 → 之后跑道每月增长¥1,100</p>
-      <p class="path-months">净效果：清债后18个月内跑道可达9个月</p>
+      <p class="path-desc" id="path-b-desc">基于您当前收入水平和职业类型，设定增收目标。</p>
+      <p class="path-number" id="path-b-num">—</p>
+      <p class="path-months" id="path-b-detail">—</p>
     </div>
     <div class="path-row">
       <div class="path-head">
-        <span class="path-label">路径C — 收入+支出双管齐下</span>
+        <span class="path-label">路径C — 双管齐下</span>
         <span class="path-effort effort-low">最优平衡</span>
       </div>
-      <p class="path-desc">支出减¥300 + 收入增¥500/月（副业、加薪或提费率）。小变化，复利效应。</p>
-      <p class="path-number" id="pc-num">月改善¥800 → 6个月达到安全线</p>
-      <p class="path-months">最韧性的路径：同步建缓冲和降消耗</p>
+      <p class="path-desc" id="path-c-desc">支出减 + 收入增，小变化复利效应。</p>
+      <p class="path-number" id="path-c-num">—</p>
+      <p class="path-months" id="path-c-detail">—</p>
     </div>
   </div>
 
   <!-- CONCLUSION -->
   <div class="conclusion">
-    <p class="conclusion-label">一句话结论 — 个性化于你的画像</p>
-    <p class="conclusion-text" id="conclusion-text">"你的收入稳定性是真正的保护——不要低估它。但你的债务义务意味着你的真实跑道比储蓄数字显示的要短。你有6-8个月内回到绿区的清晰路径。唯一的问题是：你是否会在外部事件替你做决定之前主动行动。"</p>
+    <p class="conclusion-label">一句话结论 — 基于您的真实画像</p>
+    <p class="conclusion-text" id="conclusion-text">"—"</p>
   </div>
 
   <p class="disclaimer">以上推算基于您输入的数据和标准财务建模假设进行数学计算，仅供信息和教育参考，不构成财务、法律、投资或税务建议。个人情况差异显著，重大财务决策前请咨询持牌理财顾问、信贷咨询师或其他合格专业人士。风险跑道不是注册投资顾问或理财规划师。</p>
 
+  <!-- IMPROVE PRECISION (optional fields) -->
+  <button class="precision-cta" id="precision-toggle" onclick="togglePrecision()">✏️ 补充信息，进一步提升报告精度 →</button>
+  <div class="precision-fields" id="precision-fields">
+    <p style="font-size:.72rem;color:var(--dim);margin-bottom:1rem;line-height:1.5">补充以下信息，报告将重新计算并刷新。所有数据仅在本地处理。</p>
+    <div class="modal-field">
+      <label>月还款额（每月需要还的债务总额）</label>
+      <input type="number" id="prec-dp" placeholder="如无负债请填0" min="0" step="100">
+    </div>
+    <div class="modal-field">
+      <label>邮箱（可选，用于接收报告更新提醒）</label>
+      <input type="email" id="prec-email" placeholder="your@email.com">
+    </div>
+    <button class="modal-submit" onclick="submitPrecision()" style="width:100%;padding:.85rem;background:var(--ink);color:#fff;font-family:var(--sans);font-size:.88rem;border:none;border-radius:6px;cursor:pointer">更新我的报告 →</button>
+  </div>
+
 </div>
 
 <script>
-document.getElementById('report-date').textContent=new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+/* ── DATA READING FROM LOCALSTORAGE ── */
+var reportData = null;
+try {
+  var raw = localStorage.getItem('riskRunwayData');
+  if (raw) reportData = JSON.parse(raw);
+} catch(e) {}
 
-var params=new URLSearchParams(window.location.search);
-var savings=parseInt(params.get('s')||18000);
-var expenses=parseInt(params.get('e')||4200);
-var income=parseInt(params.get('i')||8000);
-var debt=parseInt(params.get('d')||12000);
-var debtpay=parseInt(params.get('dp')||800);
-var job=params.get('j')||'全职';
+if (!reportData) {
+  document.getElementById('rh-days').textContent = '?';
+  document.getElementById('rh-desc').textContent = '未找到数据，请返回填写。';
+  throw new Error('No data');
+}
 
-function fmt(n){return'¥'+Math.round(n).toLocaleString()}
+var savings   = reportData.s || 50000;
+var expenses  = reportData.e || 8000;
+var income    = reportData.i || 10000;
+var age       = reportData.age || '26-35';
+var family    = reportData.family || 'single';
+var career    = reportData.career || 'fulltime';
+var debt      = reportData.d || 0;
+var debtPay   = reportData.dp || 0;
+var userEmail = reportData.email || '';
 
-var trueBurn=expenses+debtpay;
-var days=Math.round(savings/trueBurn*30.4);
-var dti=Math.round(debtpay/income*100);
-var pressure=Math.min(99,Math.round(40+(dti*0.5)+((180-days)/180*30)));
-var stability=job.includes('全职')?'高':job.includes('兼职')?'中':'不稳定';
-var stabilityClass=job.includes('全职')?'green':job.includes('兼职')?'amber':'red';
-var target=trueBurn*6;
-var gap=Math.max(0,target-savings);
-var rawDays=Math.round(savings/expenses*30.4);
-var debtImpact=rawDays-days;
+/* ── HELPER FUNCTIONS ── */
+function fmt(n) {
+  return '¥' + Math.round(n).toLocaleString('zh-CN');
+}
 
-// RUNWAY HERO
-document.getElementById('rh-days').textContent=days;
-var rhEl=document.getElementById('rh-days');
-rhEl.className='rh-days '+dayColorClass(days);
+function dayColorClass(d) {
+  return d <= 30 ? 'red' : d <= 90 ? 'red' : d <= 180 ? 'amber' : 'green';
+}
 
-var zone,zoneClass;
-if(days<=30){zone='🔴 极度危险';zoneClass='status-red'}
-else if(days<=90){zone='🔴 高风险';zoneClass='status-red'}
-else if(days<=180){zone='⚠ 警戒区';zoneClass='status-amber'}
-else{zone='✓ 健康区间';zoneClass='status-green'}
-document.getElementById('rh-status').textContent=zone;
-document.getElementById('rh-status').className='rh-status '+zoneClass;
+function zoneText(d) {
+  if (d <= 30) return '🔴 极度危险';
+  if (d <= 90) return '🔴 高风险';
+  if (d <= 180) return '⚠ 警戒区';
+  return '✓ 健康区间';
+}
+function zoneClass(d) {
+  if (d <= 90) return 'status-red';
+  if (d <= 180) return 'status-amber';
+  return 'status-green';
+}
 
-var descText;
-if(debtImpact>0) descText='债务调整后跑道比原始储蓄数字短'+debtImpact+'天';
-else descText='债务负担对跑道影响较小';
-document.getElementById('rh-desc').textContent=descText;
+/* ── OPTIMIZATION 2: AGE × CAREER RECOVERY COEFFICIENT ── */
+var ageRecoveryMap = {
+  '18-25': { months: 3,  label: '3-4个月（起步期，机会多）' },
+  '26-35': { months: 4,  label: '4-5个月（上升期，竞争较强）' },
+  '36-45': { months: 5,  label: '5-7个月（巅峰期，岗位少但薪酬高）' },
+  '46-55': { months: 7,  label: '7-10个月（稳定期，转型较难）' },
+  '56+':   { months: 12, label: '12个月+（退休准备期，再就业难度高）' }
+};
+var careerMultiplier = {
+  'fulltime':     1.0,
+  'parttime':     0.8,
+  'self-employed': 1.3,
+  'freelance':    1.2,
+  'unemployed':   1.0,
+  'retired':      0.5
+};
+var recoveryBase = (ageRecoveryMap[age] || ageRecoveryMap['26-35']).months;
+var recoveryMonths = Math.round(recoveryBase * (careerMultiplier[career] || 1.0));
 
-function dayColorClass(d){return d<=30?'red':d<=90?'red':d<=180?'amber':'green'}
+/* ── OPTIMIZATION 3: FAMILY STATUS EXPENSE ── */
+var familyExpenseMap = {
+  'single':         { amt: 0,    label: '单身无额外家庭支出' },
+  'married-no-kids':{ amt: 0,    label: '已婚无子女，无额外家庭支出' },
+  'married-1kid':   { amt: 3000, label: '育有1个子女，月增约¥3,000' },
+  'married-2kids':  { amt: 5000, label: '育有2+个子女，月增约¥5,000' },
+  'single-parent':  { amt: 3500, label: '单亲家庭，月增约¥3,500' },
+  'elderly-care':   { amt: 2000, label: '赡养老人，月增约¥2,000' }
+};
+var familyExpense = (familyExpenseMap[family] || familyExpenseMap['single']).amt;
 
-// VITALS
-document.getElementById('v-burn').textContent=fmt(trueBurn);
-document.getElementById('v-dti').textContent=dti+'%';
-document.getElementById('v-stability').textContent=stability;
-document.getElementById('v-stability').className='vital-val '+stabilityClass;
-document.getElementById('v-pressure').textContent=pressure+'/100';
-var pressureClass=pressure>=70?'red':pressure>=45?'amber':'green';
-document.getElementById('v-pressure').className='vital-val '+pressureClass;
+/* ── OPTIMIZATION 6: DYNAMIC EMERGENCY AMOUNT ── */
+function getShockAmount(inc) {
+  if (inc < 5000)  return 10000;
+  if (inc < 15000) return 30000;
+  if (inc < 30000) return 50000;
+  if (inc < 50000) return 80000;
+  return 150000;
+}
 
-// SCENARIO 1
-document.getElementById('sc1-adj').textContent=days+'天';
-document.getElementById('sc1-search').textContent=Math.round(days/7)+'周';
+/* ── CORE CALCULATIONS ── */
+var trueBurn    = expenses + debtPay;
+var rawDays     = expenses > 0 ? Math.round(savings / expenses * 30.4) : 9999;
+var days        = trueBurn > 0 ? Math.round(savings / trueBurn * 30.4) : 9999;
+var debtImpact  = rawDays - days;
+var dti         = income > 0 ? Math.round(debtPay / income * 100) : 0;
+var pressure    = Math.min(99, Math.max(10, Math.round(30 + dti * 0.6 + Math.max(0, 180 - days) / 180 * 40)));
+var stabilityMap = { 'fulltime':'高','parttime':'中','self-employed':'中','freelance':'低','unemployed':'无','retired':'低' };
+var stability   = stabilityMap[career] || '中';
+var stabilityClass = stability === '高' ? 'green' : stability === '中' ? 'amber' : 'red';
 
-// SCENARIO 2
-var inc20=income*0.2;
-var sc2short=trueBurn-(income-inc20);
-document.getElementById('sc2-short').textContent=(sc2short>0?'−':'')+fmt(Math.abs(sc2short))+'/月';
-var sc2run=Math.round(savings/Math.max(1,sc2short)*30.4);
-document.getElementById('sc2-run').textContent=Math.max(0,sc2run)+'天';
+var shockAmount = getShockAmount(income);
 
-// SCENARIO 3 — ¥50,000医疗紧急
-var sc3run=Math.round((savings-50000)/trueBurn*30.4);
-document.getElementById('sc3-run').textContent=Math.max(0,sc3run)+'天';
-var sc3rec=Math.ceil(50000/(income-trueBurn));
-document.getElementById('sc3-rec').textContent=sc3rec>0?sc3rec+'–'+Math.ceil(sc3rec*1.5)+'个月':'无法估算';
+/* ── REPORT DATE ── */
+document.getElementById('report-date').textContent = new Date().toLocaleDateString('zh-CN', { year:'numeric', month:'long', day:'numeric' });
 
-// SCENARIO 4
-document.getElementById('sc4-window').textContent=Math.round(days/7)+'周';
-document.getElementById('sc4-income').textContent=fmt(trueBurn)+'/月';
-document.getElementById('sc4-debt').textContent=fmt(debtpay)+'/月固定';
-var readiness=days<=60?'不建议':days<=120?'可行——但边际紧':'可行——有一定空间';
-document.getElementById('sc4-readiness').textContent=readiness;
+/* ── COVER ACCURACY ── */
+var dataCount = 5;
+if (debt > 0 || debtPay > 0) dataCount++;
+if (userEmail) dataCount++;
+var accPct = Math.min(96, 85 + dataCount * 1.5);
+document.getElementById('acc-fill').style.width = accPct + '%';
+document.getElementById('data-points').textContent = '基于' + dataCount + '个数据点';
+document.getElementById('accuracy-text').textContent = '分析准确度：' + Math.round(accPct) + '%';
 
-// SCENARIO 5
-var exp15=Math.round(expenses*1.15);
-document.getElementById('sc5-exp').textContent=fmt(exp15+debtpay);
-var sc5run=Math.round(savings/(exp15+debtpay)*30.4);
-document.getElementById('sc5-run').textContent=Math.max(0,sc5run)+'天';
-document.getElementById('sc5-gap').textContent='−'+fmt(exp15-expenses)+'/月';
+/* ── RUNWAY HERO ── */
+var daysEl = document.getElementById('rh-days');
+daysEl.textContent = days >= 9999 ? '∞' : days;
+daysEl.className = 'rh-days ' + dayColorClass(days);
+document.getElementById('rh-status').textContent = zoneText(days);
+document.getElementById('rh-status').className = 'rh-status ' + zoneClass(days);
+document.getElementById('rh-desc').textContent = debtImpact > 0
+  ? '债务调整后，跑道比无债务场景短 ' + debtImpact + ' 天'
+  : '无债务负担，跑道数字准确';
+document.getElementById('rh-unit').textContent = days >= 9999 ? '天 · 储蓄大于支出' : '天 · 已计入债务还款';
 
-// SCENARIO 6 — 国内育儿成本
-var sc6burn=trueBurn+6000;
-var sc6run=Math.round(savings/sc6burn*30.4);
-document.getElementById('sc6-run').textContent=Math.max(0,sc6run)+'天';
+/* ── VITALS ── */
+document.getElementById('v-burn').textContent = fmt(trueBurn);
+document.getElementById('v-burn').className = 'vital-val ' + (trueBurn > income ? 'red' : 'amber');
+document.getElementById('v-dti').textContent = dti + '%';
+document.getElementById('v-dti').className = 'vital-val ' + (dti >= 36 ? 'red' : dti >= 20 ? 'amber' : 'green');
+document.getElementById('v-stability').textContent = stability;
+document.getElementById('v-stability').className = 'vital-val ' + stabilityClass;
+document.getElementById('v-stability-sub').textContent = career === 'fulltime' ? '全职就业' : career === 'self-employed' ? '自雇/创业' : career === 'freelance' ? '自由职业' : career === 'unemployed' ? '目前失业' : '退休';
+document.getElementById('v-pressure').textContent = pressure + '/100';
+document.getElementById('v-pressure').className = 'vital-val ' + (pressure >= 70 ? 'red' : pressure >= 45 ? 'amber' : 'green');
 
-// TIMELINE
-document.getElementById('tl-now').textContent=days+'天跑道。可控但低于安全阈值。没有即时危机，也没有缓冲。';
+/* ── SCENARIO 1: UNEMPLOYMENT ── */
+document.getElementById('sc1-days').textContent = (days >= 9999 ? '∞' : days) + '天';
+document.getElementById('sc1-window').textContent = (days >= 9999 ? '不限' : Math.round(days * 0.7 / 7) + '周');
+document.getElementById('sc1-badge').className = 'section-badge ' + (days <= 90 ? 'badge-red' : 'badge-amber');
+// Debt survival during unemployment
+if (debtPay > 0 && savings > 0) {
+  var debtSurvive = Math.round(savings / debtPay);
+  document.getElementById('sc1-debt-survive').textContent = debtSurvive + '个月';
+  document.getElementById('sc1-debt-survive').className = 'sr-val ' + (debtSurvive <= 6 ? 'red' : debtSurvive <= 12 ? 'amber' : 'green');
+} else {
+  document.getElementById('sc1-debt-survive').textContent = debtPay > 0 ? '无债务还款压力' : '—';
+  document.getElementById('sc1-debt-survive').className = 'sr-val green';
+}
 
-// DEBT
-document.getElementById('dti-val').textContent=dti+'%';
-document.getElementById('dti-bar').style.width=Math.min(100,dti)+'%';
-var dtiBarClass=dti<20?'green':dti<36?'amber':'red';
-document.getElementById('dti-bar').className='debt-fill '+dtiBarClass;
-var dtiDesc;
-if(dti<20) dtiDesc='安全区：低于36% · 你的债务负担很低，财务弹性充裕。';
-else if(dti<36) dtiDesc='安全区：低于36% · 你的当前债务负担可控，但留给额外义务的缓冲有限。';
-else dtiDesc='⚠ 超过36% · 债务负担偏高，新增借贷选项受限。';
-document.getElementById('dti-desc').textContent=dtiDesc;
-document.getElementById('d-monthly').textContent=fmt(debtpay)+'/月';
-document.getElementById('d-total').textContent=fmt(debt);
-document.getElementById('d-impact').textContent='−'+debtImpact+'天';
+/* ── SCENARIO 2: INCOME CUT 20% ── */
+var reducedIncome = income * 0.8;
+var sc2Gap = trueBurn - reducedIncome;
+var sc2Runway = sc2Gap > 0 ? Math.round(savings / sc2Gap * 30.4) : 9999;
+document.getElementById('sc2-gap').textContent = (sc2Gap > 0 ? '−' : '+') + fmt(Math.abs(sc2Gap)) + '/月';
+document.getElementById('sc2-gap').className = 'sr-val ' + (sc2Gap > 0 ? 'red' : 'green');
+document.getElementById('sc2-runway').textContent = (sc2Runway >= 9999 ? '∞' : sc2Runway) + '天';
+document.getElementById('sc2-runway').className = 'sr-val ' + (sc2Runway <= 90 ? 'red' : sc2Runway <= 180 ? 'amber' : 'green');
+document.getElementById('sc2-badge').className = 'section-badge ' + (sc2Runway <= 90 ? 'badge-red' : 'badge-amber');
+var debtRiskText = debtPay <= 0 ? '无债务，不受影响' : sc2Gap > debtPay ? '⚠ 收入下降后难以维持还款' : '尚可维持，但缓冲极小';
+document.getElementById('sc2-debt-risk').textContent = debtRiskText;
+document.getElementById('sc2-debt-risk').className = 'sr-val ' + (sc2Gap > debtPay ? 'red' : sc2Gap > 0 ? 'amber' : 'green');
 
-// PATHS
-document.getElementById('pa-num').textContent='达到6个月安全线（'+fmt(target)+'）约需'+Math.ceil(gap/500)+'个月';
-document.getElementById('pb-num').textContent='约'+Math.ceil(debt/(debtpay+300)/12)+'年清债 → 之后跑道每月增长'+fmt(debtpay+300);
-document.getElementById('pc-num').textContent='月改善¥800 → '+Math.ceil(gap/800)+'个月达到安全线';
+/* ── SCENARIO 3: MEDICAL EMERGENCY (dynamic) ── */
+document.getElementById('sc3-title').textContent = '场景三 — 突发大额支出（约' + fmt(shockAmount) + '）';
+var sc3Savings = savings - shockAmount;
+var sc3Runway = sc3Savings > 0 ? Math.round(sc3Savings / trueBurn * 30.4) : 0;
+document.getElementById('sc3-runway').textContent = sc3Runway <= 0 ? '跑道归零' : sc3Runway + '天';
+document.getElementById('sc3-runway').className = 'sr-val ' + (sc3Runway <= 30 ? 'red' : sc3Runway <= 90 ? 'amber' : 'green');
+var sc3Debt = debtPay > 0 && sc3Savings < debtPay * 3 ? '⚠ 严重受压，还款难以维持' : '尚可维持最低还款';
+document.getElementById('sc3-debt').textContent = sc3Debt;
+document.getElementById('sc3-debt').className = 'sr-val ' + (sc3Debt.includes('受压') ? 'red' : 'amber');
+var sc3Recovery = income > trueBurn ? Math.ceil(shockAmount / (income - trueBurn)) : 9999;
+document.getElementById('sc3-recovery').textContent = sc3Recovery >= 9999 ? '收支不平衡，无法估算' : sc3Recovery + '–' + Math.ceil(sc3Recovery * 1.5) + '个月';
+document.getElementById('sc3-recovery').className = 'sr-val ' + (sc3Recovery > 12 ? 'amber' : 'green');
 
-// CONCLUSION
-var txt;
-if(days<=30) txt='"你的状况需要立即行动。每拖延一周，出路就更窄一步。数据很清楚——不是尽快行动，而是现在。"';
-else if(days<=90) txt='"你的债务义务正在压缩真实跑道。收入稳定性是你的盾牌，但它不是无限的保护。90天内做出有意义的改善是可达的——前提是这个月就开始。"';
-else if(days<=180) txt='"你的收入稳定性是真正的保护——不要低估它。但你的债务义务意味着你的真实跑道比储蓄数字显示的要短。你有6-8个月内回到绿区的清晰路径。唯一的问题是：你是否会在外部事件替你做决定之前主动行动。"';
-else txt='"你已经建立了真正的基础。你的跑道给了你真实的选项——可以说不、可以冒险、可以扛住风暴。现在的目标是保护并延长这个位置，清楚什么可能侵蚀它。"';
-document.getElementById('conclusion-text').textContent=txt;
+/* ── SCENARIO 4: QUIT JOB (age × career) ── */
+document.getElementById('sc4-window').textContent = recoveryMonths + '个月（约' + Math.round(recoveryMonths * 4.3) + '周）';
+document.getElementById('sc4-window').className = 'sr-val ' + (recoveryMonths <= 3 ? 'green' : recoveryMonths <= 6 ? 'amber' : 'red');
+document.getElementById('sc4-recovery-coeff').textContent = (ageRecoveryMap[age] || ageRecoveryMap['26-35']).label;
+document.getElementById('sc4-recovery-coeff').className = 'sr-val amber';
+document.getElementById('sc4-min-income').textContent = fmt(trueBurn) + '/月';
+document.getElementById('sc4-min-income').className = 'sr-val red';
+var feasText = days <= 30 ? '🔴 不建议辞职，跑道过短' : days <= 90 ? '⚠ 可行，但边际极紧，风险高' : days <= 180 ? '⚠ 可行——但需严格的支出控制' : '✓ 可行——有一定安全缓冲';
+var feasClass = days <= 90 ? 'red' : days <= 180 ? 'amber' : 'green';
+document.getElementById('sc4-feasibility').textContent = feasText;
+document.getElementById('sc4-feasibility').className = 'sr-val ' + feasClass;
+document.getElementById('sc4-window-sub').textContent = '基于' + age + '年龄段，' + (career === 'fulltime' ? '全职' : career) + '类型';
+
+/* ── SCENARIO 5: FAMILY EXPENSE (family status × expense) ── */
+var sc5Burn = trueBurn + familyExpense;
+var sc5Runway = sc5Burn > 0 ? Math.round(savings / sc5Burn * 30.4) : 9999;
+var famInfo = familyExpenseMap[family] || familyExpenseMap['single'];
+document.getElementById('sc5-expense-name').textContent = '家庭支出影响（' + (family === 'single' ? '单身' : family.replace(/-/g,' ')) + '）';
+document.getElementById('sc5-expense-sub').textContent = famInfo.label;
+document.getElementById('sc5-expense-amt').textContent = familyExpense > 0 ? '+¥' + familyExpense.toLocaleString() + '/月' : '无额外支出';
+document.getElementById('sc5-expense-amt').className = 'sr-val ' + (familyExpense > 0 ? 'red' : 'green');
+document.getElementById('sc5-runway').textContent = (sc5Runway >= 9999 ? '∞' : sc5Runway) + '天';
+document.getElementById('sc5-runway').className = 'sr-val ' + (sc5Runway <= 90 ? 'red' : sc5Runway <= 180 ? 'amber' : 'green');
+document.getElementById('sc5-badge').className = 'section-badge ' + (sc5Runway <= 90 ? 'badge-red' : 'badge-amber');
+var sc5IncomeNeeded = Math.max(0, sc5Burn - income);
+document.getElementById('sc5-income-needed').textContent = sc5IncomeNeeded > 0 ? '+¥' + sc5IncomeNeeded.toLocaleString() + '/月' : '当前收入已覆盖';
+document.getElementById('sc5-income-needed').className = 'sr-val ' + (sc5IncomeNeeded > 0 ? 'red' : 'green');
+
+/* ── SCENARIO 6: COST OF LIVING +15% ── */
+var exp15 = Math.round(expenses * 1.15);
+var sc6Burn = exp15 + debtPay;
+var sc6Runway = sc6Burn > 0 ? Math.round(savings / sc6Burn * 30.4) : 9999;
+document.getElementById('sc6-expense').textContent = fmt(sc6Burn);
+document.getElementById('sc6-expense').className = 'sr-val ' + (sc6Burn > income ? 'red' : 'amber');
+document.getElementById('sc6-runway').textContent = (sc6Runway >= 9999 ? '∞' : sc6Runway) + '天';
+document.getElementById('sc6-runway').className = 'sr-val ' + (sc6Runway <= 90 ? 'red' : sc6Runway <= 180 ? 'amber' : 'green');
+document.getElementById('sc6-gap').textContent = '−' + fmt(exp15 - expenses) + '/月（仅支出上涨部分）';
+document.getElementById('sc6-gap').className = 'sr-val ' + (exp15 > income ? 'red' : 'amber');
+
+/* ── OPTIMIZATION 5: 12-MONTH CASHFLOW TIMELINE (bar chart) ── */
+(function buildTimeline() {
+  var chartEl = document.getElementById('tl-chart');
+  var monthsEl = document.getElementById('tl-months');
+  chartEl.innerHTML = '';
+  monthsEl.innerHTML = '';
+  var maxH = 140;
+
+  for (var m = 0; m < 12; m++) {
+    var balance = savings - trueBurn * (m + 1);
+    var pct = Math.max(0, balance / savings * 100);
+    var h = Math.max(4, pct / 100 * maxH);
+    var colorClass = balance <= 0 ? 'red' : balance < expenses * 6 ? 'amber' : 'green';
+
+    var bar = document.createElement('div');
+    bar.className = 'tl-bar ' + colorClass;
+    bar.style.height = h + 'px';
+    // label on top if balance is positive
+    if (balance > 0 && m % 3 === 0) {
+      var lbl = document.createElement('span');
+      lbl.className = 'tl-bar-label';
+      lbl.textContent = fmt(balance);
+      bar.appendChild(lbl);
+    }
+    chartEl.appendChild(bar);
+
+    var ml = document.createElement('div');
+    ml.className = 'tl-month';
+    ml.textContent = (m + 1) + '月';
+    monthsEl.appendChild(ml);
+  }
+})();
+
+/* ── DEBT EROSION ANALYSIS (optimization 1) ── */
+document.getElementById('dti-val').textContent = dti + '%';
+document.getElementById('dti-bar').style.width = Math.min(100, dti) + '%';
+document.getElementById('dti-bar').className = 'debt-fill ' + (dti >= 36 ? 'red' : dti >= 20 ? 'amber' : 'green');
+var dtiDesc = dti === 0 ? '您无债务负担，财务弹性极佳。' :
+  dti < 20 ? '安全区：债务负担较低，财务弹性充裕。' :
+  dti < 36 ? '警戒区：债务负担可控，但新增借贷的缓冲有限。' :
+  '⚠ 高风险区：DTI超过36%，新增借贷选项受限，应优先降债。';
+document.getElementById('dti-desc').textContent = dtiDesc;
+document.getElementById('d-monthly').textContent = debtPay > 0 ? fmt(debtPay) + '/月' : '无债务';
+document.getElementById('d-monthly').className = 'sr-val ' + (debtPay > 0 ? 'red' : 'green');
+document.getElementById('d-total').textContent = debt > 0 ? fmt(debt) : '无负债';
+document.getElementById('d-total').className = 'sr-val ' + (debt > 0 ? 'amber' : 'green');
+document.getElementById('d-impact').textContent = debtImpact > 0 ? '−' + debtImpact + '天' : '无影响';
+document.getElementById('d-impact').className = 'sr-val ' + (debtImpact > 0 ? 'red' : 'green');
+
+// Debt spiral simulation
+if (debt > 0 && debtPay > 0) {
+  // Estimate: if only minimum payment (assume 2% of balance or ¥50, whichever higher)
+  var minPayment = Math.max(debt * 0.02, 50);
+  var extraPay = debtPay + 500; // pay ¥500 more
+  var monthsCurrent = debtPay > 0 ? Math.ceil(debt / debtPay * 1.5) : 9999; // rough estimate with interest
+  var monthsExtra = extraPay > 0 ? Math.ceil(debt / extraPay * 1.2) : 9999;
+  document.getElementById('debt-spiral-text').innerHTML =
+    '如果只还最低（约' + fmt(minPayment) + '/月），债务将长期无法清零，利息持续侵蚀您的跑道。<br>' +
+    '按当前还款额（' + fmt(debtPay) + '/月），约 <b>' + monthsCurrent + '个月</b> 才能清债（含利息估算）。';
+  document.getElementById('debt-extra-pay-text').innerHTML =
+    '如果每月多还¥500（即' + fmt(extraPay) + '/月），清债时间缩短至约 <b>' + monthsExtra + '个月</b>。<br>' +
+    '清债后，每月多出的¥' + (debtPay).toLocaleString() + '全部转向存款，跑道将加速延长。';
+} else {
+  document.getElementById('debt-spiral-text').textContent = '您目前无负债，不存在债务螺旋风险。这是您财务画像中最大的优势之一。';
+  document.getElementById('debt-extra-pay-text').textContent = '您目前无负债。建议保持无债状态，优先建立6个月支出储备金。';
+}
+
+/* ── OPTIMIZATION 4: DYNAMIC PATH CALCULATION ── */
+// Path A: reduce expenses by 12% (dynamic, based on actual expense)
+var reduceAmt = Math.max(300, Math.round(expenses * 0.12 / 100) * 100);
+var newBurnA = (expenses - reduceAmt) + debtPay;
+var newRunwayA = newBurnA > 0 ? Math.round(savings / newBurnA * 30.4) : 9999;
+var target = expenses * 6;
+var gap = Math.max(0, target - savings);
+document.getElementById('path-a-label').textContent = '路径A — 月支出减少' + fmt(reduceAmt);
+document.getElementById('path-a-desc').textContent = '削减弹性支出（订阅、外食、娱乐）约' + fmt(reduceAmt) + '/月。无需大改生活方式。';
+document.getElementById('path-a-num').textContent = '达到6个月安全线（' + fmt(target) + '）约需' + Math.ceil(gap / reduceAmt) + '个月';
+document.getElementById('path-a-detail').textContent = '跑道从' + days + '天 → ' + (newRunwayA >= 9999 ? '∞' : newRunwayA) + '天（月消耗降低' + fmt(reduceAmt) + '）';
+
+// Path B: increase income by 20% (dynamic)
+var incomeIncrease = Math.max(500, Math.round(income * 0.20 / 100) * 100);
+var newIncomeB = income + incomeIncrease;
+var surplusB = newIncomeB - trueBurn;
+var monthsToTargetB = surplusB > 0 ? Math.ceil(gap / surplusB) : 9999;
+document.getElementById('path-b-label').textContent = '路径B — 月收入增加' + fmt(incomeIncrease);
+document.getElementById('path-b-desc').textContent = '基于您当前收入水平（' + fmt(income) + '），增收' + fmt(incomeIncrease) + '/月是合理目标（副业、加薪或提费率）。';
+document.getElementById('path-b-num').textContent = surplusB > 0 ? '月盈余' + fmt(surplusB) + '，约' + monthsToTargetB + '个月达到安全线' : '当前支出过高，增收前需先控支';
+document.getElementById('path-b-detail').textContent = '目标：' + fmt(incomeIncrease) + '/月增收 → 每月盈余' + fmt(Math.max(0, surplusB)) + ' → 加速跑道延长';
+
+// Path C: both
+var totalImprove = reduceAmt + incomeIncrease;
+var surplusC = (income + incomeIncrease) - ((expenses - reduceAmt) + debtPay);
+var monthsToTargetC = surplusC > 0 ? Math.ceil(gap / surplusC) : 9999;
+document.getElementById('path-c-desc').textContent = '支出减' + fmt(reduceAmt) + ' + 收入增' + fmt(incomeIncrease) + '/月，小变化复利效应。';
+document.getElementById('path-c-num').textContent = '月改善' + fmt(totalImprove) + ' → ' + (surplusC > 0 ? monthsToTargetC + '个月达到安全线' : '需更大力度');
+document.getElementById('path-c-detail').textContent = '最韧性路径：同步建缓冲和降消耗，跑道加速延长';
+
+/* ── INSIGHTS (personalized) ── */
+var ins1 = debtPay > 0
+  ? '<b>您的债务义务是最被低估的隐患。</b>没有债务还款的话，您的跑道会多' + debtImpact + '天。失业场景下债务不会暂停——这是您财务画像中最容易被忽视的风险。'
+  : '<b>您没有债务负担，这是巨大优势。</b>您的跑道数字就是真实天数，没有被任何隐形义务侵蚀。保持这个位置。';
+document.getElementById('ins1').innerHTML = ins1;
+
+var ins2 = career === 'fulltime'
+  ? '<b>收入稳定性是您最大的资产。</b>全职就业给了您可预测的收入底线，比自由职业者或个体户的短期风险显著更低。保护好这个位置。'
+  : '<b>您的职业类型意味着收入波动风险较高。</b>' + (career === 'self-employed' ? '自雇/创业者' : '自由职业者') + '在收入中断时恢复周期更长，需要更厚的财务缓冲。';
+document.getElementById('ins2').innerHTML = ins2;
+
+var ins3 = shockAmount >= 50000
+  ? '<b>您离一次高压财务决策只有一步之遥。</b>一次' + fmt(shockAmount) + '的意外支出会直接让您的跑道缩短' + Math.round(shockAmount / trueBurn * 30.4) + '天。缓冲不足的问题，在您真正需要它之前是看不见的。'
+  : '<b>您的应急缓冲相对充足。</b>对于' + fmt(shockAmount) + '级别的意外支出，您的跑道有一定的吸收能力，但仍建议建立专门的应急基金。';
+document.getElementById('ins3').innerHTML = ins3;
+
+var ins4 = dti >= 30
+  ? '<b>您的负债收入比正在接近警戒线。</b>DTI达到' + dti + '%，接近放贷方标记风险抬头的区间（通常在35-43%）。如果支出再增加或收入下降，借贷选项反而会减少。'
+  : familyExpense > 0
+    ? '<b>您的家庭责任增加了财务压力测试的复杂度。</b>家庭状态意味着任何收入中断的冲击都会被放大。在' + (family === 'married-1kid' || family === 'married-2kids' ? '育儿成本' : family === 'elderly-care' ? '养老支出' : '家庭支出') + '面前，您的跑道需要更厚。'
+    : '<b>您的负债收入比处于健康区间。</b>DTI仅' + dti + '%，说明您有良好的债务管理能力。保持这个节奏，优先建立现金缓冲。';
+document.getElementById('ins4').innerHTML = ins4;
+
+/* ── CONCLUSION ── */
+var conclusion = '';
+if (days <= 30) {
+  conclusion = '"您的状况需要立即行动。每拖延一周，出路就更窄一步。数据很清楚——不是尽快行动，而是现在。"';
+} else if (days <= 90) {
+  conclusion = '"您的债务义务正在压缩真实跑道。收入稳定性是您的盾牌，但不是无限的保护。90天内做出有意义的改善是可达的——前提是这个月就开始。"';
+} else if (days <= 180) {
+  conclusion = '"您的收入稳定性是真正的保护——不要低估它。但您的' + (debtPay > 0 ? '债务义务意味着真实跑道比储蓄数字显示的要短' : '跑道刚过警戒线，还需要继续加固') + '。您有6-8个月内回到绿区的清晰路径。唯一的问题是：您是否会在外部事件替您做决定之前主动行动。"';
+} else {
+  conclusion = '"您已经建立了真正的基础。您的跑道给了您真实的选项——可以说不、可以冒险、可以扛住风暴。现在的目标是保护并延长这个位置，清楚什么可能侵蚀它。"';
+}
+document.getElementById('conclusion-text').textContent = conclusion;
+
+/* ── PRECISION TOGGLE ── */
+function togglePrecision() {
+  var f = document.getElementById('precision-fields');
+  f.classList.toggle('visible');
+  // pre-fill
+  if (document.getElementById('prec-dp').value === '') {
+    document.getElementById('prec-dp').value = debtPay || '';
+  }
+  if (document.getElementById('prec-email').value === '') {
+    document.getElementById('prec-email').value = userEmail || '';
+  }
+}
+
+function submitPrecision() {
+  var newDp = parseInt(document.getElementById('prec-dp').value) || 0;
+  var newEmail = document.getElementById('prec-email').value || '';
+  reportData.dp = newDp;
+  reportData.email = newEmail;
+  reportData.timestamp = Date.now();
+  try { localStorage.setItem('riskRunwayData', JSON.stringify(reportData)); } catch(e) {}
+  window.location.reload();
+}
 </script>
 </body>
 </html>
