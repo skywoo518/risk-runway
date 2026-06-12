@@ -92,6 +92,59 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 .back-link:hover{color:var(--ink)}
 
 .disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center;margin-bottom:1rem}
+
+/* ── SAMPLE PREVIEW (deep report teaser) ── */
+.sample-preview{margin-bottom:1.5rem;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+.sample-preview-header{background:var(--ink);color:#fff;padding:1rem 1.25rem}
+.sample-preview-header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.sample-preview-badge{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:.2rem .6rem;border-radius:2rem}
+.sample-preview-label{font-size:.6rem;letter-spacing:.1em;color:rgba(255,255,255,.35)}
+.sample-preview-title{font-family:var(--serif);font-size:1rem;font-weight:normal;letter-spacing:-.01em;color:#fff}
+.sample-preview-scenario{padding:.85rem 1.25rem;border-bottom:1px solid var(--border)}
+.sample-preview-scenario:last-child{border-bottom:none}
+.sample-preview-scenario-name{font-size:.85rem;color:var(--ink);font-weight:500;margin-bottom:.1rem}
+.sample-preview-scenario-sub{font-size:.75rem;color:var(--dim)}
+.sample-preview-locked{position:relative;overflow:hidden}
+.sample-preview-locked-inner{filter:blur(3px);pointer-events:none;user-select:none;opacity:.5}
+.sample-preview-locked-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.6)}
+.sample-preview-locked-msg{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--dim);border:1px solid var(--border);background:#fff;padding:.35rem .85rem;border-radius:2rem;font-weight:500}
+.sample-preview-note{font-size:.68rem;color:var(--dim);text-align:center;padding:.6rem 1.25rem;background:var(--paper);border-top:1px solid var(--border)}
+
+/* ── UPGRADE MODAL (smoke test) ── */
+.upgrade-modal-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:1rem;
+}
+.upgrade-modal-overlay.visible{display:flex}
+.upgrade-modal-box{
+  background:var(--paper);border-radius:12px;max-width:460px;width:100%;
+  max-height:85vh;overflow-y:auto;padding:2rem;position:relative;
+  animation:modalIn .2s ease;
+}
+.upgrade-modal-close{position:absolute;top:1rem;right:1rem;font-size:1.3rem;color:var(--dim);cursor:pointer;line-height:1;border:none;background:none}
+.upgrade-modal-close:hover{color:var(--ink)}
+.upgrade-modal-title{font-family:var(--serif);font-size:1.15rem;font-weight:normal;margin-bottom:.4rem}
+.upgrade-modal-subtitle{font-size:.82rem;color:#666;margin-bottom:1.25rem;line-height:1.6}
+.upgrade-modal-field{margin-bottom:.85rem}
+.upgrade-modal-field label{font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.25rem;display:block}
+.upgrade-modal-field input,.upgrade-modal-field select{
+  width:100%;padding:.6rem .85rem;font-size:.85rem;font-family:var(--sans);
+  border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff;outline:none;
+}
+.upgrade-modal-field input:focus,.upgrade-modal-field select:focus{border-color:var(--ink)}
+.upgrade-fake-pay{
+  width:100%;padding:1rem;background:var(--green);color:#fff;
+  font-family:var(--sans);font-size:.95rem;font-weight:600;
+  border:none;border-radius:6px;cursor:pointer;transition:opacity .15s;margin-top:.5rem;
+}
+.upgrade-fake-pay:hover{opacity:.88}
+.upgrade-smoke-note{font-size:.65rem;color:var(--dim);text-align:center;margin-top:.5rem;line-height:1.5}
+.upgrade-thanks{display:none;text-align:center;padding:1.5rem 0}
+.upgrade-thanks.visible{display:block}
+.upgrade-thanks-emoji{font-size:2rem;margin-bottom:.5rem}
+.upgrade-thanks-title{font-family:var(--serif);font-size:1.1rem;margin-bottom:.5rem}
+.upgrade-thanks-desc{font-size:.82rem;color:var(--dim);line-height:1.6}
 </style>
 </head>
 <body>
@@ -184,19 +237,98 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     <div id="insights-list"></div>
   </div>
 
-  <!-- UPGRADE TO DEEP -->
-  <div class="upgrade-box">
-    <p class="upgrade-label">Want a more precise analysis?</p>
-    <p class="upgrade-title">Upgrade to <i>Deep Analysis</i></p>
-    <ul class="upgrade-list" style="list-style:none;padding:0">
-      <li>✦ 6 real scenarios (including quit window, childcare/eldercare stress tests)</li>
-      <li>✦ Debt erosion analysis (minimum payment trap + accelerated payoff)</li>
-      <li>✦ 12-month cash flow timeline visualization</li>
-      <li>✦ 3 precise improvement paths (based on your actual income/age/career)</li>
-      <li>✦ Accuracy from 71% to 94%</li>
-    </ul>
-    <a class="upgrade-btn" href="index.html">Upgrade to Deep Analysis</a>
-    <p class="upgrade-note">Deep report free during beta period</p>
+  <!-- DEEP REPORT SAMPLE PREVIEW (2 locked scenarios) -->
+  <div class="sample-preview">
+    <div class="sample-preview-header">
+      <div class="sample-preview-header-top">
+        <span class="sample-preview-label">Deep Analysis — Sample Preview</span>
+        <span class="sample-preview-badge">94% accuracy</span>
+      </div>
+      <p class="sample-preview-title">What you'll unlock in the deep report</p>
+    </div>
+
+    <!-- Unlocked: Scenario 1 (Job loss) — free preview -->
+    <div class="sample-preview-scenario" style="background:var(--green-soft)">
+      <p class="sample-preview-scenario-name">✓ Scenario 1 — Job loss (unlocked in basic)</p>
+      <p class="sample-preview-scenario-sub">Your true runway with all obligations included</p>
+    </div>
+
+    <!-- Locked: Scenario 3 (Debt erosion) -->
+    <div class="sample-preview-locked">
+      <div class="sample-preview-locked-inner">
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">Scenario 3 — Debt erosion analysis</p>
+          <p class="sample-preview-scenario-sub">True runway after subtracting monthly debt repayments</p>
+        </div>
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">Minimum payment trap simulation</p>
+          <p class="sample-preview-scenario-sub">Only paying minimums — interest eats your runway</p>
+        </div>
+      </div>
+      <div class="sample-preview-locked-overlay"><span class="sample-preview-locked-msg">🔒 Unlock debt erosion analysis</span></div>
+    </div>
+
+    <!-- Locked: Scenario 4 (Quit job window) -->
+    <div class="sample-preview-locked">
+      <div class="sample-preview-locked-inner">
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">Scenario 4 — Safe job search window</p>
+          <p class="sample-preview-scenario-sub">Based on your age & career type — precise number</p>
+        </div>
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">12-month cash flow timeline</p>
+          <p class="sample-preview-scenario-sub">Visual bar chart — month by month balance</p>
+        </div>
+      </div>
+      <div class="sample-preview-locked-overlay"><span class="sample-preview-locked-msg">🔒 Unlock full deep report</span></div>
+    </div>
+
+    <p class="sample-preview-note">Deep report includes all 7 scenarios + 12-month timeline + 3 recovery paths · $13.99 one-time</p>
+  </div>
+
+  <!-- UPGRADE BUTTON (opens modal) -->
+  <div style="text-align:center;margin-bottom:1.5rem">
+    <button class="upgrade-btn" style="cursor:pointer" onclick="openUpgradeModal()">📊 Upgrade to Deep Analysis — $13.99</button>
+    <p style="font-size:.7rem;color:var(--dim);margin-top:.5rem">Smoke test · No payment processed · We'll notify you when launched</p>
+  </div>
+
+  <!-- UPGRADE MODAL (smoke test) -->
+  <div class="upgrade-modal-overlay" id="upgrade-modal-overlay">
+    <div class="upgrade-modal-box">
+      <button class="upgrade-modal-close" onclick="closeUpgradeModal()">×</button>
+      <p class="upgrade-modal-title">Upgrade to Deep Analysis</p>
+      <p class="upgrade-modal-subtitle">This is a <b>smoke test</b> — we're validating demand. No payment will be processed. If you confirm below, we'll record your intent and notify you when the full version launches.</p>
+
+      <div class="upgrade-modal-field">
+        <label>Email <span style="color:var(--red)">*</span></label>
+        <input type="email" id="upgrade-email" placeholder="your@email.com" required>
+      </div>
+      <div class="upgrade-modal-field">
+        <label>Monthly income (optional, improves accuracy)</label>
+        <input type="number" id="upgrade-income" placeholder="e.g. 5000" min="0" step="100">
+      </div>
+      <div class="upgrade-modal-field">
+        <label>Age range (optional)</label>
+        <select id="upgrade-age">
+          <option value="">Choose</option>
+          <option value="18-25">18-25</option>
+          <option value="26-35">26-35</option>
+          <option value="36-45">36-45</option>
+          <option value="46-55">46-55</option>
+          <option value="56+">56+</option>
+        </select>
+      </div>
+
+      <button class="upgrade-fake-pay" onclick="submitUpgradeSmoke()">✓ Yes, I'd pay $13.99 for this →</button>
+      <p class="upgrade-smoke-note">🔒 This is a smoke test. No credit card required. Your email is only used to notify you at launch.</p>
+
+      <div class="upgrade-thanks" id="upgrade-thanks">
+        <p class="upgrade-thanks-emoji">🎉</p>
+        <p class="upgrade-thanks-title">Thank you!</p>
+        <p class="upgrade-thanks-desc">We've recorded your interest. You're on the early access list — we'll notify you when the full deep report launches.<br><br><strong>Would you like to upgrade now for free?</strong> (Limited-time smoke test bonus)</p>
+        <button class="upgrade-fake-pay" style="margin-top:1rem;background:var(--amber)" onclick="claimFreeUpgrade()">🎁 Claim free upgrade (limited slots)</button>
+      </div>
+    </div>
   </div>
 
   <!-- DISCLAIMER -->
@@ -300,6 +432,60 @@ var ih=document.getElementById('insights-list');
 insights.forEach(function(it){
   ih.innerHTML+='<div class="insight-row"><div class="insight-dot '+it.dot+'"></div><p class="insight-text">'+it.text+'</p></div>';
 });
+
+/* ── UPGRADE MODAL (smoke test) ── */
+function openUpgradeModal(){
+  // Auto-fill email from URL params
+  var em = new URLSearchParams(location.search).get('em');
+  if(em && em.trim()){
+    document.getElementById('upgrade-email').value = decodeURIComponent(em);
+  }
+  document.getElementById('upgrade-modal-overlay').classList.add('visible');
+}
+function closeUpgradeModal(){
+  document.getElementById('upgrade-modal-overlay').classList.remove('visible');
+}
+document.getElementById('upgrade-modal-overlay').addEventListener('click',function(e){
+  if(e.target===this) closeUpgradeModal();
+});
+
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function submitUpgradeSmoke(){
+  var email = document.getElementById('upgrade-email').value.trim();
+  if(!email){alert('Please enter your email');return;}
+  if(!isValidEmail(email)){alert('Please enter a valid email');return;}
+
+  // Save intent to localStorage (smoke test)
+  var intent = JSON.parse(localStorage.getItem('rrSmokeIntent')||'[]');
+  intent.push({
+    email: email,
+    income: parseInt(document.getElementById('upgrade-income').value)||0,
+    age: document.getElementById('upgrade-age').value||'',
+    savings: savings,
+    expenses: expenses,
+    timestamp: Date.now()
+  });
+  try{localStorage.setItem('rrSmokeIntent',JSON.stringify(intent));}catch(e){}
+
+  // Show thank-you state
+  document.querySelector('.upgrade-fake-pay').style.display='none';
+  document.querySelector('.upgrade-smoke-note').style.display='none';
+  document.getElementById('upgrade-thanks').classList.add('visible');
+}
+
+function claimFreeUpgrade(){
+  // In smoke test: redirect to index.html with email pre-filled
+  var email = document.getElementById('upgrade-email').value.trim();
+  // Save to localStorage so deep report can use it
+  var data = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');
+  data.email = email;
+  data.timestamp = Date.now();
+  try{localStorage.setItem('riskRunwayData',JSON.stringify(data));}catch(e){}
+  window.location.href = 'index.html';
+}
 </script>
 </body>
 </html>

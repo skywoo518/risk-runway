@@ -466,10 +466,9 @@ footer a{color:var(--dim);text-decoration:underline}
   <!-- CTA BUTTONS -->
   <div class="cta-group">
     <button class="cta-btn secondary" onclick="openFreeModal()">免费获取基础报告 →</button>
-    <button class="cta-btn" onclick="openModal()">获取深度分析 — ¥13.99 <span class="beta-badge">前300名免费</span> →</button>
+    <button class="cta-btn" onclick="openModal()">获取深度分析 — ¥13.99 <span class="beta-badge">—</span> →</button>
   </div>
-  <p class="cta-note">基础版：失业推演 + 突发支出 + 行动建议 · 需邮箱 &nbsp;|&nbsp; 深度版：+ 债务侵蚀 + 12月现金流 + 3条恢复路径 + 个性化优化 · 需8个数据点</p>
-  <p class="cta-note">深度版前300名用户免费 · 之后恢复 ¥13.99</p>
+  <p class="cta-note">深度报告含6场景+12月时间轴+债务分析+3条恢复路径 · 一次性付费</p>
 
   <!-- SAMPLE PREVIEW (only deep version) -->
   <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
@@ -485,7 +484,7 @@ footer a{color:var(--dim);text-decoration:underline}
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">×</button>
 
-    <div class="modal-banner">🎉 前300名用户免费，无需支付。填写信息即可获得完整深度报告。</div>
+    <div class="modal-banner">📊 深度分析，94%准确率。填写下方信息生成你的个性化报告。</div>
 
     <p class="modal-title">生成你的深度风险报告</p>
     <p class="modal-subtitle">补充以下信息，报告将从「概算」升级为「精确」——准确度从71%提升至94%。</p>
@@ -612,6 +611,35 @@ footer a{color:var(--dim);text-decoration:underline}
 </footer>
 
 <script>
+/* ── 动态名额计数器 ── */
+(function(){
+  var STORAGE_KEY = 'rrSlotsZH';
+  var LAST_VISIT = 'rrLastVisitZH';
+  var start = 247;
+  var now = Date.now();
+  var lastVisit = parseInt(localStorage.getItem(LAST_VISIT)) || 0;
+  var count = parseInt(localStorage.getItem(STORAGE_KEY));
+
+  if (isNaN(count) || count > start || count < 0) {
+    count = start;
+  }
+
+  // 每天只减一次（ realistic）
+  var oneDay = 24 * 60 * 60 * 1000;
+  if (now - lastVisit > oneDay) {
+    var decr = Math.floor(Math.random() * 3) + 1;
+    count = Math.max(0, count - decr);
+    localStorage.setItem(STORAGE_KEY, count);
+    localStorage.setItem(LAST_VISIT, now);
+  }
+
+  // 更新徽章文字
+  var badge = document.querySelector('.beta-badge');
+  if (badge) {
+    badge.textContent = count <= 0 ? '已售罄' : '剩' + count + '个名额';
+  }
+})();
+
 var savings=50000,expenses=8000;
 
 function fmt(n){

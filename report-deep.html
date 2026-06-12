@@ -22,6 +22,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--paper)}
 .logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}.logo b{color:var(--red);font-weight:normal}
 .report-badge{font-size:.68rem;letter-spacing:.1em;color:var(--green);border:1px solid #b8e8ce;padding:.2rem .7rem;border-radius:2rem;background:var(--green-soft)}
+.report-badge.beta{color:var(--amber);border-color:#f5d99a;background:var(--amber-soft)}
+.nav-badges{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
 
 .report-wrap{max-width:680px;margin:0 auto;padding:2.5rem 2rem 5rem}
 
@@ -132,7 +134,10 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 
 <nav>
   <div class="logo">Runway<b>AI</b></div>
-  <span class="report-badge">Deep Analysis · Based on your real data</span>
+  <div class="nav-badges">
+    <span class="report-badge beta">Beta User</span>
+    <span class="report-badge">Deep Analysis · Based on your real data</span>
+  </div>
 </nav>
 
 <div class="report-wrap">
@@ -452,6 +457,21 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
   </div>
 
   <p class="disclaimer">The above calculations are mathematical projections based on your input data and standard financial modeling assumptions. They are for informational and educational purposes only, and do not constitute financial, legal, investment, or tax advice. Individual circumstances vary significantly. Consult a licensed financial advisor, credit counselor, or other qualified professional before making major financial decisions. RunwayAI is not a registered investment advisor or financial planner.</p>
+
+  <!-- PAID INTENT COLLECTION (Smoke Test) -->
+  <div id="intent-section" style="background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-top:1.5rem;text-align:center">
+    <p style="font-size:.82rem;color:var(--dim);margin-bottom:.5rem">📊 Smoke Test — Help us validate</p>
+    <p style="font-size:1rem;font-weight:500;margin-bottom:1rem;color:var(--ink)">Would you pay <b>$13.99</b> for this deep analysis?</p>
+    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:1rem">
+      <button onclick="submitIntent('yes')" style="padding:.7rem 1.5rem;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:.9rem;cursor:pointer;font-family:var(--sans);font-weight:500">✓ Yes, I'd pay $13.99</button>
+      <button onclick="submitIntent('no')" style="padding:.7rem 1.5rem;background:#fff;color:var(--dim);border:1px solid var(--border);border-radius:6px;font-size:.9rem;cursor:pointer;font-family:var(--sans)">Not at this price</button>
+    </div>
+    <div id="intent-email-row" style="display:none;gap:.5rem;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:.75rem">
+      <input type="email" id="intent-email" placeholder="your@email.com" style="padding:.6rem .85rem;border:1px solid var(--border);border-radius:6px;font-size:.85rem;width:200px;font-family:var(--sans)">
+      <button onclick="submitIntentEmail()" style="padding:.6rem 1.2rem;background:var(--ink);color:#fff;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;font-family:var(--sans)">Notify me at launch</button>
+    </div>
+    <p id="intent-thanks" style="display:none;font-size:.85rem;color:var(--green);margin-top:.75rem">🎉 Thank you! We'll notify you when the full version launches.</p>
+  </div>
 
   <!-- IMPROVE PRECISION (optional fields) -->
   <button class="precision-cta" id="precision-toggle" onclick="togglePrecision()">✏️ Add more info to improve report accuracy →</button>
@@ -838,6 +858,49 @@ function submitPrecision() {
   reportData.timestamp = Date.now();
   try { localStorage.setItem('riskRunwayData', JSON.stringify(reportData)); } catch(e) {}
   window.location.reload();
+}
+
+/* ── PAID INTENT COLLECTION (Smoke Test) ── */
+function submitIntent(yesNo){
+  if(yesNo === 'yes'){
+    document.getElementById('intent-email-row').style.display='flex';
+    // Pre-fill email from report data
+    var em = (reportData && reportData.email) ? reportData.email : '';
+    if(em) document.getElementById('intent-email').value = em;
+    return;
+  }
+  if(yesNo === 'no'){
+    // Record "no" intent
+    var intent = JSON.parse(localStorage.getItem('rrSmokeIntent')||'[]');
+    intent.push({email:'',willing:false,timestamp:Date.now()});
+    try{localStorage.setItem('rrSmokeIntent',JSON.stringify(intent));}catch(e){}
+    document.getElementById('intent-section').innerHTML = '<p style="font-size:.9rem;color:var(--dim)">Thanks for your feedback! 🙏</p>';
+  }
+}
+
+function submitIntentEmail(){
+  var em = document.getElementById('intent-email').value.trim();
+  if(!em){alert('Please enter your email');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){alert('Please enter a valid email');return;}
+
+  // Record intent
+  var intent = JSON.parse(localStorage.getItem('rrSmokeIntent')||'[]');
+  intent.push({
+    email: em,
+    willing: true,
+    savings: savings,
+    expenses: expenses,
+    days: days,
+    timestamp: Date.now()
+  });
+  try{localStorage.setItem('rrSmokeIntent',JSON.stringify(intent));}catch(e){}
+
+  // Also save email to reportData
+  if(reportData){reportData.email=em;try{localStorage.setItem('riskRunwayData',JSON.stringify(reportData));}catch(e){}}
+
+  // Show thank you
+  document.getElementById('intent-email-row').style.display='none';
+  document.getElementById('intent-thanks').style.display='block';
 }
 </script>
 

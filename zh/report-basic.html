@@ -88,7 +88,58 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 .upgrade-btn:hover{opacity:.85}
 .upgrade-note{font-size:.7rem;color:rgba(255,255,255,.35);margin-top:.75rem}
 
-.back-link{display:inline-block;font-size:.78rem;color:var(--dim);text-decoration:none;margin-bottom:1.5rem;transition:color .15s}
+/* ── 深度报告样本预览 ── */
+.sample-preview{margin-bottom:1.5rem;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+.sample-preview-header{background:var(--ink);color:#fff;padding:1rem 1.25rem}
+.sample-preview-header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.sample-preview-badge{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);padding:.2rem .6rem;border-radius:2rem}
+.sample-preview-label{font-size:.6rem;letter-spacing:.1em;color:rgba(255,255,255,.35)}
+.sample-preview-title{font-family:var(--serif);font-size:1rem;font-weight:normal;letter-spacing:-.01em;color:#fff}
+.sample-preview-scenario{padding:.85rem 1.25rem;border-bottom:1px solid var(--border)}
+.sample-preview-scenario:last-child{border-bottom:none}
+.sample-preview-scenario-name{font-size:.85rem;color:var(--ink);font-weight:500;margin-bottom:.1rem}
+.sample-preview-scenario-sub{font-size:.75rem;color:var(--dim)}
+.sample-preview-locked{position:relative;overflow:hidden}
+.sample-preview-locked-inner{filter:blur(3px);pointer-events:none;user-select:none;opacity:.5}
+.sample-preview-locked-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.6)}
+.sample-preview-locked-msg{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--dim);border:1px solid var(--border);background:#fff;padding:.35rem .85rem;border-radius:2rem;font-weight:500}
+.sample-preview-note{font-size:.68rem;color:var(--dim);text-align:center;padding:.6rem 1.25rem;background:var(--paper);border-top:1px solid var(--border)}
+
+/* ── 升级弹窗（Smoke Test） ── */
+.upgrade-modal-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:1rem;
+}
+.upgrade-modal-overlay.visible{display:flex}
+.upgrade-modal-box{
+  background:var(--paper);border-radius:12px;max-width:460px;width:100%;
+  max-height:85vh;overflow-y:auto;padding:2rem;position:relative;
+  animation:modalIn .2s ease;
+}
+.upgrade-modal-close{position:absolute;top:1rem;right:1rem;font-size:1.3rem;color:var(--dim);cursor:pointer;line-height:1;border:none;background:none}
+.upgrade-modal-close:hover{color:var(--ink)}
+.upgrade-modal-title{font-family:var(--serif);font-size:1.15rem;font-weight:normal;margin-bottom:.4rem}
+.upgrade-modal-subtitle{font-size:.82rem;color:#666;margin-bottom:1.25rem;line-height:1.6}
+.upgrade-modal-field{margin-bottom:.85rem}
+.upgrade-modal-field label{font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.25rem;display:block}
+.upgrade-modal-field input,.upgrade-modal-field select{
+  width:100%;padding:.6rem .85rem;font-size:.85rem;font-family:var(--sans);
+  border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff;outline:none;
+}
+.upgrade-modal-field input:focus,.upgrade-modal-field select:focus{border-color:var(--ink)}
+.upgrade-fake-pay{
+  width:100%;padding:1rem;background:var(--green);color:#fff;
+  font-family:var(--sans);font-size:.95rem;font-weight:600;
+  border:none;border-radius:6px;cursor:pointer;transition:opacity .15s;margin-top:.5rem;
+}
+.upgrade-fake-pay:hover{opacity:.88}
+.upgrade-smoke-note{font-size:.65rem;color:var(--dim);text-align:center;margin-top:.5rem;line-height:1.5}
+.upgrade-thanks{display:none;text-align:center;padding:1.5rem 0}
+.upgrade-thanks.visible{display:block}
+.upgrade-thanks-emoji{font-size:2rem;margin-bottom:.5rem}
+.upgrade-thanks-title{font-family:var(--serif);font-size:1.1rem;margin-bottom:.5rem}
+.upgrade-thanks-desc{font-size:.82rem;color:var(--dim);line-height:1.6}
 .back-link:hover{color:var(--ink)}
 
 .disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center;margin-bottom:1rem}
@@ -184,19 +235,98 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     <div id="insights-list"></div>
   </div>
 
-  <!-- UPGRADE TO DEEP -->
-  <div class="upgrade-box">
-    <p class="upgrade-label">想要更精确的分析？</p>
-    <p class="upgrade-title">升级为 <i>深度分析</i></p>
-    <ul class="upgrade-list" style="list-style:none;padding:0">
-      <li>✦ 6个真实场景（含辞职窗口、育儿/养老压力测试）</li>
-      <li>✦ 债务侵蚀分析（最小还款陷阱 + 加速还款效果）</li>
-      <li>✦ 12个月现金流时间轴可视化</li>
-      <li>✦ 3条精确改善路径（基于你的实际收入/年龄/职业）</li>
-      <li>✦ 准确度从71%提升至94%</li>
-    </ul>
-    <a class="upgrade-btn" href="index.html">返回升级至深度分析</a>
-    <p class="upgrade-note">内测期间深度报告限时免费开放</p>
+  <!-- 深度报告样本预览（2个锁定场景） -->
+  <div class="sample-preview">
+    <div class="sample-preview-header">
+      <div class="sample-preview-header-top">
+        <span class="sample-preview-label">深度分析 — 样本预览</span>
+        <span class="sample-preview-badge">94% 准确率</span>
+      </div>
+      <p class="sample-preview-title">你将要在深度报告中看到的内容</p>
+    </div>
+
+    <!-- 解锁：场景1（失业）— 基础版已可见 -->
+    <div class="sample-preview-scenario" style="background:var(--green-soft)">
+      <p class="sample-preview-scenario-name">✓ 场景1 — 失业（基础版已解锁）</p>
+      <p class="sample-preview-scenario-sub">含所有义务的真实跑道</p>
+    </div>
+
+    <!-- 锁定：场景3（债务侵蚀）-->
+    <div class="sample-preview-locked">
+      <div class="sample-preview-locked-inner">
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">场景3 — 债务侵蚀分析</p>
+          <p class="sample-preview-scenario-sub">减去每月债务还款后的真实跑道</p>
+        </div>
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">最小还款陷阱模拟</p>
+          <p class="sample-preview-scenario-sub">仅还最低额度 —— 利息持续侵蚀你的跑道</p>
+        </div>
+      </div>
+      <div class="sample-preview-locked-overlay"><span class="sample-preview-locked-msg">🔒 解锁债务侵蚀分析</span></div>
+    </div>
+
+    <!-- 锁定：场景4（辞职窗口）-->
+    <div class="sample-preview-locked">
+      <div class="sample-preview-locked-inner">
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">场景4 — 安全求职窗口</p>
+          <p class="sample-preview-scenario-sub">基于你的年龄和职业类型 — 精确数字</p>
+        </div>
+        <div class="sample-preview-scenario">
+          <p class="sample-preview-scenario-name">12个月现金流时间轴</p>
+          <p class="sample-preview-scenario-sub">可视化柱状图 — 逐月余额</p>
+        </div>
+      </div>
+      <div class="sample-preview-locked-overlay"><span class="sample-preview-locked-msg">🔒 解锁完整深度报告</span></div>
+    </div>
+
+    <p class="sample-preview-note">深度报告含全部7个场景 + 12月时间轴 + 3条恢复路径 · ¥13.99 一次性</p>
+  </div>
+
+  <!-- 升级按钮（打开弹窗） -->
+  <div style="text-align:center;margin-bottom:1.5rem">
+    <button class="upgrade-btn" style="cursor:pointer" onclick="openUpgradeModal()">📊 升级至深度分析 — ¥13.99</button>
+    <p style="font-size:.7rem;color:var(--dim);margin-top:.5rem">Smoke Test · 不会实际扣款 · 发布时将通知你</p>
+  </div>
+
+  <!-- 升级弹窗（Smoke Test） -->
+  <div class="upgrade-modal-overlay" id="upgrade-modal-overlay">
+    <div class="upgrade-modal-box">
+      <button class="upgrade-modal-close" onclick="closeUpgradeModal()">×</button>
+      <p class="upgrade-modal-title">升级至深度分析</p>
+      <p class="upgrade-modal-subtitle">这是一个 <b>Smoke Test</b> — 我们在验证需求。不会进行实际支付。如果你在下方确认，我们会记录你的意向，完整版发布时将通知你。</p>
+
+      <div class="upgrade-modal-field">
+        <label>邮箱 <span style="color:var(--red)">*</span></label>
+        <input type="email" id="upgrade-email" placeholder="your@email.com" required>
+      </div>
+      <div class="upgrade-modal-field">
+        <label>月收入（可选，提高准确率）</label>
+        <input type="number" id="upgrade-income" placeholder="例：20000" min="0" step="100">
+      </div>
+      <div class="upgrade-modal-field">
+        <label>年龄区间（可选）</label>
+        <select id="upgrade-age">
+          <option value="">选择</option>
+          <option value="18-25">18-25岁</option>
+          <option value="26-35">26-35岁</option>
+          <option value="36-45">36-45岁</option>
+          <option value="46-55">46-55岁</option>
+          <option value="56+">56岁以上</option>
+        </select>
+      </div>
+
+      <button class="upgrade-fake-pay" onclick="submitUpgradeSmoke()">✓ 是的，我愿意支付 ¥13.99 →</button>
+      <p class="upgrade-smoke-note">🔒 这是 Smoke Test。无需信用卡。你的邮箱仅用于发布时通知你。</p>
+
+      <div class="upgrade-thanks" id="upgrade-thanks">
+        <p class="upgrade-thanks-emoji">🎉</p>
+        <p class="upgrade-thanks-title">谢谢！</p>
+        <p class="upgrade-thanks-desc">我们已记录你的意向。你已在内测名单中 — 完整深度报告发布时将通知你。<br><br><strong>是否要现在免费升级？</strong>（限时Smoke Test福利）</p>
+        <button class="upgrade-fake-pay" style="margin-top:1rem;background:var(--amber)" onclick="claimFreeUpgrade()">🎁 领取免费升级（名额有限）</button>
+      </div>
+    </div>
   </div>
 
   <!-- DISCLAIMER -->
@@ -300,6 +430,55 @@ var ih=document.getElementById('insights-list');
 insights.forEach(function(it){
   ih.innerHTML+='<div class="insight-row"><div class="insight-dot '+it.dot+'"></div><p class="insight-text">'+it.text+'</p></div>';
 });
+
+/* ── 升级弹窗（Smoke Test） ── */
+function openUpgradeModal(){
+  var em = new URLSearchParams(location.search).get('em');
+  if(em && em.trim()){
+    document.getElementById('upgrade-email').value = decodeURIComponent(em);
+  }
+  document.getElementById('upgrade-modal-overlay').classList.add('visible');
+}
+function closeUpgradeModal(){
+  document.getElementById('upgrade-modal-overlay').classList.remove('visible');
+}
+document.getElementById('upgrade-modal-overlay').addEventListener('click',function(e){
+  if(e.target===this) closeUpgradeModal();
+});
+
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function submitUpgradeSmoke(){
+  var email = document.getElementById('upgrade-email').value.trim();
+  if(!email){alert('请输入邮箱');return;}
+  if(!isValidEmail(email)){alert('请输入有效的邮箱');return;}
+
+  var intent = JSON.parse(localStorage.getItem('rrSmokeIntent')||'[]');
+  intent.push({
+    email: email,
+    income: parseInt(document.getElementById('upgrade-income').value)||0,
+    age: document.getElementById('upgrade-age').value||'',
+    savings: savings,
+    expenses: expenses,
+    timestamp: Date.now()
+  });
+  try{localStorage.setItem('rrSmokeIntent',JSON.stringify(intent));}catch(e){}
+
+  document.querySelector('.upgrade-fake-pay').style.display='none';
+  document.querySelector('.upgrade-smoke-note').style.display='none';
+  document.getElementById('upgrade-thanks').classList.add('visible');
+}
+
+function claimFreeUpgrade(){
+  var email = document.getElementById('upgrade-email').value.trim();
+  var data = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');
+  data.email = email;
+  data.timestamp = Date.now();
+  try{localStorage.setItem('riskRunwayData',JSON.stringify(data));}catch(e){}
+  window.location.href = 'index.html';
+}
 </script>
 </body>
 </html>

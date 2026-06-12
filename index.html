@@ -466,10 +466,9 @@ footer a{color:var(--dim);text-decoration:underline}
   <!-- CTA BUTTONS -->
   <div class="cta-group">
     <button class="cta-btn secondary" onclick="openFreeModal()">Get free basic report →</button>
-    <button class="cta-btn" onclick="openModal()">Get deep analysis — $13.99 <span class="beta-badge">First 300 free</span> →</button>
+    <button class="cta-btn" onclick="openModal()">Get deep analysis — $13.99 →</button>
   </div>
-  <p class="cta-note">Basic: Job loss + Emergency expense + Action items · need email &nbsp;|&nbsp; Deep: + Debt erosion + 12-month cash flow + 3 recovery paths + Personalized tips · need 8 data points</p>
-  <p class="cta-note">Deep report free for the first 300 users · then $13.99</p>
+  <p class="cta-note">Deep report includes 6 scenarios + 12-month timeline + debt analysis + 3 recovery paths · one-time payment</p>
 
   <!-- SAMPLE PREVIEW (only deep version) -->
   <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
@@ -485,7 +484,7 @@ footer a{color:var(--dim);text-decoration:underline}
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">×</button>
 
-    <div class="modal-banner">🎉 Free for the first 300 users — no payment required. Fill in your info to get the full deep report.</div>
+    <div class="modal-banner">📊 Deep analysis with 94% accuracy. Fill in your details below to generate your personalized report.</div>
 
     <p class="modal-title">Generate your deep risk report</p>
     <p class="modal-subtitle">Adding these details upgrades your report from "estimate" to "precise" — accuracy jumps from 71% to 94%.</p>
@@ -612,6 +611,35 @@ footer a{color:var(--dim);text-decoration:underline}
 </footer>
 
 <script>
+/* ── DYNAMIC SLOTS COUNTER ── */
+(function(){
+  var STORAGE_KEY = 'rrSlots';
+  var LAST_VISIT = 'rrLastVisit';
+  var start = 247; // 300 - 53 already taken
+  var now = Date.now();
+  var lastVisit = parseInt(localStorage.getItem(LAST_VISIT)) || 0;
+  var count = parseInt(localStorage.getItem(STORAGE_KEY));
+
+  if (isNaN(count) || count > start || count < 0) {
+    count = start;
+  }
+
+  // Only decrement once per day (max 3 per day realistic)
+  var oneDay = 24 * 60 * 60 * 1000;
+  if (now - lastVisit > oneDay) {
+    var decr = Math.floor(Math.random() * 3) + 1;
+    count = Math.max(0, count - decr);
+    localStorage.setItem(STORAGE_KEY, count);
+    localStorage.setItem(LAST_VISIT, now);
+  }
+
+  // Update badge text
+  var badge = document.querySelector('.beta-badge');
+  if (badge) {
+    badge.textContent = count <= 0 ? 'Sold out' : count + ' spots left';
+  }
+})();
+
 var savings=5000,expenses=3500;
 
 function fmt(n){
