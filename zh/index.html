@@ -150,14 +150,14 @@ input[type=range]{
 }
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;
-  width:18px;height:18px;border-radius:50%;
+  width:22px;height:22px;border-radius:50%;
   background:var(--ink);border:2px solid var(--paper);
   box-shadow:0 0 0 1px var(--ink);
   cursor:pointer;transition:transform .12s;
 }
 input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.15)}
 input[type=range]::-moz-range-thumb{
-  width:16px;height:16px;border-radius:50%;
+  width:20px;height:20px;border-radius:50%;
   background:var(--ink);border:2px solid var(--paper);
   cursor:pointer;
 }
@@ -370,6 +370,12 @@ input[type=range]::-moz-range-thumb{
   .how-grid{grid-template-columns:1fr;gap:1.25rem}
   .context-row{grid-template-columns:1fr}
   h1{font-size:1.85rem}
+  .hero{padding:2.5rem 1.25rem 1.5rem}
+  .runway-box{padding:1.5rem 1.25rem 2rem}
+  .runway-number-wrap{padding:2rem 1rem}
+  nav{padding:.7rem 1rem}
+  .nav-tag{display:none}
+  .slider-value{font-size:1.1rem}
 }
 .how-n{font-family:var(--serif);font-size:2.5rem;color:var(--dimmer);letter-spacing:-.04em;line-height:1;margin-bottom:.6rem}
 .how-t{font-size:.88rem;font-weight:500;margin-bottom:.3rem}

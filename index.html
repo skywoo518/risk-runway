@@ -150,14 +150,14 @@ input[type=range]{
 }
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;
-  width:18px;height:18px;border-radius:50%;
+  width:22px;height:22px;border-radius:50%;
   background:var(--ink);border:2px solid var(--paper);
   box-shadow:0 0 0 1px var(--ink);
   cursor:pointer;transition:transform .12s;
 }
 input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.15)}
 input[type=range]::-moz-range-thumb{
-  width:16px;height:16px;border-radius:50%;
+  width:20px;height:20px;border-radius:50%;
   background:var(--ink);border:2px solid var(--paper);
   cursor:pointer;
 }
@@ -284,6 +284,162 @@ input[type=range]::-moz-range-thumb{
 .pay-btn:hover{opacity:.88}
 .pay-disclaimer{font-size:.7rem;color:var(--dim);line-height:1.55;max-width:380px;margin:0 auto}
 
+/* ── PRICING GRID ── */
+.pricing-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1rem;margin-bottom:1.5rem;
+}
+@media(max-width:480px){.pricing-grid{grid-template-columns:1fr}}
+.pricing-card{
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:1.25rem 1rem;text-align:center;
+  background:#fff;transition:all .15s;
+  cursor:pointer;position:relative;
+}
+.pricing-card:hover{border-color:var(--dim)}
+.pricing-card.selected{border-color:var(--ink);box-shadow:0 0 0 1.5px var(--ink)}
+.pricing-card.selected .pricing-check{opacity:1}
+.pricing-check{
+  position:absolute;top:.5rem;right:.5rem;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.6rem;opacity:0;transition:opacity .15s;
+}
+.pricing-tier{font-size:.62rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.35rem}
+.pricing-price{font-family:var(--serif);font-size:1.6rem;letter-spacing:-.03em;margin-bottom:.15rem}
+.pricing-price sup{font-size:.9rem;vertical-align:.35rem}
+.pricing-accuracy{
+  font-size:.65rem;letter-spacing:.06em;
+  padding:.18rem .55rem;border-radius:2rem;
+  display:inline-block;margin-bottom:.5rem;
+}
+.pricing-accuracy.amber{background:var(--amber-soft);color:var(--amber)}
+.pricing-accuracy.green{background:var(--green-soft);color:var(--green)}
+.pricing-features-list{
+  font-size:.75rem;color:#666;line-height:1.5;
+  text-align:left;list-style:none;
+  max-width:240px;margin:0 auto;
+  display:flex;flex-direction:column;gap:.25rem;
+}
+.pricing-features-list li{padding-left:1rem;position:relative}
+.pricing-features-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:.7rem}
+.pricing-upgrade-note{
+  font-size:.68rem;color:var(--green);margin-top:.45rem;
+  padding:.2rem .7rem;border-radius:2rem;
+  background:var(--green-soft);border:1px solid #b8e8ce;
+  display:inline-block;
+}
+.pricing-best{
+  font-size:.62rem;letter-spacing:.08em;
+  background:var(--ink);color:#fff;
+  padding:.15rem .5rem;border-radius:2rem;
+  position:absolute;top:-.5rem;left:50%;transform:translateX(-50%);
+}
+
+/* ── SAMPLE REPORT ── */
+.sample-toggle{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.82rem;color:var(--dim);
+  background:none;border:1px solid var(--border);
+  padding:.45rem 1rem;border-radius:2rem;cursor:pointer;
+  margin-bottom:1.5rem;transition:all .15s;
+  font-family:var(--sans);
+}
+.sample-toggle:hover{border-color:var(--ink);color:var(--ink)}
+.sample-toggle .arrow{transition:transform .2s;display:inline-block}
+.sample-toggle.open .arrow{transform:rotate(180deg)}
+
+.sample-preview{
+  display:none;
+  border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;margin-bottom:1.5rem;
+  text-align:left;
+}
+.sample-preview.visible{display:block}
+
+.sample-header{
+  background:var(--ink);color:#fff;
+  padding:1.25rem 1.5rem;
+}
+.sample-header-top{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:.75rem;
+}
+.sample-badge{
+  font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);
+  padding:.25rem .65rem;border-radius:2rem;
+}
+.sample-tag{
+  font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);
+}
+.sample-title{
+  font-family:var(--serif);font-size:1.1rem;font-weight:normal;
+  letter-spacing:-.01em;color:#fff;margin-bottom:.25rem;
+}
+.sample-date{font-size:.72rem;color:rgba(255,255,255,.35)}
+
+.sample-vitals{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:rgba(255,255,255,.08);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.sample-vital{padding:.8rem 1.2rem}
+.sample-vital-label{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.2rem}
+.sample-vital-val{font-family:var(--serif);font-size:1.2rem;letter-spacing:-.02em}
+.sample-vital-val.danger{color:#e05c4a}
+.sample-vital-val.warning{color:#e8a93a}
+.sample-vital-val.safe{color:#4ec98a}
+.sample-vital-status{font-size:.68rem;color:rgba(255,255,255,.35);margin-top:.1rem}
+
+.sample-section{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);background:#fff}
+.sample-section:last-child{border-bottom:none}
+.sample-section-label{
+  font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:.6rem;
+}
+.sample-scenario{
+  display:grid;grid-template-columns:1fr auto;
+  align-items:start;gap:.5rem;margin-bottom:.75rem;
+}
+.sample-scenario:last-child{margin-bottom:0}
+.sample-scenario-name{font-size:.88rem;color:var(--ink);font-weight:500}
+.sample-scenario-sub{font-size:.78rem;color:#888;margin-top:.15rem}
+.sample-scenario-val{
+  font-family:var(--serif);font-size:1rem;
+  letter-spacing:-.01em;text-align:right;white-space:nowrap;
+}
+.sample-scenario-val.red{color:var(--red)}
+.sample-scenario-val.green{color:var(--green)}
+.sample-scenario-val.amber{color:var(--amber)}
+
+.sample-locked{
+  padding:1.1rem 1.5rem;
+  background:#fff;
+  position:relative;overflow:hidden;
+  border-top:1px solid var(--border);
+}
+.sample-locked-inner{filter:blur(4px);pointer-events:none;user-select:none}
+.sample-locked-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(2px);
+}
+.sample-locked-msg{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.78rem;color:var(--dim);
+  border:1px solid var(--border);
+  background:#fff;padding:.4rem 1rem;border-radius:2rem;
+}
+.sample-note{
+  font-size:.7rem;color:var(--dim);
+  text-align:center;padding:.75rem 1.5rem;
+  background:var(--paper);border-top:1px solid var(--border);
+}
+
 /* email capture after fake pay */
 .email-gate{display:none;padding-top:1rem}
 .email-gate.visible{display:block}
@@ -317,6 +473,12 @@ input[type=range]::-moz-range-thumb{
   .how-grid{grid-template-columns:1fr;gap:1.25rem}
   .context-row{grid-template-columns:1fr}
   h1{font-size:1.85rem}
+  .hero{padding:2.5rem 1.25rem 1.5rem}
+  .runway-box{padding:1.5rem 1.25rem 2rem}
+  .runway-number-wrap{padding:2rem 1rem}
+  nav{padding:.7rem 1rem}
+  .nav-tag{display:none}
+  .slider-value{font-size:1.1rem}
 }
 .how-n{font-family:var(--serif);font-size:2.5rem;color:var(--dimmer);letter-spacing:-.04em;line-height:1;margin-bottom:.6rem}
 .how-t{font-size:.88rem;font-weight:500;margin-bottom:.3rem}
@@ -427,17 +589,53 @@ footer a{color:var(--dim);text-decoration:underline}
   <div style="max-width:640px;margin:0 auto;padding:0 2rem">
     <div class="divider"></div>
     <div class="pay-card">
-      <p style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:.25rem">Full AI report</p>
-      <div class="pay-price"><sup>$</sup>9.9</div>
+      <p style="font-size:.72rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.75rem">Choose your report tier</p>
+
+      <div class="pricing-grid">
+        <!-- Basic -->
+        <div class="pricing-card" id="tier-basic" onclick="selectTier('basic')">
+          <div class="pricing-check">✓</div>
+          <p class="pricing-tier">Basic</p>
+          <div class="pricing-price"><sup>$</sup>9.99</div>
+          <span class="pricing-accuracy amber">71% accuracy</span>
+          <ul class="pricing-features-list">
+            <li>2 data points (savings + expenses)</li>
+            <li>3 core scenario simulations</li>
+            <li>2 risk insights</li>
+            <li>3 recovery paths (approximate)</li>
+          </ul>
+        </div>
+
+        <!-- Deep -->
+        <div class="pricing-card selected" id="tier-deep" onclick="selectTier('deep')">
+          <span class="pricing-best">Recommended</span>
+          <div class="pricing-check">✓</div>
+          <p class="pricing-tier">Deep</p>
+          <div class="pricing-price"><sup>$</sup>13.99</div>
+          <span class="pricing-accuracy green">94% accuracy</span>
+          <ul class="pricing-features-list">
+            <li>7 data points (incl. income/debt/job)</li>
+            <li>6 full scenario simulations</li>
+            <li>12-month cash flow timeline</li>
+            <li>4 personalized insights</li>
+            <li>3 recovery paths (precise numbers)</li>
+          </ul>
+          <div class="pricing-upgrade-note">+5 data points, accuracy 71% → 94%</div>
+        </div>
+      </div>
+
       <p class="pay-desc">A personalized deep-dive into your financial risk profile — scenarios, timelines, and decision tools tailored to your numbers.</p>
-      <ul class="pay-features">
-        <li>Survival runway under 6 life scenarios</li>
-        <li>Job loss, income cut, major expense shock</li>
-        <li>"Can I quit?" decision simulator</li>
-        <li>Month-by-month cash flow projection</li>
-        <li>3 concrete paths back to the green zone</li>
-      </ul>
-      <button class="pay-btn" onclick="smokeTest()">Get my report now</button>
+
+      <!-- Sample report (JS dynamic rendering) -->
+      <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
+        <span id="sample-toggle-text">Preview deep report sample</span>
+        <span class="arrow">↓</span>
+      </button>
+
+      <div class="sample-preview" id="sample-preview"></div>
+      <!-- END SAMPLE -->
+
+      <button class="pay-btn" onclick="smokeTest()">Get deep report — $13.99</button>
       <p class="pay-disclaimer">Mathematical projections only · Not investment advice · Data processed locally · Never stored or shared</p>
 
       <!-- email gate after smoke test -->
@@ -489,6 +687,7 @@ footer a{color:var(--dim);text-decoration:underline}
 <script>
 var savings=5000,expenses=3500;
 var phase2shown=false,phase3shown=false;
+var selectedTier='deep'; // default recommended tier
 
 function fmt(n){return'$'+Math.round(n).toLocaleString()}
 
@@ -620,12 +819,14 @@ function revealPhase2(){
 function revealPhase3(){
   phase3shown=true;
   document.getElementById('phase3').classList.add('visible');
+  updateSampleReport(); // ensure sample uses latest slider values
   setTimeout(function(){
     document.getElementById('phase3').scrollIntoView({behavior:'smooth',block:'start'});
   },100);
 }
 
 function smokeTest(){
+  var btnText=selectedTier==='deep'?'Get deep report — $13.99':'Get basic report — $9.99';
   document.querySelector('.pay-btn').textContent='Processing…';
   document.querySelector('.pay-btn').disabled=true;
   setTimeout(function(){
@@ -635,11 +836,361 @@ function smokeTest(){
   },1200);
 }
 
+function selectTier(tier){
+  selectedTier=tier;
+  var basic=document.getElementById('tier-basic');
+  var deep=document.getElementById('tier-deep');
+  basic.classList.toggle('selected',tier==='basic');
+  deep.classList.toggle('selected',tier==='deep');
+  var btn=document.querySelector('.pay-btn');
+  if(tier==='deep'){
+    btn.textContent='Get deep report — $13.99';
+  } else {
+    btn.textContent='Get basic report — $9.99';
+  }
+  // update sample toggle text
+  var toggleText=document.getElementById('sample-toggle-text');
+  toggleText.textContent=tier==='deep'?'Preview deep report sample':'Preview basic report sample';
+  // if sample is open, re-render immediately
+  if(document.getElementById('sample-preview').classList.contains('visible')){
+    updateSampleReport();
+  }
+}
+
 function submitEmail(){
   var v=document.getElementById('email-inp').value;
   if(!v||!v.includes('@')){alert('Please enter a valid email.');return}
   document.getElementById('email-form-inner').style.display='none';
   document.getElementById('email-sent').style.display='block';
+}
+
+function toggleSample(){
+  var preview=document.getElementById('sample-preview');
+  var btn=document.getElementById('sample-toggle');
+  var isOpen=preview.classList.contains('visible');
+  if(isOpen){
+    preview.classList.remove('visible');
+    preview.innerHTML='';
+    btn.classList.remove('open');
+    document.getElementById('sample-toggle-text').textContent=selectedTier==='deep'?'Preview deep report sample':'Preview basic report sample';
+  } else {
+    updateSampleReport();
+    preview.classList.add('visible');
+    btn.classList.add('open');
+    document.getElementById('sample-toggle-text').textContent='Close sample';
+    setTimeout(function(){
+      preview.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },80);
+  }
+}
+
+function updateSampleReport(){
+  var days=expenses>0?Math.round(savings/expenses*30.4):9999;
+  var months=days/30.4;
+  var annualCost=expenses*12;
+  var target6m=expenses*6;
+
+  // risk level
+  var color=days<=30?'danger':days<=180?'warning':'safe';
+  var colorCss=color==='safe'?'green':color==='danger'?'red':'amber';
+  var zoneText=days<=30?'🔴 Critical':days<=90?'🟡 At risk':days<=180?'🟡 Caution':'🟢 Healthy';
+
+  // financial stress index
+  var stressScore=Math.max(10,Math.min(95,Math.round(100-days/3.65)));
+  var stressColor=stressScore>=70?'danger':stressScore>=45?'warning':'safe';
+  var stressColorCss=stressColor==='safe'?'green':stressColor==='danger'?'red':'amber';
+  var stressText=stressScore>=70?'🔴 High pressure':stressScore>=45?'🟡 Moderate':'🟢 Healthy';
+
+  var coverageMonths=(months>=9999?'∞':months.toFixed(1))+' months';
+  var coverageStatus=months<6?'Below 6-month safety line':'Above safety line';
+  var daysStr=days>=9999?'∞':days.toLocaleString();
+  var monthsStr=months>=9999?'∞':Math.ceil(months);
+  var zeroMonth=days>=9999?'Never':'Month '+Math.ceil(months);
+
+  var now=new Date();
+  var dateStr='Generated: '+now.getFullYear()+'/'+(now.getMonth()+1)+' · Based on your input data';
+
+  // basic tier path approximations
+  var needed=Math.max(0,target6m-savings);
+  var monthsToSafe=needed>0?Math.ceil(needed/(expenses*0.85)*2):'Already safe';
+  var reduceAmt=Math.round(expenses*0.15/100)*100;
+
+  var html='';
+
+  if(selectedTier==='basic'){
+    // ══════ BASIC SAMPLE ══════
+    html=`
+    <div class="sample-header" style="background:var(--ink)">
+      <div class="sample-header-top">
+        <span class="sample-badge">Based on your data</span>
+        <span class="sample-tag" style="color:rgba(255,255,255,.35)">Basic · 71% accuracy</span>
+      </div>
+      <p class="sample-title">Financial Survival Analysis Report</p>
+      <p class="sample-date">${dateStr}</p>
+      <div class="sample-vitals">
+        <div class="sample-vital">
+          <p class="sample-vital-label">Survival runway</p>
+          <p class="sample-vital-val ${color}">${daysStr} days</p>
+          <p class="sample-vital-status">${zoneText}</p>
+        </div>
+        <div class="sample-vital">
+          <p class="sample-vital-label">Savings coverage</p>
+          <p class="sample-vital-val ${color}">${coverageMonths}</p>
+          <p class="sample-vital-status">${coverageStatus}</p>
+        </div>
+        <div class="sample-vital">
+          <p class="sample-vital-label">Annual expenses</p>
+          <p class="sample-vital-val warning">${fmt(annualCost)}</p>
+          <p class="sample-vital-status">Must be sustained</p>
+        </div>
+        <div class="sample-vital">
+          <p class="sample-vital-label">Financial stress index</p>
+          <p class="sample-vital-val ${stressColor}">${stressScore}/100</p>
+          <p class="sample-vital-status">${stressText}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 1: Job loss — unlocked -->
+    <div class="sample-section">
+      <p class="sample-section-label">Scenario 1 — If you lost your job today</p>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Survival window</p><p class="sample-scenario-sub">Based on monthly expenses ${fmt(expenses)}</p></div>
+        <p class="sample-scenario-val ${colorCss}">${daysStr} days</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Monthly cash burn</p><p class="sample-scenario-sub">Essential expenses only</p></div>
+        <p class="sample-scenario-val red">-${fmt(expenses)}/mo</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Savings depletion month</p><p class="sample-scenario-sub">Without any income</p></div>
+        <p class="sample-scenario-val red">${zeroMonth}</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Recommended safety reserve</p><p class="sample-scenario-sub">6-month survival standard</p></div>
+        <p class="sample-scenario-val green">${fmt(target6m)}</p>
+      </div>
+    </div>
+
+    <!-- Scenario 2: Income cut 20% — locked -->
+    <div class="sample-locked">
+      <div class="sample-locked-inner">
+        <div style="padding:0">
+          <p class="sample-section-label">Scenario 2 — If your income dropped 20%</p>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Monthly shortfall</p><p class="sample-scenario-sub">Gap after income reduction</p></div>
+            <p class="sample-scenario-val red">-${fmt(expenses*0.2)}/mo</p>
+          </div>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Runway reduction</p><p class="sample-scenario-sub">How much shorter your runway becomes</p></div>
+            <p class="sample-scenario-val amber">~30%</p>
+          </div>
+        </div>
+      </div>
+      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 Unlock in basic report</span></div>
+    </div>
+
+    <!-- Scenario 3: Emergency $30,000 — locked -->
+    <div class="sample-locked">
+      <div class="sample-locked-inner">
+        <div style="padding:0">
+          <p class="sample-section-label">Scenario 3 — Emergency $30,000 expense</p>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Runway loss</p><p class="sample-scenario-sub">Medical/repair/family emergency</p></div>
+            <p class="sample-scenario-val red">-${fmt(30000)} one-time</p>
+          </div>
+        </div>
+      </div>
+      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 Unlock in basic report</span></div>
+    </div>
+
+    <!-- 3 paths — all locked (basic only has approximate) -->
+    <div class="sample-locked">
+      <div class="sample-locked-inner">
+        <div style="padding:0">
+          <p class="sample-section-label">3 paths back to the safe zone</p>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Path A: Reduce expenses</p><p class="sample-scenario-sub">Cut ${fmt(reduceAmt)}/mo, reach safety in ~${monthsToSafe==='Already safe'?'0':monthsToSafe} months</p></div>
+            <p class="sample-scenario-val green">Easy</p>
+          </div>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Path B: Increase income</p><p class="sample-scenario-sub">Add ${fmt(Math.round(expenses*0.2/100)*100)}/mo, 12 months to target</p></div>
+            <p class="sample-scenario-val amber">Moderate</p>
+          </div>
+        </div>
+      </div>
+      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 Unlock in basic report</span></div>
+    </div>
+
+    <p class="sample-note">This is a basic ($9.99) sample preview, calculated from your real data. The full basic report includes 3 scenarios, 2 insights, 3 approximate recovery paths.<br><span style="color:var(--green);font-weight:500">Upgrade to deep ($13.99) → accuracy jumps from 71% to 94%, plus 6 scenarios + 12-month timeline + precise paths</span></p>`;
+  } else {
+    // ══════ DEEP SAMPLE ══════
+    // deep tier uses estimated income/debt data (landing page only has 2 sliders)
+    var income=Math.round(expenses*2.5/100)*100;
+    var debt=Math.round(income*1.5/10000)*10000;
+    var dp=Math.round(expenses*0.1/100)*100;
+    var dti=Math.round(dp/income*100);
+    var runwayWithDebt=Math.round((savings-debt)/(expenses+dp)*30.4);
+    runwayWithDebt=Math.max(0,runwayWithDebt);
+
+    html=`
+    <div class="sample-header" style="background:#1a3a2a">
+      <div class="sample-header-top">
+        <span class="sample-badge">Based on your data</span>
+        <span class="sample-tag" style="color:rgba(255,255,255,.35)">Deep · 94% accuracy</span>
+      </div>
+      <p class="sample-title">Financial Risk Deep Analysis Report</p>
+      <p class="sample-date">${dateStr}</p>
+      <div class="sample-vitals">
+        <div class="sample-vital">
+          <p class="sample-vital-label">Survival runway</p>
+          <p class="sample-vital-val ${color}">${daysStr} days</p>
+          <p class="sample-vital-status">${zoneText}</p>
+        </div>
+        <div class="sample-vital">
+          <p class="sample-vital-label">Savings coverage</p>
+          <p class="sample-vital-val ${color}">${coverageMonths}</p>
+          <p class="sample-vital-status">${coverageStatus}</p>
+        </div>
+        <div class="sample-vital">
+          <p class="sample-vital-label">Debt-to-income ratio</p>
+          <p class="sample-vital-val ${dti>50?'danger':dti>30?'warning':'safe'}">${dti}%</p>
+          <p class="sample-vital-status">${dti>50?'🔴 Too high':dti>30?'🟡 Moderate':'🟢 Healthy'}</p>
+        </div>
+        <div class="sample-vital">
+          <p class="sample-vital-label">Financial stress index</p>
+          <p class="sample-vital-val ${stressColor}">${stressScore}/100</p>
+          <p class="sample-vital-status">${stressText}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 1: Job loss — unlocked -->
+    <div class="sample-section">
+      <p class="sample-section-label">Scenario 1 — If you lost your job today</p>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Survival window</p><p class="sample-scenario-sub">Based on expenses ${fmt(expenses)} + debt repayment ${fmt(dp)}</p></div>
+        <p class="sample-scenario-val ${colorCss}">${daysStr} days</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">True monthly burn (incl. debt)</p><p class="sample-scenario-sub">Expenses + repayments</p></div>
+        <p class="sample-scenario-val red">-${fmt(expenses+dp)}/mo</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Savings depletion month</p><p class="sample-scenario-sub">Without any income</p></div>
+        <p class="sample-scenario-val red">${zeroMonth}</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Recommended safety reserve</p><p class="sample-scenario-sub">6-month survival standard</p></div>
+        <p class="sample-scenario-val green">${fmt(target6m)}</p>
+      </div>
+    </div>
+
+    <!-- Scenario 2: Medical $50,000 — unlocked -->
+    <div class="sample-section">
+      <p class="sample-section-label">Scenario 2 — Emergency medical expense $50,000</p>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">One-time runway loss</p><p class="sample-scenario-sub">Medical emergency/surgery/hospital</p></div>
+        <p class="sample-scenario-val red">${Math.round(50000/expenses*30.4)} days</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Remaining runway</p><p class="sample-scenario-sub">After deducting $50,000</p></div>
+        <p class="sample-scenario-val ${Math.max(0,savings-50000)/expenses*30.4<=90?'red':'amber'}">${Math.max(0,savings-50000)<=0?'0 days':Math.round(Math.max(0,savings-50000)/expenses*30.4)+' days'}</p>
+      </div>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Time to recover to safety line</p><p class="sample-scenario-sub">Save ${fmt(Math.round((target6m-Math.max(0,savings-50000))/6))}/mo</p></div>
+        <p class="sample-scenario-val amber">6 months</p>
+      </div>
+    </div>
+
+    <!-- Scenario 3: Quit job — locked -->
+    <div class="sample-locked">
+      <div class="sample-locked-inner">
+        <div style="padding:0">
+          <p class="sample-section-label">Scenario 3 — If you quit your job</p>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Safe job search window</p><p class="sample-scenario-sub">Before financial pressure becomes critical</p></div>
+            <p class="sample-scenario-val amber">~${Math.round(days/7)} weeks</p>
+          </div>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Income replacement urgency</p><p class="sample-scenario-sub">Based on your industry's re-employment cycle</p></div>
+            <p class="sample-scenario-val red">High</p>
+          </div>
+        </div>
+      </div>
+      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 Unlock in deep report</span></div>
+    </div>
+
+    <!-- Scenarios 4-6 — locked -->
+    <div class="sample-locked">
+      <div class="sample-locked-inner">
+        <div style="padding:0">
+          <p class="sample-section-label">Scenarios 4–6 — Cost of living +15% / Pay cut 20% / Childcare</p>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Cost of living +15%</p><p class="sample-scenario-sub">Monthly expenses rise to ${fmt(Math.round(expenses*1.15))}</p></div>
+            <p class="sample-scenario-val amber">Runway shrinks ${Math.round(1-1/1.15*100)}%</p>
+          </div>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Pay cut 20%</p><p class="sample-scenario-sub">Income drops to ${fmt(Math.round(income*0.8))}</p></div>
+            <p class="sample-scenario-val red">Monthly gap ${fmt(Math.round(expenses-income*0.8))}</p>
+          </div>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Childcare expense</p><p class="sample-scenario-sub">Additional $2,000–$4,000/month</p></div>
+            <p class="sample-scenario-val red">Runway significantly reduced</p>
+          </div>
+        </div>
+      </div>
+      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 Unlock in deep report</span></div>
+    </div>
+
+    <!-- 12-month timeline — locked -->
+    <div class="sample-locked">
+      <div class="sample-locked-inner">
+        <div style="padding:0;padding-top:.4rem;padding-bottom:.4rem">
+          <p class="sample-section-label">12-month cash flow timeline</p>
+          <div style="display:flex;align-items:end;gap:4px;padding:.5rem 0;height:50px">
+            ${[0,1,2,3,4,5,6,7,8,9,10,11].map(m=>{
+              var bal=Math.max(0,savings-expenses*(m+1));
+              var h=Math.round(bal/savings*40)+8;
+              return '<div style="flex:1;height:'+h+'px;background:'+((m+1)*expenses>=savings?'#e05c4a':'#4ec98a')+';border-radius:2px 2px 0 0;min-width:12px"></div>';
+            }).join('')}
+          </div>
+          <div style="display:flex;font-size:.6rem;color:rgba(0,0,0,.3)">
+            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m=>'<div style="flex:1;text-align:center">'+m+'mo</div>').join('')}
+          </div>
+        </div>
+      </div>
+      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 Unlock in deep report</span></div>
+    </div>
+
+    <!-- 3 paths — first unlocked, rest locked -->
+    <div class="sample-section">
+      <p class="sample-section-label">3 paths back to the safe zone (precise numbers)</p>
+      <div class="sample-scenario">
+        <div><p class="sample-scenario-name">Path A: Reduce expenses</p><p class="sample-scenario-sub">Cut ${fmt(reduceAmt)}/mo, ${monthsToSafe==='Already safe'?'already safe':monthsToSafe+' months'} to safety, runway extends to ${Math.round((savings)/(expenses-reduceAmt)*30.4)} days</p></div>
+        <p class="sample-scenario-val green">Easy</p>
+      </div>
+    </div>
+    <div class="sample-locked">
+      <div class="sample-locked-inner">
+        <div style="padding:0">
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Path B: Increase income</p><p class="sample-scenario-sub">Add ${fmt(Math.round(expenses*0.2/100)*100)}/mo, 12 months to target, stress index from ${stressScore} down to ${Math.max(10,Math.round(stressScore-25))}</p></div>
+            <p class="sample-scenario-val amber">Moderate</p>
+          </div>
+          <div class="sample-scenario">
+            <div><p class="sample-scenario-name">Path C: Combined approach</p><p class="sample-scenario-sub">Fastest path, 5 months to safety line</p></div>
+            <p class="sample-scenario-val green">Recommended</p>
+          </div>
+        </div>
+      </div>
+      <div class="sample-locked-overlay"><span class="sample-locked-msg">🔒 Unlock in deep report</span></div>
+    </div>
+
+    <p class="sample-note">This is a deep ($13.99) sample preview, calculated from your real data. The full deep report includes 6 scenarios, 12-month cash flow timeline, 4 personalized insights, 3 recovery paths with precise numbers.<br><span style="color:var(--amber)">Basic ($9.99) includes only 3 scenarios + approximate paths, 71% accuracy</span></p>`;
+  }
+
+  document.getElementById('sample-preview').innerHTML=html;
 }
 
 // slider wiring
