@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风险跑道 — 你的财务生存分析报告</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0a0a;
+  --paper:#f5f4f0;
+  --dim:#b8b5ac;
+  --dimmer:#d4d1c8;
+  --border:#e2dfd8;
+  --red:#c0392b;--red-soft:#fdf0ee;
+  --amber:#d4840a;--amber-soft:#fdf6e8;
+  --green:#1a7a4a;--green-soft:#eaf5ef;
+  --serif:'Georgia','Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;min-height:100vh}
+nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--paper)}
+.logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}.logo b{color:var(--red);font-weight:normal}
+.report-badge{font-size:.68rem;letter-spacing:.1em;color:var(--dim);border:1px solid var(--border);padding:.2rem .7rem;border-radius:2rem}
+
+.report-wrap{max-width:680px;margin:0 auto;padding:2.5rem 2rem 5rem}
+
+/* cover */
+.cover{
+  background:var(--ink);color:#fff;border-radius:12px;
+  padding:2rem 2rem 1.75rem;margin-bottom:1.5rem;
+  position:relative;overflow:hidden;
+}
+.cover::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 0%,rgba(192,57,43,.2) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+.cover-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.4)}
+.cover-plan{font-size:.65rem;letter-spacing:.1em;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:.2rem .65rem;border-radius:2rem}
+.cover-title{font-family:var(--serif);font-size:1.5rem;font-weight:normal;letter-spacing:-.02em;margin-bottom:.25rem}
+.cover-meta{font-size:.75rem;color:rgba(255,255,255,.35)}
+.cover-accuracy{
+  display:inline-flex;align-items:center;gap:.4rem;
+  margin-top:1.25rem;font-size:.72rem;letter-spacing:.06em;
+  color:rgba(255,255,255,.5);
+  border-top:1px solid rgba(255,255,255,.1);
+  padding-top:1rem;width:100%;
+}
+.acc-bar{flex:1;height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.acc-fill{height:100%;background:#4ec98a;width:71%}
+
+/* runway hero */
+.runway-hero{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fff;border:1px solid var(--border);border-radius:10px;
+  padding:1.5rem;margin-bottom:1rem;
+  flex-wrap:wrap;gap:1rem;
+}
+.rh-left{}
+.rh-eyebrow{font-size:.65rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.25rem}
+.rh-days{font-family:var(--serif);font-size:3.5rem;letter-spacing:-.04em;line-height:1;color:var(--amber)}
+.rh-unit{font-size:.78rem;color:var(--dim);margin-top:.25rem}
+.rh-right{text-align:right}
+.rh-status{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.72rem;letter-spacing:.06em;
+  background:var(--amber-soft);color:var(--amber);
+  border:1px solid #f5d99a;padding:.3rem .85rem;border-radius:2rem;
+  margin-bottom:.5rem;
+}
+.rh-desc{font-size:.8rem;color:var(--dim);max-width:180px;line-height:1.5;text-align:right}
+
+/* vitals */
+.vitals{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+@media(max-width:520px){.vitals{grid-template-columns:1fr 1fr}}
+.vital{background:#fff;padding:.85rem .75rem;text-align:center}
+.vital-label{font-size:.62rem;letter-spacing:.08em;color:var(--dim);margin-bottom:.3rem}
+.vital-val{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}
+.vital-val.red{color:var(--red)}.vital-val.amber{color:var(--amber)}.vital-val.green{color:var(--green)}
+.vital-sub{font-size:.65rem;color:var(--dim);margin-top:.15rem}
+
+/* section */
+.section{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.section-head{
+  padding:.85rem 1.25rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.section-title{font-size:.72rem;letter-spacing:.1em;color:var(--dim)}
+.section-badge{font-size:.65rem;letter-spacing:.06em;padding:.2rem .6rem;border-radius:2rem}
+.badge-red{background:var(--red-soft);color:var(--red)}
+.badge-amber{background:var(--amber-soft);color:var(--amber)}
+.badge-green{background:var(--green-soft);color:var(--green)}
+
+.scenario-row{
+  padding:.9rem 1.25rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:.75rem;
+}
+.scenario-row:last-child{border-bottom:none}
+.sr-name{font-size:.9rem;color:var(--ink);font-weight:500;margin-bottom:.15rem}
+.sr-sub{font-size:.75rem;color:var(--dim)}
+.sr-val{font-family:var(--serif);font-size:1rem;text-align:right;white-space:nowrap}
+.sr-val.red{color:var(--red)}.sr-val.amber{color:var(--amber)}.sr-val.green{color:var(--green)}
+
+/* insight */
+.insight-row{
+  padding:.9rem 1.25rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:28px 1fr;gap:.75rem;
+}
+.insight-row:last-child{border-bottom:none}
+.insight-dot{width:8px;height:8px;border-radius:50%;margin-top:.5rem;flex-shrink:0}
+.insight-dot.red{background:var(--red)}.insight-dot.amber{background:var(--amber)}
+.insight-text{font-size:.88rem;color:#444;line-height:1.6}
+.insight-text b{color:var(--ink)}
+
+/* paths */
+.path-row{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.path-row:last-child{border-bottom:none}
+.path-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.path-label{font-size:.88rem;font-weight:500}
+.path-effort{font-size:.68rem;letter-spacing:.06em;padding:.2rem .6rem;border-radius:2rem}
+.effort-low{background:var(--green-soft);color:var(--green)}
+.effort-med{background:var(--amber-soft);color:var(--amber)}
+.effort-high{background:var(--red-soft);color:var(--red)}
+.path-desc{font-size:.82rem;color:#666;line-height:1.55}
+.path-number{font-family:var(--serif);font-size:1rem;color:var(--ink);margin-top:.3rem}
+
+/* annual */
+.annual-row{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.annual-row:last-child{border-bottom:none}
+.ar-label{font-size:.85rem;color:#555}
+.ar-val{font-family:var(--serif);font-size:1rem}
+
+/* conclusion */
+.conclusion{
+  background:var(--ink);color:#fff;border-radius:10px;
+  padding:1.75rem;margin-bottom:1rem;
+}
+.conclusion-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.35);margin-bottom:.75rem}
+.conclusion-text{font-family:var(--serif);font-size:1.15rem;font-weight:normal;line-height:1.55;letter-spacing:-.01em}
+
+/* disclaimer */
+.disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center}
+
+/* upgrade */
+.upgrade{border:2px solid var(--green);border-radius:10px;padding:1.5rem;margin-bottom:1rem;background:var(--green-soft);text-align:center}
+.upgrade h3{font-family:var(--serif);font-size:1.1rem;font-weight:normal;margin-bottom:.4rem}
+.upgrade p{font-size:.82rem;color:#555;margin-bottom:1rem;line-height:1.55}
+.upgrade-btn{
+  display:inline-block;padding:.7rem 1.75rem;
+  background:var(--ink);color:#fff;
+  font-size:.85rem;border-radius:5px;
+  text-decoration:none;cursor:pointer;border:none;
+  transition:opacity .15s;
+}
+.upgrade-btn:hover{opacity:.85}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">风险<b>跑道</b></div>
+  <span class="report-badge">基础报告 · ¥9.9</span>
+</nav>
+
+<div class="report-wrap">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-top">
+      <span class="cover-label">财务生存分析</span>
+      <span class="cover-plan">基础版</span>
+    </div>
+    <p class="cover-title">你的财务跑道报告</p>
+    <p class="cover-meta">由风险跑道生成 &nbsp;·&nbsp; <span id="report-date"></span></p>
+    <div class="cover-accuracy">
+      <span>分析准确度：71%</span>
+      <div class="acc-bar"><div class="acc-fill"></div></div>
+      <span>基于2个数据点</span>
+    </div>
+  </div>
+
+  <!-- RUNWAY HERO -->
+  <div class="runway-hero">
+    <div class="rh-left">
+      <p class="rh-eyebrow">你的财务跑道</p>
+      <div class="rh-days" id="rh-days">109</div>
+      <p class="rh-unit">天的生存能力</p>
+    </div>
+    <div class="rh-right">
+      <div class="rh-status">⚠ 警戒区</div>
+      <p class="rh-desc">低于财务研究建议的6个月安全储备线</p>
+    </div>
+  </div>
+
+  <!-- VITALS -->
+  <div class="vitals">
+    <div class="vital">
+      <p class="vital-label">月度消耗</p>
+      <p class="vital-val red" id="v-burn">¥4,200</p>
+      <p class="vital-sub">固定支出</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">年度支出总额</p>
+      <p class="vital-val amber" id="v-annual">¥50,400</p>
+      <p class="vital-sub">维持当前生活</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">安全储备目标</p>
+      <p class="vital-val green" id="v-target">¥25,200</p>
+      <p class="vital-sub">6个月缓冲</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">距安全线差距</p>
+      <p class="vital-val red" id="v-gap">¥7,200</p>
+      <p class="vital-sub">尚需补足</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 1: JOB LOSS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">场景一 — 如果今天失业</span>
+      <span class="section-badge badge-amber">警戒</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">生存窗口</p><p class="sr-sub">存款归零前的天数</p></div>
+      <p class="sr-val amber" id="sc1-days">109天</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">每月现金消耗</p><p class="sr-sub">仅计必要固定支出</p></div>
+      <p class="sr-val red" id="sc1-burn">−¥4,200</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">储蓄归零月份</p><p class="sr-sub">无收入情况下</p></div>
+      <p class="sr-val red" id="sc1-break">第4个月</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">推荐安全储备目标</p><p class="sr-sub">6个月生存线标准</p></div>
+      <p class="sr-val green" id="sc1-target">¥25,200</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 2: INCOME CUT -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">场景二 — 如果收入下降20%</span>
+      <span class="section-badge badge-amber">有风险</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">每月缺口</p><p class="sr-sub">缩减后收入与支出之差</p></div>
+      <p class="sr-val red" id="sc2-gap">−¥840/月</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">缩减收入下的跑道</p><p class="sr-sub">存款消耗加速</p></div>
+      <p class="sr-val amber" id="sc2-runway">68天</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">进入危险区时间</p><p class="sr-sub">如不调整支出</p></div>
+      <p class="sr-val red" id="sc2-critical">第3个月</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 3: EMERGENCY EXPENSE -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">场景三 — 突发大额支出¥30,000</span>
+      <span class="section-badge badge-red">高冲击</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">冲击后新跑道</p><p class="sr-sub">对生存能力的即时影响</p></div>
+      <p class="sr-val red" id="sc3-runway">0天</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">跑道缩减</p><p class="sr-sub">一次意外事件损失的天数</p></div>
+      <p class="sr-val red" id="sc3-loss">−109天</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">恢复周期</p><p class="sr-sub">按当前存款速度重建缓冲</p></div>
+      <p class="sr-val amber" id="sc3-recovery">4-6个月</p>
+    </div>
+  </div>
+
+  <!-- HIDDEN RISK INSIGHTS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">2条隐形风险洞察</span>
+      <span class="section-badge badge-amber">AI分析</span>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot red" style="margin-left:10px"></div>
+      <p class="insight-text"><b>你已低于关键阈值。</b>财务研究反复表明，跑道不足3个月的家庭，遇到意外支出时极有可能被迫借贷——因为别无选择。以你目前的水平，一次¥10,000的意外就可能把你推入那个处境。</p>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot amber" style="margin-left:10px"></div>
+      <p class="insight-text"><b>你的年度支出比想象的大。</b>每年<span id="ins2-annual">¥50,400</span>是你维持当前生活的成本。这个数字很难缩减——大部分是固定支出。从"我还行"到"我出问题了"的距离，比大多数人以为的要短得多。</p>
+    </div>
+  </div>
+
+  <!-- 3 RECOVERY PATHS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">3条回到安全区的路径</span>
+      <span class="section-badge badge-green">行动选项</span>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">路径A — 减少月支出</span>
+        <span class="path-effort effort-low">低难度</span>
+      </div>
+      <p class="path-desc">削减固定支出¥500-¥1,000/月——订阅、外食、弹性消费。</p>
+      <p class="path-number" id="pa-result">月减¥500 → 约12个月达到6个月安全线</p>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">路径B — 增加月收入</span>
+        <span class="path-effort effort-med">中等难度</span>
+      </div>
+      <p class="path-desc">通过副业、接单或谈加薪，月收入增加¥1,000-¥2,000。</p>
+      <p class="path-number" id="pb-result">月增¥1,000 → 约9个月达标</p>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">路径C — 双管齐下</span>
+        <span class="path-effort effort-low">最快</span>
+      </div>
+      <p class="path-desc">月支出减¥500 + 月收入增¥500，同步推进。</p>
+      <p class="path-number" id="pc-result">月改善¥1,000 → 约7个月达标</p>
+    </div>
+  </div>
+
+  <!-- UPGRADE PROMPT -->
+  <div class="upgrade">
+    <h3>想要更精准的分析？</h3>
+    <p>这份基础报告基于2个数据点——准确度：71%。深度分析报告使用7个数据点，产出94%准确度的个性化分析，包含你的债务负担、收入稳定性、职业类型和家庭结构。</p>
+    <button class="upgrade-btn" onclick="window.location.href='report-deep.html'+location.search">升级深度分析 — ¥13.99 →</button>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="conclusion">
+    <p class="conclusion-label">一句话结论</p>
+    <p class="conclusion-text" id="conclusion-text">"你的财务状况能应付平静的日子，但经不起任何一次意外。你距离安全不远——但需要在下一次意外发生之前主动行动。"</p>
+  </div>
+
+  <p class="disclaimer">以上推算基于您输入的数据进行数学计算，仅供信息参考，不构成财务、法律或投资建议。个人情况差异较大，重大财务决策前请咨询持牌理财顾问。风险跑道 · 非注册投资顾问。</p>
+
+</div>
+
+<script>
+document.getElementById('report-date').textContent=new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+
+// 读取URL参数，否则用默认值
+var params=new URLSearchParams(window.location.search);
+var savings=parseInt(params.get('s')||18000);
+var expenses=parseInt(params.get('e')||4200);
+var days=Math.round(savings/expenses*30.4);
+var months=days/30.4;
+var annual=expenses*12;
+var target=expenses*6;
+var gap=Math.max(0,target-savings);
+
+function fmt(n){return'¥'+Math.round(n).toLocaleString()}
+
+// 跑道颜色
+function dayColor(d){return d<=30?'red':d<=180?'amber':'green'}
+function dayColorClass(d){return d<=30?'red':d<=180?'amber':'green'}
+
+// RUNWAY HERO
+var rhEl=document.getElementById('rh-days');
+rhEl.textContent=days;
+rhEl.style.color=days<=30?'var(--red)':days<=180?'var(--amber)':'var(--green)';
+
+var statusEl=document.querySelector('.rh-status');
+var descEl=document.querySelector('.rh-desc');
+if(days<=30){
+  statusEl.textContent='🔴 极度危险';statusEl.style.background='var(--red-soft)';statusEl.style.color='var(--red)';statusEl.style.borderColor='#f5bcb8';
+  descEl.textContent='远低于安全线，任何意外都将导致严重后果';
+}else if(days<=90){
+  statusEl.textContent='🔴 高风险';statusEl.style.background='var(--red-soft)';statusEl.style.color='var(--red)';statusEl.style.borderColor='#f5bcb8';
+  descEl.textContent='低于3个月安全线，一次意外就可能陷入困境';
+}else if(days<=180){
+  statusEl.textContent='⚠ 警戒区';statusEl.style.background='var(--amber-soft)';statusEl.style.color='var(--amber)';statusEl.style.borderColor='#f5d99a';
+  descEl.textContent='低于6个月安全储备线建议';
+}else{
+  statusEl.textContent='✓ 健康区间';statusEl.style.background='var(--green-soft)';statusEl.style.color='var(--green)';statusEl.style.borderColor='#b8e8ce';
+  descEl.textContent='跑道充裕，具有真实的财务选择空间';
+}
+
+// VITALS
+document.getElementById('v-burn').textContent=fmt(expenses);
+document.getElementById('v-annual').textContent=fmt(annual);
+document.getElementById('v-target').textContent=fmt(target);
+document.getElementById('v-gap').textContent=gap>0?fmt(gap):'已达标';
+if(gap<=0) document.getElementById('v-gap').className='vital-val green';
+
+// SCENARIO 1
+document.getElementById('sc1-days').textContent=days+'天';
+document.getElementById('sc1-days').className='sr-val '+dayColorClass(days);
+document.getElementById('sc1-burn').textContent='−'+fmt(expenses);
+document.getElementById('sc1-break').textContent='第'+Math.ceil(months)+'个月';
+document.getElementById('sc1-target').textContent=fmt(target);
+
+// SCENARIO 2 — 收入降20%（基础版没有收入参数，用支出*2.5估算）
+var estIncome=expenses*2.5; // 估算收入
+var cut20=estIncome*0.2;
+var sc2short=expenses-(estIncome-cut20); // 月缺口 = 支出 - 缩减后收入
+var sc2run=Math.round(savings/Math.max(1,sc2short)*30.4);
+document.getElementById('sc2-gap').textContent=(sc2short>0?'−':'')+fmt(Math.abs(sc2short))+'/月';
+document.getElementById('sc2-runway').textContent=Math.max(0,sc2run)+'天';
+document.getElementById('sc2-critical').textContent=sc2short>0?'第'+Math.max(1,Math.ceil(savings/sc2short))+'个月':'不会归零';
+
+// SCENARIO 3 — 突发支出¥30,000（国内医疗/维修典型金额）
+var shock=30000;
+var daysAfterShock=Math.round((savings-shock)/expenses*30.4);
+document.getElementById('sc3-runway').textContent=Math.max(0,daysAfterShock)+'天';
+document.getElementById('sc3-loss').textContent='−'+(days-daysAfterShock)+'天';
+var recoveryMonths=shock>0?Math.ceil(shock/(estIncome-expenses)):0;
+document.getElementById('sc3-recovery').textContent=recoveryMonths>0?recoveryMonths+'-'+Math.ceil(recoveryMonths*1.5)+'个月':'无需恢复';
+
+// INSIGHTS
+document.getElementById('ins2-annual').textContent=fmt(annual);
+
+// PATHS
+var pa=Math.ceil(gap/500);
+var pb=Math.ceil(gap/1000);
+var pc=Math.ceil(gap/1000);
+document.getElementById('pa-result').textContent='月减¥500 → 约'+pa+'个月达到6个月安全线';
+document.getElementById('pb-result').textContent='月增¥1,000 → 约'+pb+'个月达标';
+document.getElementById('pc-result').textContent='月改善¥1,000 → 约'+pc+'个月达标';
+
+// CONCLUSION
+var txt;
+if(days<=30) txt='"你的财务状况已经处于危险区。任何意外支出或收入中断都会立刻迫使你做出艰难的选择。行动的时间不是尽快——而是现在。"';
+else if(days<=90) txt='"你的缓冲窗口很窄。一次常规的财务冲击就可能把'管理'变成'挣扎'。上面这些场景不是假设——它们是最常见的、把人从勉强维持推向困境的事件。"';
+else if(days<=180) txt='"你的财务状况能应付平静的日子，但经不起任何一次意外。你距离安全不远——但需要在下一次意外发生之前主动行动。"';
+else txt='"你的状况比大多数国人好。你的跑道给了你真正的选择权——可以说不、可以冒险、可以扛住风暴。现在的目标是保护并延长这个位置，搞清楚什么可能侵蚀它。"';
+document.getElementById('conclusion-text').textContent=txt;
+</script>
+</body>
+</html>

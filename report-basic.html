@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RiskRunway — Your Financial Survival Analysis Report</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0a0a;
+  --paper:#f5f4f0;
+  --dim:#b8b5ac;
+  --dimmer:#d4d1c8;
+  --border:#e2dfd8;
+  --red:#c0392b;--red-soft:#fdf0ee;
+  --amber:#d4840a;--amber-soft:#fdf6e8;
+  --green:#1a7a4a;--green-soft:#eaf5ef;
+  --serif:'Georgia','Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;min-height:100vh}
+nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--paper)}
+.logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}.logo b{color:var(--red);font-weight:normal}
+.report-badge{font-size:.68rem;letter-spacing:.1em;color:var(--dim);border:1px solid var(--border);padding:.2rem .7rem;border-radius:2rem}
+
+.report-wrap{max-width:680px;margin:0 auto;padding:2.5rem 2rem 5rem}
+
+/* cover */
+.cover{
+  background:var(--ink);color:#fff;border-radius:12px;
+  padding:2rem 2rem 1.75rem;margin-bottom:1.5rem;
+  position:relative;overflow:hidden;
+}
+.cover::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 0%,rgba(192,57,43,.2) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+.cover-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.4)}
+.cover-plan{font-size:.65rem;letter-spacing:.1em;background:rgba(255,255,255,.1);color:rgba(255,255,255,.6);padding:.2rem .65rem;border-radius:2rem}
+.cover-title{font-family:var(--serif);font-size:1.5rem;font-weight:normal;letter-spacing:-.02em;margin-bottom:.25rem}
+.cover-meta{font-size:.75rem;color:rgba(255,255,255,.35)}
+.cover-accuracy{
+  display:inline-flex;align-items:center;gap:.4rem;
+  margin-top:1.25rem;font-size:.72rem;letter-spacing:.06em;
+  color:rgba(255,255,255,.5);
+  border-top:1px solid rgba(255,255,255,.1);
+  padding-top:1rem;width:100%;
+}
+.acc-bar{flex:1;height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.acc-fill{height:100%;background:#4ec98a;width:71%}
+
+/* runway hero */
+.runway-hero{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fff;border:1px solid var(--border);border-radius:10px;
+  padding:1.5rem;margin-bottom:1rem;
+  flex-wrap:wrap;gap:1rem;
+}
+.rh-left{}
+.rh-eyebrow{font-size:.65rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.25rem}
+.rh-days{font-family:var(--serif);font-size:3.5rem;letter-spacing:-.04em;line-height:1;color:var(--amber)}
+.rh-unit{font-size:.78rem;color:var(--dim);margin-top:.25rem}
+.rh-right{text-align:right}
+.rh-status{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.72rem;letter-spacing:.06em;
+  background:var(--amber-soft);color:var(--amber);
+  border:1px solid #f5d99a;padding:.3rem .85rem;border-radius:2rem;
+  margin-bottom:.5rem;
+}
+.rh-desc{font-size:.8rem;color:var(--dim);max-width:180px;line-height:1.5;text-align:right}
+
+/* vitals */
+.vitals{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+@media(max-width:520px){.vitals{grid-template-columns:1fr 1fr}}
+.vital{background:#fff;padding:.85rem .75rem;text-align:center}
+.vital-label{font-size:.62rem;letter-spacing:.08em;color:var(--dim);margin-bottom:.3rem}
+.vital-val{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}
+.vital-val.red{color:var(--red)}.vital-val.amber{color:var(--amber)}.vital-val.green{color:var(--green)}
+.vital-sub{font-size:.65rem;color:var(--dim);margin-top:.15rem}
+
+/* section */
+.section{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.section-head{
+  padding:.85rem 1.25rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.section-title{font-size:.72rem;letter-spacing:.1em;color:var(--dim)}
+.section-badge{font-size:.65rem;letter-spacing:.06em;padding:.2rem .6rem;border-radius:2rem}
+.badge-red{background:var(--red-soft);color:var(--red)}
+.badge-amber{background:var(--amber-soft);color:var(--amber)}
+.badge-green{background:var(--green-soft);color:var(--green)}
+
+.scenario-row{
+  padding:.9rem 1.25rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:.75rem;
+}
+.scenario-row:last-child{border-bottom:none}
+.sr-name{font-size:.9rem;color:var(--ink);font-weight:500;margin-bottom:.15rem}
+.sr-sub{font-size:.75rem;color:var(--dim)}
+.sr-val{font-family:var(--serif);font-size:1rem;text-align:right;white-space:nowrap}
+.sr-val.red{color:var(--red)}.sr-val.amber{color:var(--amber)}.sr-val.green{color:var(--green)}
+
+/* insight */
+.insight-row{
+  padding:.9rem 1.25rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:28px 1fr;gap:.75rem;
+}
+.insight-row:last-child{border-bottom:none}
+.insight-dot{width:8px;height:8px;border-radius:50%;margin-top:.5rem;flex-shrink:0}
+.insight-dot.red{background:var(--red)}.insight-dot.amber{background:var(--amber)}
+.insight-text{font-size:.88rem;color:#444;line-height:1.6}
+.insight-text b{color:var(--ink)}
+
+/* paths */
+.path-row{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.path-row:last-child{border-bottom:none}
+.path-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.path-label{font-size:.88rem;font-weight:500}
+.path-effort{font-size:.68rem;letter-spacing:.06em;padding:.2rem .6rem;border-radius:2rem}
+.effort-low{background:var(--green-soft);color:var(--green)}
+.effort-med{background:var(--amber-soft);color:var(--amber)}
+.effort-high{background:var(--red-soft);color:var(--red)}
+.path-desc{font-size:.82rem;color:#666;line-height:1.55}
+.path-number{font-family:var(--serif);font-size:1rem;color:var(--ink);margin-top:.3rem}
+
+/* annual */
+.annual-row{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.annual-row:last-child{border-bottom:none}
+.ar-label{font-size:.85rem;color:#555}
+.ar-val{font-family:var(--serif);font-size:1rem}
+
+/* conclusion */
+.conclusion{
+  background:var(--ink);color:#fff;border-radius:10px;
+  padding:1.75rem;margin-bottom:1rem;
+}
+.conclusion-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.35);margin-bottom:.75rem}
+.conclusion-text{font-family:var(--serif);font-size:1.15rem;font-weight:normal;line-height:1.55;letter-spacing:-.01em}
+
+/* disclaimer */
+.disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center}
+
+/* upgrade */
+.upgrade{border:2px solid var(--green);border-radius:10px;padding:1.5rem;margin-bottom:1rem;background:var(--green-soft);text-align:center}
+.upgrade h3{font-family:var(--serif);font-size:1.1rem;font-weight:normal;margin-bottom:.4rem}
+.upgrade p{font-size:.82rem;color:#555;margin-bottom:1rem;line-height:1.55}
+.upgrade-btn{
+  display:inline-block;padding:.7rem 1.75rem;
+  background:var(--ink);color:#fff;
+  font-size:.85rem;border-radius:5px;
+  text-decoration:none;cursor:pointer;border:none;
+  transition:opacity .15s;
+}
+.upgrade-btn:hover{opacity:.85}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">RiskRunway</div>
+  <span class="report-badge">Basic Report · $9.99</span>
+</nav>
+
+<div class="report-wrap">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-top">
+      <span class="cover-label">Financial Survival Analysis</span>
+      <span class="cover-plan">Basic</span>
+    </div>
+    <p class="cover-title">Your Financial Runway Report</p>
+    <p class="cover-meta">Generated by RiskRunway &nbsp;·&nbsp; <span id="report-date"></span></p>
+    <div class="cover-accuracy">
+      <span>Analysis accuracy: 71%</span>
+      <div class="acc-bar"><div class="acc-fill"></div></div>
+      <span>Based on 2 data points</span>
+    </div>
+  </div>
+
+  <!-- RUNWAY HERO -->
+  <div class="runway-hero">
+    <div class="rh-left">
+      <p class="rh-eyebrow">Your Financial Runway</p>
+      <div class="rh-days" id="rh-days">72</div>
+      <p class="rh-unit">days of survival</p>
+    </div>
+    <div class="rh-right">
+      <div class="rh-status">&#9888; Caution Zone</div>
+      <p class="rh-desc">Below the 6-month safety reserve recommended by financial research</p>
+    </div>
+  </div>
+
+  <!-- VITALS -->
+  <div class="vitals">
+    <div class="vital">
+      <p class="vital-label">Monthly Burn</p>
+      <p class="vital-val red" id="v-burn">$4,200</p>
+      <p class="vital-sub">Fixed expenses</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">Annual Total</p>
+      <p class="vital-val amber" id="v-annual">$50,400</p>
+      <p class="vital-sub">Current lifestyle cost</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">Safety Target</p>
+      <p class="vital-val green" id="v-target">$25,200</p>
+      <p class="vital-sub">6-month buffer</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">Gap to Safety</p>
+      <p class="vital-val red" id="v-gap">$15,200</p>
+      <p class="vital-sub">Needed to close</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 1: JOB LOSS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 1 — If You Lose Your Job Today</span>
+      <span class="section-badge badge-amber">Caution</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Survival Window</p><p class="sr-sub">Days until savings reach zero</p></div>
+      <p class="sr-val amber" id="sc1-days">72 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Monthly Cash Burn</p><p class="sr-sub">Essential fixed expenses only</p></div>
+      <p class="sr-val red" id="sc1-burn">−$4,200</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Month Savings Hit Zero</p><p class="sr-sub">With no income</p></div>
+      <p class="sr-val red" id="sc1-break">Month 3</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Recommended Safety Target</p><p class="sr-sub">6-month survival standard</p></div>
+      <p class="sr-val green" id="sc1-target">$25,200</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 2: INCOME CUT -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 2 — If Your Income Drops 20%</span>
+      <span class="section-badge badge-amber">At Risk</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Monthly Shortfall</p><p class="sr-sub">Difference between reduced income and expenses</p></div>
+      <p class="sr-val red" id="sc2-gap">$4,200/mo</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Runway with Reduced Income</p><p class="sr-sub">Savings deplete faster</p></div>
+      <p class="sr-val amber" id="sc2-runway">304,000 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Time to Danger Zone</p><p class="sr-sub">If expenses are not adjusted</p></div>
+      <p class="sr-val red" id="sc2-critical">Will not hit zero</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 3: EMERGENCY EXPENSE -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 3 — Emergency Expense of $5,000</span>
+      <span class="section-badge badge-red">High Impact</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">New Runway After Shock</p><p class="sr-sub">Immediate impact on survival capacity</p></div>
+      <p class="sr-val red" id="sc3-runway">36 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Runway Reduction</p><p class="sr-sub">Days lost from a single unexpected event</p></div>
+      <p class="sr-val red" id="sc3-loss">−36 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Recovery Timeline</p><p class="sr-sub">Time to rebuild buffer at current savings rate</p></div>
+      <p class="sr-val amber" id="sc3-recovery">1-2 months</p>
+    </div>
+  </div>
+
+  <!-- HIDDEN RISK INSIGHTS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">2 Hidden Risk Insights</span>
+      <span class="section-badge badge-amber">AI Analysis</span>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot red" style="margin-left:10px"></div>
+      <p class="insight-text"><b>You are below a critical threshold.</b> Financial research consistently shows that households with less than 3 months of runway are highly likely to be forced into debt when an unexpected expense hits — because they have no alternative. At your current level, a single $1,500 surprise could push you into that position.</p>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot amber" style="margin-left:10px"></div>
+      <p class="insight-text"><b>Your annual spending is larger than it feels.</b> <span id="ins2-annual">$50,400</span> per year is what it costs to maintain your current life. This number is hard to shrink — most of it is fixed. The distance from "I'm fine" to "I'm in trouble" is far shorter than most people think.</p>
+    </div>
+  </div>
+
+  <!-- 3 RECOVERY PATHS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">3 Paths Back to the Safety Zone</span>
+      <span class="section-badge badge-green">Action Options</span>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">Path A — Cut Monthly Expenses</span>
+        <span class="path-effort effort-low">Easy</span>
+      </div>
+      <p class="path-desc">Reduce fixed expenses by $500–$1,000/month — subscriptions, dining out, discretionary spending.</p>
+      <p class="path-number" id="pa-result">Cut $500/mo → ~12 months to reach 6-month safety line</p>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">Path B — Increase Monthly Income</span>
+        <span class="path-effort effort-med">Moderate</span>
+      </div>
+      <p class="path-desc">Add $1,000–$2,000/month through side work, freelancing, or negotiating a raise.</p>
+      <p class="path-number" id="pb-result">Add $1,000/mo → ~9 months to target</p>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">Path C — Dual Approach</span>
+        <span class="path-effort effort-low">Fastest</span>
+      </div>
+      <p class="path-desc">Cut monthly expenses by $500 + increase monthly income by $500, simultaneously.</p>
+      <p class="path-number" id="pc-result">Improve $1,000/mo → ~7 months to target</p>
+    </div>
+  </div>
+
+  <!-- UPGRADE PROMPT -->
+  <div class="upgrade">
+    <h3>Want a more precise analysis?</h3>
+    <p>This basic report is based on 2 data points — accuracy: 71%. The Deep Analysis uses 7 data points and delivers a personalized analysis with 94% accuracy, covering your debt burden, income stability, career type, and household structure.</p>
+    <button class="upgrade-btn" onclick="window.location.href='report-deep.html'+location.search">Upgrade to Deep Analysis — $13.99 &#8594;</button>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="conclusion">
+    <p class="conclusion-label">One-Sentence Conclusion</p>
+    <p class="conclusion-text" id="conclusion-text">"Your finances can handle calm days, but not a single shock. You're not far from safety — but you need to act before the next surprise hits."</p>
+  </div>
+
+  <p class="disclaimer">The estimates above are mathematical calculations based on your input data, provided for informational purposes only and do not constitute financial, legal, or investment advice. Individual circumstances vary widely — consult a licensed financial advisor before making major financial decisions. RiskRunway · Not a registered investment advisor.</p>
+
+</div>
+
+<script>
+document.getElementById('report-date').textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+// Read URL parameters, fallback to defaults
+var params=new URLSearchParams(window.location.search);
+var savings=parseInt(params.get('s')||10000);
+var expenses=parseInt(params.get('e')||4200);
+var days=Math.round(savings/expenses*30.4);
+var months=days/30.4;
+var annual=expenses*12;
+var target=expenses*6;
+var gap=Math.max(0,target-savings);
+
+function fmt(n){return'$'+Math.round(n).toLocaleString('en-US')}
+
+// Runway color
+function dayColor(d){return d<=30?'red':d<=180?'amber':'green'}
+function dayColorClass(d){return d<=30?'red':d<=180?'amber':'green'}
+
+// RUNWAY HERO
+var rhEl=document.getElementById('rh-days');
+rhEl.textContent=days;
+rhEl.style.color=days<=30?'var(--red)':days<=180?'var(--amber)':'var(--green)';
+
+var statusEl=document.querySelector('.rh-status');
+var descEl=document.querySelector('.rh-desc');
+if(days<=30){
+  statusEl.textContent='\uD83D\uDD34 Extreme Danger';statusEl.style.background='var(--red-soft)';statusEl.style.color='var(--red)';statusEl.style.borderColor='#f5bcb8';
+  descEl.textContent='Far below the safety line — any accident will have severe consequences';
+}else if(days<=90){
+  statusEl.textContent='\uD83D\uDD34 High Risk';statusEl.style.background='var(--red-soft)';statusEl.style.color='var(--red)';statusEl.style.borderColor='#f5bcb8';
+  descEl.textContent='Below the 3-month safety line — one setback could spiral into crisis';
+}else if(days<=180){
+  statusEl.textContent='\u26A0 Caution Zone';statusEl.style.background='var(--amber-soft)';statusEl.style.color='var(--amber)';statusEl.style.borderColor='#f5d99a';
+  descEl.textContent='Below the recommended 6-month reserve buffer';
+}else{
+  statusEl.textContent='\u2713 Healthy Range';statusEl.style.background='var(--green-soft)';statusEl.style.color='var(--green)';statusEl.style.borderColor='#b8e8ce';
+  descEl.textContent='Ample runway giving you genuine financial flexibility';
+}
+
+// VITALS
+document.getElementById('v-burn').textContent=fmt(expenses);
+document.getElementById('v-annual').textContent=fmt(annual);
+document.getElementById('v-target').textContent=fmt(target);
+document.getElementById('v-gap').textContent=gap>0?fmt(gap):'Target Met';
+if(gap<=0) document.getElementById('v-gap').className='vital-val green';
+
+// SCENARIO 1
+document.getElementById('sc1-days').textContent=days+' days';
+document.getElementById('sc1-days').className='sr-val '+dayColorClass(days);
+document.getElementById('sc1-burn').textContent='\u2212'+fmt(expenses);
+document.getElementById('sc1-break').textContent='Month '+Math.ceil(months);
+document.getElementById('sc1-target').textContent=fmt(target);
+
+// SCENARIO 2 — income drops 20% (basic version has no income parameter, estimate as expenses * 2.5)
+var estIncome=expenses*2.5;
+var cut20=estIncome*0.2;
+var sc2short=expenses-(estIncome-cut20);
+var sc2run=Math.round(savings/Math.max(1,sc2short)*30.4);
+document.getElementById('sc2-gap').textContent=(sc2short>0?'\u2212':'')+fmt(Math.abs(sc2short))+'/mo';
+document.getElementById('sc2-runway').textContent=Math.max(0,sc2run)+' days';
+document.getElementById('sc2-critical').textContent=sc2short>0?'Month '+Math.max(1,Math.ceil(savings/sc2short)):'Will not hit zero';
+
+// SCENARIO 3 — emergency expense $5,000 (typical US emergency cost)
+var shock=5000;
+var daysAfterShock=Math.round((savings-shock)/expenses*30.4);
+document.getElementById('sc3-runway').textContent=Math.max(0,daysAfterShock)+' days';
+document.getElementById('sc3-loss').textContent='\u2212'+(days-daysAfterShock)+' days';
+var recoveryMonths=shock>0?Math.ceil(shock/(estIncome-expenses)):0;
+document.getElementById('sc3-recovery').textContent=recoveryMonths>0?recoveryMonths+'-'+Math.ceil(recoveryMonths*1.5)+' months':'No recovery needed';
+
+// INSIGHTS
+document.getElementById('ins2-annual').textContent=fmt(annual);
+
+// PATHS
+var pa=Math.ceil(gap/500);
+var pb=Math.ceil(gap/1000);
+var pc=Math.ceil(gap/1000);
+document.getElementById('pa-result').textContent='Cut $500/mo \u2192 ~'+pa+' months to reach 6-month safety line';
+document.getElementById('pb-result').textContent='Add $1,000/mo \u2192 ~'+pb+' months to target';
+document.getElementById('pc-result').textContent='Improve $1,000/mo \u2192 ~'+pc+' months to target';
+
+// CONCLUSION
+var txt;
+if(days<=30) txt='"Your finances are in the danger zone. Any unexpected expense or income loss will force difficult choices immediately. The time to act isn\'t soon \u2014 it\'s now."';
+else if(days<=90) txt='"Your buffer window is narrow. A routine financial shock can turn managing into struggling. The scenarios above aren\'t hypothetical \u2014 they are the most common events that tip people from getting by into real hardship."';
+else if(days<=180) txt='"Your finances can handle calm days, but not a single shock. You\'re not far from safety \u2014 but you need to act before the next surprise hits."';
+else txt='"Your position is better than most. Your runway gives you real options \u2014 the ability to say no, to take risks, to weather storms. The goal now is to protect and extend this position, and understand what could erode it."';
+document.getElementById('conclusion-text').textContent=txt;
+</script>
+</body>
+</html>

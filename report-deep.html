@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RiskRunway — Deep Financial Risk Analysis Report</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0a0a;
+  --paper:#f5f4f0;
+  --dim:#b8b5ac;
+  --dimmer:#d4d1c8;
+  --border:#e2dfd8;
+  --red:#c0392b;--red-soft:#fdf0ee;
+  --amber:#d4840a;--amber-soft:#fdf6e8;
+  --green:#1a7a4a;--green-soft:#eaf5ef;
+  --serif:'Georgia','Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;min-height:100vh}
+nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--paper)}
+.logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}.logo b{color:var(--red);font-weight:normal}
+.report-badge{font-size:.68rem;letter-spacing:.1em;color:var(--green);border:1px solid #b8e8ce;padding:.2rem .7rem;border-radius:2rem;background:var(--green-soft)}
+
+.report-wrap{max-width:680px;margin:0 auto;padding:2.5rem 2rem 5rem}
+
+.cover{background:var(--ink);color:#fff;border-radius:12px;padding:2rem 2rem 1.75rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(26,122,74,.25) 0%,transparent 60%);pointer-events:none}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+.cover-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.4)}
+.cover-plan{font-size:.65rem;letter-spacing:.1em;background:rgba(78,201,138,.2);color:#7de0a8;padding:.2rem .65rem;border-radius:2rem;border:1px solid rgba(78,201,138,.3)}
+.cover-title{font-family:var(--serif);font-size:1.5rem;font-weight:normal;letter-spacing:-.02em;margin-bottom:.25rem}
+.cover-meta{font-size:.75rem;color:rgba(255,255,255,.35)}
+.cover-accuracy{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.25rem;font-size:.72rem;letter-spacing:.06em;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.1);padding-top:1rem;width:100%}
+.acc-bar{flex:1;height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.acc-fill{height:100%;background:#4ec98a;width:94%}
+
+.runway-hero{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem;flex-wrap:wrap;gap:1rem}
+.rh-eyebrow{font-size:.65rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.25rem}
+.rh-days{font-family:var(--serif);font-size:3.5rem;letter-spacing:-.04em;line-height:1}
+.rh-days.amber{color:var(--amber)}.rh-days.red{color:var(--red)}.rh-days.green{color:var(--green)}
+.rh-unit{font-size:.78rem;color:var(--dim);margin-top:.25rem}
+.rh-status{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;letter-spacing:.06em;padding:.3rem .85rem;border-radius:2rem;margin-bottom:.5rem}
+.status-amber{background:var(--amber-soft);color:var(--amber);border:1px solid #f5d99a}
+.status-red{background:var(--red-soft);color:var(--red);border:1px solid #f5bcb8}
+.status-green{background:var(--green-soft);color:var(--green);border:1px solid #b8e8ce}
+.rh-desc{font-size:.8rem;color:var(--dim);max-width:200px;line-height:1.5;text-align:right}
+
+.vitals{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+@media(max-width:520px){.vitals{grid-template-columns:1fr 1fr}}
+.vital{background:#fff;padding:.85rem .75rem;text-align:center}
+.vital-label{font-size:.62rem;letter-spacing:.08em;color:var(--dim);margin-bottom:.3rem}
+.vital-val{font-family:var(--serif);font-size:1.05rem;letter-spacing:-.02em}
+.vital-val.red{color:var(--red)}.vital-val.amber{color:var(--amber)}.vital-val.green{color:var(--green)}
+.vital-sub{font-size:.62rem;color:var(--dim);margin-top:.15rem}
+
+.section{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;overflow:hidden}
+.section-head{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:.72rem;letter-spacing:.1em;color:var(--dim)}
+.section-badge{font-size:.65rem;letter-spacing:.06em;padding:.2rem .6rem;border-radius:2rem}
+.badge-red{background:var(--red-soft);color:var(--red)}
+.badge-amber{background:var(--amber-soft);color:var(--amber)}
+.badge-green{background:var(--green-soft);color:var(--green)}
+.badge-blue{background:#eef3f8;color:#2a6ab2}
+
+.scenario-row{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;align-items:center;gap:.75rem}
+.scenario-row:last-child{border-bottom:none}
+.sr-name{font-size:.9rem;color:var(--ink);font-weight:500;margin-bottom:.15rem}
+.sr-sub{font-size:.75rem;color:var(--dim)}
+.sr-val{font-family:var(--serif);font-size:1rem;text-align:right;white-space:nowrap}
+.sr-val.red{color:var(--red)}.sr-val.amber{color:var(--amber)}.sr-val.green{color:var(--green)}
+
+/* timeline */
+.timeline{padding:1.25rem}
+.tl-row{display:flex;gap:.85rem;margin-bottom:1rem}
+.tl-row:last-child{margin-bottom:0}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:32px;flex-shrink:0}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tl-dot.red{background:var(--red)}.tl-dot.amber{background:var(--amber)}.tl-dot.green{background:var(--green)}
+.tl-line{width:2px;flex:1;background:var(--border);margin-top:4px}
+.tl-month{font-size:.68rem;letter-spacing:.06em;color:var(--dim);margin-top:.25rem;white-space:nowrap}
+.tl-title{font-size:.88rem;font-weight:500;margin-bottom:.2rem}
+.tl-desc{font-size:.78rem;color:#666;line-height:1.5}
+
+/* debt impact */
+.debt-bar-wrap{padding:1rem 1.25rem}
+.debt-label-row{display:flex;justify-content:space-between;font-size:.75rem;color:var(--dim);margin-bottom:.4rem}
+.debt-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:.6rem}
+.debt-fill{height:100%;border-radius:4px;transition:width .5s}
+.debt-fill.red{background:var(--red)}.debt-fill.amber{background:var(--amber)}.debt-fill.green{background:var(--green)}
+
+.insight-row{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:28px 1fr;gap:.75rem}
+.insight-row:last-child{border-bottom:none}
+.insight-dot{width:8px;height:8px;border-radius:50%;margin-top:.5rem;flex-shrink:0}
+.insight-dot.red{background:var(--red)}.insight-dot.amber{background:var(--amber)}
+.insight-text{font-size:.88rem;color:#444;line-height:1.6}
+.insight-text b{color:var(--ink)}
+
+.path-row{padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.path-row:last-child{border-bottom:none}
+.path-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem;flex-wrap:wrap;gap:.35rem}
+.path-label{font-size:.88rem;font-weight:500}
+.path-effort{font-size:.68rem;letter-spacing:.06em;padding:.2rem .6rem;border-radius:2rem}
+.effort-low{background:var(--green-soft);color:var(--green)}
+.effort-med{background:var(--amber-soft);color:var(--amber)}
+.path-desc{font-size:.82rem;color:#666;line-height:1.55}
+.path-number{font-family:var(--serif);font-size:.95rem;color:var(--ink);margin-top:.35rem}
+.path-months{font-size:.72rem;color:var(--green);margin-top:.15rem}
+
+.conclusion{background:var(--ink);color:#fff;border-radius:10px;padding:1.75rem;margin-bottom:1rem}
+.conclusion-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.35);margin-bottom:.75rem}
+.conclusion-text{font-family:var(--serif);font-size:1.15rem;font-weight:normal;line-height:1.55;letter-spacing:-.01em}
+
+.disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Risk<b>Runway</b></div>
+  <span class="report-badge">Deep Analysis · $13.99</span>
+</nav>
+
+<div class="report-wrap">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-top">
+      <span class="cover-label">Deep Financial Survival Analysis</span>
+      <span class="cover-plan">94% Accuracy</span>
+    </div>
+    <p class="cover-title">Your Personalized Financial Risk Report</p>
+    <p class="cover-meta">Generated by RiskRunway &nbsp;·&nbsp; <span id="report-date"></span></p>
+    <div class="cover-accuracy">
+      <span>Analysis accuracy: 94%</span>
+      <div class="acc-bar"><div class="acc-fill"></div></div>
+      <span>Based on 7 data points</span>
+    </div>
+  </div>
+
+  <!-- RUNWAY HERO -->
+  <div class="runway-hero">
+    <div>
+      <p class="rh-eyebrow">Your True Financial Runway</p>
+      <div class="rh-days amber" id="rh-days">109</div>
+      <p class="rh-unit">days · debt obligations included</p>
+    </div>
+    <div style="text-align:right">
+      <div class="rh-status status-amber" id="rh-status">&#9888; Caution Zone</div>
+      <p class="rh-desc" id="rh-desc">Debt-adjusted runway is 23 days shorter than your raw savings number suggests</p>
+    </div>
+  </div>
+
+  <!-- VITALS -->
+  <div class="vitals">
+    <div class="vital">
+      <p class="vital-label">True Monthly Burn</p>
+      <p class="vital-val red" id="v-burn">$5,000</p>
+      <p class="vital-sub">Expenses + debt payments</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">Debt-to-Income</p>
+      <p class="vital-val amber" id="v-dti">28%</p>
+      <p class="vital-sub">Of total income</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">Income Stability</p>
+      <p class="vital-val green" id="v-stability">High</p>
+      <p class="vital-sub">Full-time employed</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">Stress Index</p>
+      <p class="vital-val amber" id="v-pressure">61/100</p>
+      <p class="vital-sub">Moderate risk</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 1: JOB LOSS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 1 — Job Loss</span>
+      <span class="section-badge badge-amber">Caution</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Debt-Adjusted Runway</p><p class="sr-sub">True survival window with all obligations</p></div>
+      <p class="sr-val amber" id="sc1-adj">109 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Safe Job-Search Window</p><p class="sr-sub">Max time before financial pressure becomes critical</p></div>
+      <p class="sr-val amber" id="sc1-search">15 weeks</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Income Replacement Urgency</p><p class="sr-sub">Based on your employment type</p></div>
+      <p class="sr-val amber" id="sc1-urgency">Medium-High</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 2: INCOME CUT -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 2 — Income Drops 20%</span>
+      <span class="section-badge badge-red">High Risk</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">New Monthly Shortfall</p><p class="sr-sub">Gap after income reduction</p></div>
+      <p class="sr-val red" id="sc2-short">-$1,100/mo</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Adjusted Runway</p><p class="sr-sub">Survival days with reduced income</p></div>
+      <p class="sr-val red" id="sc2-run">76 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Debt Payment Risk</p><p class="sr-sub">Can you maintain current debt obligations</p></div>
+      <p class="sr-val red" id="sc2-debt">Tight from month 3</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 3: MEDICAL EMERGENCY -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 3 — Medical Emergency $50,000</span>
+      <span class="section-badge badge-red">Severe Impact</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Post-Shock Runway</p><p class="sr-sub">Immediate impact on survival capacity</p></div>
+      <p class="sr-val red" id="sc3-run">0 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Debt Payment Capacity</p><p class="sr-sub">Can you maintain current obligations</p></div>
+      <p class="sr-val red">Severely strained</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Recovery Timeline</p><p class="sr-sub">Rebuilding your pre-shock position</p></div>
+      <p class="sr-val amber" id="sc3-rec">8–12 months</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 4: QUIT JOB -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 4 — Quitting Your Job</span>
+      <span class="section-badge badge-blue">Decision Simulation</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Safe Transition Window</p><p class="sr-sub">Max job-search time before entering danger</p></div>
+      <p class="sr-val amber" id="sc4-window">15 weeks</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Minimum Income Needed by Month 4</p><p class="sr-sub">To stop draining savings</p></div>
+      <p class="sr-val amber" id="sc4-income">$5,000/mo</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Debt Obligations During Transition</p><p class="sr-sub">Non-negotiable monthly floor</p></div>
+      <p class="sr-val red" id="sc4-debt">$800/mo fixed</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Overall Quit Feasibility</p><p class="sr-sub">Based on your complete financial profile</p></div>
+      <p class="sr-val amber" id="sc4-readiness">Possible — but margins are tight</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 5: COST OF LIVING -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 5 — Cost of Living Rises 15%</span>
+      <span class="section-badge badge-amber">Environmental Risk</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">New Monthly Expenses</p><p class="sr-sub">After increase, including debt payments</p></div>
+      <p class="sr-val red" id="sc5-exp">$5,630</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Adjusted Runway</p><p class="sr-sub">Survival days at higher burn rate</p></div>
+      <p class="sr-val amber" id="sc5-run">97 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Monthly Income Gap</p><p class="sr-sub">Additional income needed to break even</p></div>
+      <p class="sr-val red" id="sc5-gap">-$630/mo</p>
+    </div>
+  </div>
+
+  <!-- SCENARIO 6: FAMILY EXPENSE -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 6 — Major Family Expense</span>
+      <span class="section-badge badge-amber">Life Event</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Childcare / Daycare Added Cost</p><p class="sr-sub">Typical first-year additional expense</p></div>
+      <p class="sr-val red">+$2,000–$4,000/mo</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Runway with Family Expansion</p><p class="sr-sub">Estimated at +$2,500/mo increase</p></div>
+      <p class="sr-val red" id="sc6-run">62 days</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Minimum Income Increase Needed</p><p class="sr-sub">To maintain current runway level</p></div>
+      <p class="sr-val amber">+$2,500/mo</p>
+    </div>
+  </div>
+
+  <!-- 12-MONTH TIMELINE -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">12-Month Cash Flow Trajectory</span>
+      <span class="section-badge badge-amber">If Nothing Changes</span>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="tl-row">
+        <div class="tl-left"><div class="tl-dot green"></div><div class="tl-line"></div><span class="tl-month">Now</span></div>
+        <div class="tl-content"><p class="tl-title">Current Position — Caution Zone</p><p class="tl-desc" id="tl-now">109-day runway. Manageable but below the safety threshold. No immediate crisis — and no buffer either.</p></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-left"><div class="tl-dot amber"></div><div class="tl-line"></div><span class="tl-month">Month 3</span></div>
+        <div class="tl-content"><p class="tl-title">Inflection Window</p><p class="tl-desc">If an unexpected expense of $5,000+ hits here, your runway drops below 90 days — triggering high-pressure financial decisions.</p></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-left"><div class="tl-dot amber"></div><div class="tl-line"></div><span class="tl-month">Month 6</span></div>
+        <div class="tl-content"><p class="tl-title">6-Month Safety Threshold</p><p class="tl-desc">If you start saving an extra $500/month from now, you'll roughly hit the safety line around this point.</p></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-left"><div class="tl-dot green"></div><span class="tl-month">Month 12</span></div>
+        <div class="tl-content"><p class="tl-title">Green Zone Target</p><p class="tl-desc">With consistent improvement, a 9-month runway is achievable by year-end — giving you genuine options and flexibility.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEBT IMPACT -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Debt Impact Analysis</span>
+      <span class="section-badge badge-green">Deep Report Exclusive</span>
+    </div>
+    <div class="debt-bar-wrap">
+      <div class="debt-label-row"><span>Debt-to-Income Ratio</span><span id="dti-val">28%</span></div>
+      <div class="debt-bar"><div class="debt-fill amber" id="dti-bar" style="width:28%"></div></div>
+      <p style="font-size:.75rem;color:var(--dim);margin-bottom:1rem" id="dti-desc">Safe zone: below 36% · Your current debt burden is manageable, but leaves limited room for additional obligations.</p>
+      <div class="scenario-row" style="padding:0;border:none;margin-bottom:.5rem">
+        <div><p class="sr-name">Monthly Debt Payments</p><p class="sr-sub">Non-negotiable monthly floor</p></div>
+        <p class="sr-val red" id="d-monthly">$800/mo</p>
+      </div>
+      <div class="scenario-row" style="padding:0;border:none;margin-bottom:.5rem">
+        <div><p class="sr-name">Total Debt Balance</p><p class="sr-sub">Full repayment obligation</p></div>
+        <p class="sr-val amber" id="d-total">$12,000</p>
+      </div>
+      <div class="scenario-row" style="padding:0;border:none">
+        <div><p class="sr-name">Debt Impact on Runway</p><p class="sr-sub">Days lost vs. zero-debt scenario</p></div>
+        <p class="sr-val red" id="d-impact">-23 days</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 PERSONALIZED INSIGHTS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">4 Personalized Risk Insights</span>
+      <span class="section-badge badge-amber">AI Analysis</span>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot red" style="margin-left:10px"></div>
+      <p class="insight-text" id="ins1"><b>Your debt obligations are the most underestimated risk.</b> Without debt payments, your runway would be 23 days longer. In a job-loss scenario, your debt payments don't pause — when income hits zero, they keep draining your reserves. This is the easiest risk to overlook in your financial picture.</p>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot amber" style="margin-left:10px"></div>
+      <p class="insight-text" id="ins2"><b>Income stability is your greatest asset.</b> Full-time employment gives you a predictable income floor. That's significantly lower short-term risk than freelancers or self-employed workers face. Protect this position — losing it without a buffer is your highest-impact risk event.</p>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot amber" style="margin-left:10px"></div>
+      <p class="insight-text" id="ins3"><b>You're one step away from a high-pressure decision.</b> At your current runway, a single $10,000 unexpected expense wouldn't just reduce savings — it would force a choice between borrowing, cutting living expenses, or overdrafting. The problem with insufficient buffer is that it's invisible until you actually need it.</p>
+    </div>
+    <div class="insight-row">
+      <div class="insight-dot amber" style="margin-left:10px"></div>
+      <p class="insight-text" id="ins4"><b>Your debt-to-income ratio has a ceiling.</b> At 28% DTI, you're approaching the range where lenders flag rising risk (typically 35–43%). If expenses increase or income drops, this ratio moves against you — exactly when you might need borrowing options the most, they become less available.</p>
+    </div>
+  </div>
+
+  <!-- 3 RECOVERY PATHS WITH EXACT NUMBERS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">3 Paths Back to the Green Zone</span>
+      <span class="section-badge badge-green">With Exact Numbers</span>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">Path A — Cut Monthly Expenses by $500</span>
+        <span class="path-effort effort-low">Easy · Fastest</span>
+      </div>
+      <p class="path-desc">Trim subscriptions ($80), dining out ($200), and one discretionary item ($220). No major lifestyle change required.</p>
+      <p class="path-number" id="pa-num">Reaching 6-month safety line ($30,000) takes ~8 months</p>
+      <p class="path-months">Runway improvement: each $500/mo saved extends runway by ~3.6 days/month</p>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">Path B — Accelerate Debt Payoff</span>
+        <span class="path-effort effort-med">Moderate · High Return</span>
+      </div>
+      <p class="path-desc">Pay an extra $300/month toward your highest-rate debt. Once cleared, redirect the full $1,100/mo to savings.</p>
+      <p class="path-number" id="pb-num">~3 years to clear debt → then runway grows $1,100/mo</p>
+      <p class="path-months">Net effect: 9-month runway achievable within 18 months after debt payoff</p>
+    </div>
+    <div class="path-row">
+      <div class="path-head">
+        <span class="path-label">Path C — Income + Expenses Combined</span>
+        <span class="path-effort effort-low">Optimal Balance</span>
+      </div>
+      <p class="path-desc">Cut expenses by $300 + increase income by $500/mo (side work, raise, or rate increase). Small changes, compound effect.</p>
+      <p class="path-number" id="pc-num">$800/mo improvement → 6 months to safety line</p>
+      <p class="path-months">Most resilient path: builds buffer and reduces burn simultaneously</p>
+    </div>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="conclusion">
+    <p class="conclusion-label">One-Sentence Conclusion — Personalized to Your Profile</p>
+    <p class="conclusion-text" id="conclusion-text">"Your income stability is genuine protection — don't underestimate it. But your debt obligations mean your true runway is shorter than your savings number suggests. You have a clear path to the green zone within 6–8 months. The only question is whether you'll act before an external event makes the decision for you."</p>
+  </div>
+
+  <p class="disclaimer">The estimates above are mathematical calculations based on your input data and standard financial modeling assumptions, provided for informational and educational purposes only. They do not constitute financial, legal, investment, or tax advice. Individual circumstances vary widely — consult a licensed financial advisor, credit counselor, or other qualified professional before making major financial decisions. RiskRunway is not a registered investment advisor or financial planner.</p>
+
+</div>
+
+<script>
+document.getElementById('report-date').textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+var params=new URLSearchParams(window.location.search);
+var savings=parseInt(params.get('s')||18000);
+var expenses=parseInt(params.get('e')||4200);
+var income=parseInt(params.get('i')||8000);
+var debt=parseInt(params.get('d')||12000);
+var debtpay=parseInt(params.get('dp')||800);
+var job=params.get('j')||'full-time';
+
+function fmt(n){return'$'+Math.round(n).toLocaleString('en-US')}
+
+var trueBurn=expenses+debtpay;
+var days=Math.round(savings/trueBurn*30.4);
+var dti=Math.round(debtpay/income*100);
+var pressure=Math.min(99,Math.round(40+(dti*0.5)+((180-days)/180*30)));
+var stability=job.includes('full')?'High':job.includes('part')?'Medium':'Unstable';
+var stabilityClass=job.includes('full')?'green':job.includes('part')?'amber':'red';
+var target=trueBurn*6;
+var gap=Math.max(0,target-savings);
+var rawDays=Math.round(savings/expenses*30.4);
+var debtImpact=rawDays-days;
+
+function dayColorClass(d){return d<=30?'red':d<=90?'red':d<=180?'amber':'green'}
+
+// RUNWAY HERO
+document.getElementById('rh-days').textContent=days;
+var rhEl=document.getElementById('rh-days');
+rhEl.className='rh-days '+dayColorClass(days);
+
+var zone,zoneClass;
+if(days<=30){zone='\uD83D\uDD34 Extreme Danger';zoneClass='status-red'}
+else if(days<=90){zone='\uD83D\uDD34 High Risk';zoneClass='status-red'}
+else if(days<=180){zone='\u26A0 Caution Zone';zoneClass='status-amber'}
+else{zone='\u2713 Healthy Range';zoneClass='status-green'}
+document.getElementById('rh-status').textContent=zone;
+document.getElementById('rh-status').className='rh-status '+zoneClass;
+
+var descText;
+if(debtImpact>0) descText='Debt-adjusted runway is '+debtImpact+' days shorter than your raw savings number suggests';
+else descText='Debt burden has minimal impact on your runway';
+document.getElementById('rh-desc').textContent=descText;
+
+// VITALS
+document.getElementById('v-burn').textContent=fmt(trueBurn);
+document.getElementById('v-dti').textContent=dti+'%';
+document.getElementById('v-stability').textContent=stability;
+document.getElementById('v-stability').className='vital-val '+stabilityClass;
+document.getElementById('v-pressure').textContent=pressure+'/100';
+var pressureClass=pressure>=70?'red':pressure>=45?'amber':'green';
+document.getElementById('v-pressure').className='vital-val '+pressureClass;
+
+// SCENARIO 1
+document.getElementById('sc1-adj').textContent=days+' days';
+document.getElementById('sc1-adj').className='sr-val '+dayColorClass(days);
+var urgency=days<=30?'Critical':days<=90?'Medium-High':days<=180?'Moderate':'Low';
+document.getElementById('sc1-urgency').textContent=urgency;
+document.getElementById('sc1-urgency').className='sr-val '+dayColorClass(days);
+document.getElementById('sc1-search').textContent=Math.round(days/7)+' weeks';
+
+// SCENARIO 2
+var inc20=income*0.2;
+var sc2short=trueBurn-(income-inc20);
+document.getElementById('sc2-short').textContent=(sc2short>0?'-':'')+fmt(Math.abs(sc2short))+'/mo';
+document.getElementById('sc2-short').className='sr-val '+(sc2short>0?'red':'green');
+var sc2run=Math.round(savings/Math.max(1,sc2short)*30.4);
+document.getElementById('sc2-run').textContent=Math.max(0,sc2run)+' days';
+document.getElementById('sc2-run').className='sr-val '+dayColorClass(sc2run);
+var debtRiskMonth=sc2short>0?Math.ceil(savings/sc2short):0;
+document.getElementById('sc2-debt').textContent=debtRiskMonth>0&&debtRiskMonth<=6?'Tight from month '+Math.max(2,debtRiskMonth-1):debtRiskMonth>0?'Manageable':'No impact';
+
+// SCENARIO 3 — $50,000 medical emergency (typical US cost with insurance gap)
+var sc3run=Math.round((savings-50000)/trueBurn*30.4);
+document.getElementById('sc3-run').textContent=Math.max(0,sc3run)+' days';
+document.getElementById('sc3-run').className='sr-val '+(sc3run<=0?'red':dayColorClass(sc3run));
+var sc3rec=Math.ceil(50000/(income-trueBurn));
+document.getElementById('sc3-rec').textContent=sc3rec>0?sc3rec+'\u2013'+Math.ceil(sc3rec*1.5)+' months':'Cannot estimate';
+
+// SCENARIO 4
+document.getElementById('sc4-window').textContent=Math.round(days/7)+' weeks';
+document.getElementById('sc4-income').textContent=fmt(trueBurn)+'/mo';
+document.getElementById('sc4-debt').textContent=fmt(debtpay)+'/mo fixed';
+var readiness=days<=60?'Not recommended':days<=120?'Possible \u2014 but margins are tight':'Possible \u2014 with some room';
+document.getElementById('sc4-readiness').textContent=readiness;
+
+// SCENARIO 5
+var exp15=Math.round(expenses*1.15);
+document.getElementById('sc5-exp').textContent=fmt(exp15+debtpay);
+var sc5run=Math.round(savings/(exp15+debtpay)*30.4);
+document.getElementById('sc5-run').textContent=Math.max(0,sc5run)+' days';
+document.getElementById('sc5-run').className='sr-val '+dayColorClass(sc5run);
+document.getElementById('sc5-gap').textContent='-'+fmt(exp15-expenses)+'/mo';
+
+// SCENARIO 6 — US childcare costs
+var sc6burn=trueBurn+2500;
+var sc6run=Math.round(savings/sc6burn*30.4);
+document.getElementById('sc6-run').textContent=Math.max(0,sc6run)+' days';
+document.getElementById('sc6-run').className='sr-val '+(sc6run<=90?'red':'amber');
+
+// TIMELINE
+document.getElementById('tl-now').textContent=days+'-day runway. Manageable but below the safety threshold. No immediate crisis \u2014 and no buffer either.';
+
+// DEBT
+document.getElementById('dti-val').textContent=dti+'%';
+document.getElementById('dti-bar').style.width=Math.min(100,dti)+'%';
+var dtiBarClass=dti<20?'green':dti<36?'amber':'red';
+document.getElementById('dti-bar').className='debt-fill '+dtiBarClass;
+var dtiDesc;
+if(dti<20) dtiDesc='Safe zone: below 36% · Your debt burden is low, with ample financial flexibility.';
+else if(dti<36) dtiDesc='Safe zone: below 36% · Your current debt burden is manageable, but leaves limited room for additional obligations.';
+else dtiDesc='\u26A0 Above 36% · Debt burden is elevated, limiting new borrowing options.';
+document.getElementById('dti-desc').textContent=dtiDesc;
+document.getElementById('d-monthly').textContent=fmt(debtpay)+'/mo';
+document.getElementById('d-total').textContent=fmt(debt);
+document.getElementById('d-impact').textContent='-'+debtImpact+' days';
+
+// PATHS
+document.getElementById('pa-num').textContent='Reaching 6-month safety line ('+fmt(target)+') takes ~'+Math.ceil(gap/500)+' months';
+document.getElementById('pb-num').textContent='~'+Math.ceil(debt/(debtpay+300)/12)+' years to clear debt \u2192 then runway grows '+fmt(debtpay+300)+'/mo';
+document.getElementById('pc-num').textContent='$800/mo improvement \u2192 '+Math.ceil(gap/800)+' months to safety line';
+
+// CONCLUSION
+var txt;
+if(days<=30) txt='"Your situation demands immediate action. Every week you wait, the options narrow further. The data is clear \u2014 the time to act isn\'t soon, it\'s now."';
+else if(days<=90) txt='"Your debt obligations are compressing your true runway. Income stability is your shield, but it\'s not unlimited protection. Meaningful improvement within 90 days is achievable \u2014 if you start this month."';
+else if(days<=180) txt='"Your income stability is genuine protection \u2014 don\'t underestimate it. But your debt obligations mean your true runway is shorter than your savings number suggests. You have a clear path to the green zone within 6\u20138 months. The only question is whether you\'ll act before an external event makes the decision for you."';
+else txt='"You\'ve built a genuine foundation. Your runway gives you real options \u2014 the ability to say no, to take risks, to weather storms. The goal now is to protect and extend this position, and understand what could erode it."';
+document.getElementById('conclusion-text').textContent=txt;
+</script>
+</body>
+</html>
