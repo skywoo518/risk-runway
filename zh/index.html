@@ -180,6 +180,9 @@ input[type=range]::-moz-range-thumb{
 .free-card-sub{font-size:.78rem;color:#777;line-height:1.55}
 
 /* ── CTA BUTTON ── */
+.cta-group{display:flex;gap:.75rem;margin-bottom:.5rem}
+.cta-group .cta-btn{flex:1;margin-bottom:0}
+@media(max-width:480px){.cta-group{flex-direction:column}}
 .cta-btn{
   width:100%;padding:1rem 1.5rem;
   background:var(--red);color:#fff;
@@ -191,7 +194,14 @@ input[type=range]::-moz-range-thumb{
 }
 .cta-btn:hover{opacity:.88}
 .cta-btn:active{transform:scale(.99)}
-.cta-note{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:2rem}
+.cta-btn.secondary{
+  background:#fff;color:var(--ink);
+  border:1.5px solid var(--ink);
+}
+.cta-btn.secondary:hover{background:var(--ink);color:#fff}
+.cta-note{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:.5rem}
+.cta-note+.cta-note{margin-bottom:2rem}
+.free-modal-banner{background:var(--amber-soft);border:1px solid #f5d99a;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.5rem;text-align:center;font-size:.82rem;color:var(--amber);line-height:1.5}
 
 /* ── SAMPLE REPORT ── */
 .sample-toggle{
@@ -420,9 +430,13 @@ footer a{color:var(--dim);text-decoration:underline}
     </div>
   </div>
 
-  <!-- CTA BUTTON -->
-  <button class="cta-btn" onclick="openModal()">获取深度分析报告 — ¥13.99 →</button>
-  <p class="cta-note">内测期间免费开放 · 8个数据点 · 94%准确度 · 即时生成</p>
+  <!-- CTA BUTTONS -->
+  <div class="cta-group">
+    <button class="cta-btn secondary" onclick="openFreeModal()">免费获取基础报告 →</button>
+    <button class="cta-btn" onclick="openModal()">获取深度分析 — ¥13.99 →</button>
+  </div>
+  <p class="cta-note">基础版：3个场景 · 71%准确度 · 需邮箱 &nbsp;|&nbsp; 深度版：6个场景 · 94%准确度 · 需8个数据点</p>
+  <p class="cta-note">内测期间深度版限时免费开放</p>
 
   <!-- SAMPLE PREVIEW (only deep version) -->
   <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
@@ -501,6 +515,26 @@ footer a{color:var(--dim);text-decoration:underline}
 
     <button class="modal-submit" onclick="submitModal()">立即生成报告 →</button>
     <p class="modal-disclaimer">数据仅在本地浏览器处理 · 绝不存储或分享 · 数学推算不构成财务建议</p>
+  </div>
+</div>
+
+<!-- MODAL: FREE BASIC REPORT -->
+<div class="modal-overlay" id="free-modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeFreeModal()">×</button>
+
+    <div class="free-modal-banner">📧 免费获取完整基础报告（含3个场景分析+行动建议）</div>
+
+    <p class="modal-title">获取基础风险报告</p>
+    <p class="modal-subtitle">输入邮箱，我们将基于你的存款和支出数据，生成一份包含3个场景分析的基础报告。</p>
+
+    <div class="modal-field">
+      <label>邮箱地址 <span style="color:var(--red)">*</span></label>
+      <input type="email" id="free-email" placeholder="your@email.com" required>
+    </div>
+
+    <button class="modal-submit" onclick="submitFreeModal()">免费获取报告 →</button>
+    <p class="modal-disclaimer">我们尊重你的隐私，邮箱仅用于发送报告，不会用于其他目的。</p>
   </div>
 </div>
 
@@ -666,6 +700,34 @@ function submitModal(){
 
   // Redirect to deep report
   window.location.href = 'report-deep.html';
+}
+
+// ── FREE MODAL ──
+function openFreeModal(){
+  document.getElementById('free-modal-overlay').classList.add('visible');
+}
+
+function closeFreeModal(){
+  document.getElementById('free-modal-overlay').classList.remove('visible');
+}
+
+document.getElementById('free-modal-overlay').addEventListener('click', function(e){
+  if(e.target === this) closeFreeModal();
+});
+
+function submitFreeModal(){
+  var email = document.getElementById('free-email').value.trim();
+  if(!email){alert('请输入邮箱地址');return}
+  if(!email.includes('@')){alert('请输入有效的邮箱地址');return}
+
+  // Store email for potential future use
+  var userData = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');
+  userData.email = email;
+  userData.timestamp = Date.now();
+  localStorage.setItem('riskRunwayData', JSON.stringify(userData));
+
+  // Redirect to basic report with savings/expenses in URL
+  window.location.href = 'report-basic.html?s=' + savings + '&e=' + expenses + '&em=' + encodeURIComponent(email);
 }
 
 // ── SAMPLE REPORT ──

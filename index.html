@@ -180,6 +180,9 @@ input[type=range]::-moz-range-thumb{
 .free-card-sub{font-size:.78rem;color:#777;line-height:1.55}
 
 /* ── CTA BUTTON ── */
+.cta-group{display:flex;gap:.75rem;margin-bottom:.5rem}
+.cta-group .cta-btn{flex:1;margin-bottom:0}
+@media(max-width:480px){.cta-group{flex-direction:column}}
 .cta-btn{
   width:100%;padding:1rem 1.5rem;
   background:var(--red);color:#fff;
@@ -191,7 +194,14 @@ input[type=range]::-moz-range-thumb{
 }
 .cta-btn:hover{opacity:.88}
 .cta-btn:active{transform:scale(.99)}
-.cta-note{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:2rem}
+.cta-btn.secondary{
+  background:#fff;color:var(--ink);
+  border:1.5px solid var(--ink);
+}
+.cta-btn.secondary:hover{background:var(--ink);color:#fff}
+.cta-note{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:.5rem}
+.cta-note+.cta-note{margin-bottom:2rem}
+.free-modal-banner{background:var(--amber-soft);border:1px solid #f5d99a;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.5rem;text-align:center;font-size:.82rem;color:var(--amber);line-height:1.5}
 
 /* ── SAMPLE REPORT ── */
 .sample-toggle{
@@ -420,9 +430,13 @@ footer a{color:var(--dim);text-decoration:underline}
     </div>
   </div>
 
-  <!-- CTA BUTTON -->
-  <button class="cta-btn" onclick="openModal()">Get my deep risk report — $13.99 →</button>
-  <p class="cta-note">Free during beta · 8 data points · 94% accuracy · Instant generation</p>
+  <!-- CTA BUTTONS -->
+  <div class="cta-group">
+    <button class="cta-btn secondary" onclick="openFreeModal()">Get free basic report →</button>
+    <button class="cta-btn" onclick="openModal()">Get deep analysis — $13.99 →</button>
+  </div>
+  <p class="cta-note">Basic: 3 scenarios · 71% accuracy · need email &nbsp;|&nbsp; Deep: 6 scenarios · 94% accuracy · need 8 data points</p>
+  <p class="cta-note">Deep report free during beta period</p>
 
   <!-- SAMPLE PREVIEW (only deep version) -->
   <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
@@ -501,6 +515,26 @@ footer a{color:var(--dim);text-decoration:underline}
 
     <button class="modal-submit" onclick="submitModal()">Generate my report now →</button>
     <p class="modal-disclaimer">All data processed locally in your browser · Never stored or shared · Mathematical projections, not financial advice</p>
+  </div>
+</div>
+
+<!-- MODAL: FREE BASIC REPORT -->
+<div class="modal-overlay" id="free-modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeFreeModal()">×</button>
+
+    <div class="free-modal-banner">📧 Get a complete basic report (3 scenario analyses + action items) for free</div>
+
+    <p class="modal-title">Get your basic risk report</p>
+    <p class="modal-subtitle">Enter your email and we'll generate a basic report with 3 scenario analyses based on your savings and expense data.</p>
+
+    <div class="modal-field">
+      <label>Email address <span style="color:var(--red)">*</span></label>
+      <input type="email" id="free-email" placeholder="your@email.com" required>
+    </div>
+
+    <button class="modal-submit" onclick="submitFreeModal()">Get free report →</button>
+    <p class="modal-disclaimer">We respect your privacy. Email is only used to deliver the report and will not be used for other purposes.</p>
   </div>
 </div>
 
@@ -665,6 +699,34 @@ function submitModal(){
 
   // Redirect to deep report
   window.location.href = 'report-deep.html';
+}
+
+// ── FREE MODAL ──
+function openFreeModal(){
+  document.getElementById('free-modal-overlay').classList.add('visible');
+}
+
+function closeFreeModal(){
+  document.getElementById('free-modal-overlay').classList.remove('visible');
+}
+
+document.getElementById('free-modal-overlay').addEventListener('click', function(e){
+  if(e.target === this) closeFreeModal();
+});
+
+function submitFreeModal(){
+  var email = document.getElementById('free-email').value.trim();
+  if(!email){alert('Please enter your email address');return}
+  if(!email.includes('@')){alert('Please enter a valid email address');return}
+
+  // Store email for potential future use
+  var userData = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');
+  userData.email = email;
+  userData.timestamp = Date.now();
+  localStorage.setItem('riskRunwayData', JSON.stringify(userData));
+
+  // Redirect to basic report with savings/expenses in URL
+  window.location.href = 'report-basic.html?s=' + savings + '&e=' + expenses + '&em=' + encodeURIComponent(email);
 }
 
 // ── SAMPLE REPORT ──

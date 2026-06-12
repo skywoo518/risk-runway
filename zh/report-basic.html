@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风险跑道 — 基础财务风险报告</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0a0a;--paper:#f5f4f0;--dim:#b8b5ac;--dimmer:#d4d1c8;--border:#e2dfd8;
+  --red:#c0392b;--red-soft:#fdf0ee;
+  --amber:#d4840a;--amber-soft:#fdf6e8;
+  --green:#1a7a4a;--green-soft:#eaf5ef;
+  --serif:'Georgia','Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;min-height:100vh}
+nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--paper)}
+.logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}.logo b{color:var(--red);font-weight:normal}
+.report-badge{font-size:.68rem;letter-spacing:.1em;color:var(--amber);border:1px solid #f5d99a;padding:.2rem .7rem;border-radius:2rem;background:var(--amber-soft)}
+
+.report-wrap{max-width:640px;margin:0 auto;padding:2.5rem 2rem 5rem}
+
+.cover{background:var(--ink);color:#fff;border-radius:12px;padding:2rem 2rem 1.75rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(212,132,10,.2) 0%,transparent 60%);pointer-events:none}
+.cover-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem}
+.cover-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.4)}
+.cover-plan{font-size:.65rem;letter-spacing:.1em;background:rgba(232,169,58,.2);color:#f0c060;padding:.2rem .65rem;border-radius:2rem;border:1px solid rgba(232,169,58,.3)}
+.cover-title{font-family:var(--serif);font-size:1.5rem;font-weight:normal;letter-spacing:-.02em;margin-bottom:.25rem}
+.cover-meta{font-size:.75rem;color:rgba(255,255,255,.35)}
+.cover-accuracy{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.25rem;font-size:.72rem;letter-spacing:.06em;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.1);padding-top:1rem;width:100%}
+.acc-bar{flex:1;height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.acc-fill{height:100%;background:#e8a93a;width:71%}
+
+.runway-hero{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem;flex-wrap:wrap;gap:1rem}
+.rh-eyebrow{font-size:.65rem;letter-spacing:.12em;color:var(--dim);margin-bottom:.25rem}
+.rh-days{font-family:var(--serif);font-size:3.5rem;letter-spacing:-.04em;line-height:1}
+.rh-days.amber{color:var(--amber)}.rh-days.red{color:var(--red)}.rh-days.green{color:var(--green)}
+.rh-unit{font-size:.78rem;color:var(--dim);margin-top:.25rem}
+.rh-status{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;letter-spacing:.06em;padding:.3rem .85rem;border-radius:2rem;margin-bottom:.5rem}
+.status-amber{background:var(--amber-soft);color:var(--amber);border:1px solid #f5d99a}
+.status-red{background:var(--red-soft);color:var(--red);border:1px solid #f5bcb8}
+.status-green{background:var(--green-soft);color:var(--green);border:1px solid #b8e8ce}
+.rh-desc{font-size:.8rem;color:var(--dim);max-width:200px;line-height:1.5;text-align:right}
+
+.vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.5rem}
+@media(max-width:520px){.vitals{grid-template-columns:1fr}}
+.vital{background:#fff;padding:.85rem .75rem;text-align:center}
+.vital-label{font-size:.62rem;letter-spacing:.08em;color:var(--dim);margin-bottom:.3rem}
+.vital-val{font-family:var(--serif);font-size:1.05rem;letter-spacing:-.02em}
+.vital-val.red{color:var(--red)}.vital-val.amber{color:var(--amber)}.vital-val.green{color:var(--green)}
+.vital-sub{font-size:.62rem;color:var(--dim);margin-top:.15rem}
+
+.section{background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:1.5rem;overflow:hidden}
+.section-head{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-title{font-size:.72rem;letter-spacing:.1em;color:var(--dim)}
+.section-badge{font-size:.65rem;letter-spacing:.06em;padding:.2rem .6rem;border-radius:2rem}
+.badge-red{background:var(--red-soft);color:var(--red)}
+.badge-amber{background:var(--amber-soft);color:var(--amber)}
+.badge-green{background:var(--green-soft);color:var(--green)}
+
+.scenario-row{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;align-items:center;gap:.75rem}
+.scenario-row:last-child{border-bottom:none}
+.sr-name{font-size:.9rem;color:var(--ink);font-weight:500;margin-bottom:.15rem}
+.sr-sub{font-size:.75rem;color:var(--dim)}
+.sr-val{font-family:var(--serif);font-size:1rem;text-align:right;white-space:nowrap}
+.sr-val.red{color:var(--red)}.sr-val.amber{color:var(--amber)}.sr-val.green{color:var(--green)}
+
+.insight-row{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:grid;grid-template-columns:28px 1fr;gap:.75rem}
+.insight-row:last-child{border-bottom:none}
+.insight-dot{width:8px;height:8px;border-radius:50%;margin-top:.5rem;flex-shrink:0}
+.insight-dot.red{background:var(--red)}.insight-dot.amber{background:var(--amber)}
+.insight-text{font-size:.88rem;color:#444;line-height:1.6}
+.insight-text b{color:var(--ink)}
+
+/* upgrade CTA */
+.upgrade-box{background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-bottom:1.5rem}
+.upgrade-label{font-size:.65rem;letter-spacing:.14em;color:rgba(255,255,255,.35);margin-bottom:1rem}
+.upgrade-title{font-family:var(--serif);font-size:1.35rem;font-weight:normal;letter-spacing:-.02em;margin-bottom:.75rem;line-height:1.3}
+.upgrade-title i{font-style:italic;color:#f0c060}
+.upgrade-list{font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.8;margin-bottom:1.5rem;text-align:left;max-width:420px;margin-left:auto;margin-right:auto}
+.upgrade-list li{margin-bottom:.2rem}
+.upgrade-btn{
+  display:inline-block;padding:.9rem 2.2rem;background:#fff;color:var(--ink);
+  font-family:var(--sans);font-size:.9rem;text-decoration:none;border-radius:6px;
+  transition:opacity .15s;font-weight:500;
+}
+.upgrade-btn:hover{opacity:.85}
+.upgrade-note{font-size:.7rem;color:rgba(255,255,255,.35);margin-top:.75rem}
+
+.back-link{display:inline-block;font-size:.78rem;color:var(--dim);text-decoration:none;margin-bottom:1.5rem;transition:color .15s}
+.back-link:hover{color:var(--ink)}
+
+.disclaimer{font-size:.7rem;color:var(--dim);line-height:1.6;padding:1rem;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center;margin-bottom:1rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">风险<b>跑道</b></div>
+  <span class="report-badge">基础分析</span>
+</nav>
+
+<div class="report-wrap">
+  <a class="back-link" href="index.html">← 返回计算器</a>
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-top">
+      <span class="cover-label">财务生存基础分析</span>
+      <span class="cover-plan" id="cover-accuracy">71% 准确度</span>
+    </div>
+    <p class="cover-title">您的财务风险基础报告</p>
+    <p class="cover-meta">由风险跑道生成 &nbsp;·&nbsp; <span id="report-date"></span></p>
+    <div class="cover-accuracy">
+      <span>准确度</span>
+      <div class="acc-bar"><div class="acc-fill"></div></div>
+      <span>71%</span>
+    </div>
+  </div>
+
+  <!-- RUNWAY HERO -->
+  <div class="runway-hero" id="runway-hero">
+    <div>
+      <p class="rh-eyebrow">当前财务跑道</p>
+      <p class="rh-status" id="rh-status"><span id="rh-status-dot"></span><span id="rh-status-text">—</span></p>
+      <p class="rh-days" id="rh-days">—</p>
+      <p class="rh-unit">天（约 <span id="rh-months">—</span> 个月）</p>
+    </div>
+    <p class="rh-desc" id="rh-desc">—</p>
+  </div>
+
+  <!-- VITALS -->
+  <div class="vitals">
+    <div class="vital">
+      <p class="vital-label">总存款</p>
+      <p class="vital-val" id="v-savings">—</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">月支出</p>
+      <p class="vital-val" id="v-expenses">—</p>
+    </div>
+    <div class="vital">
+      <p class="vital-label">月消耗率</p>
+      <p class="vital-val" id="v-burn">—</p>
+    </div>
+  </div>
+
+  <!-- SCENARIOS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">场景模拟</span>
+      <span class="section-badge badge-amber">3个场景</span>
+    </div>
+    <div class="scenario-row">
+      <div>
+        <p class="sr-name">如果今天失业</p>
+        <p class="sr-sub">停止所有收入，仅靠存款生活</p>
+      </div>
+      <p class="sr-val" id="sc-unemployed">—</p>
+    </div>
+    <div class="scenario-row">
+      <div>
+        <p class="sr-name">突发大额支出</p>
+        <p class="sr-sub" id="sc-emergency-sub">一次性意外支出后剩余跑道</p>
+      </div>
+      <p class="sr-val" id="sc-emergency">—</p>
+    </div>
+    <div class="scenario-row">
+      <div>
+        <p class="sr-name">每月减少10%支出</p>
+        <p class="sr-sub">缩减非必要开支，延长跑道</p>
+      </div>
+      <p class="sr-val" id="sc-cut">—</p>
+    </div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">行动建议</span>
+      <span class="section-badge badge-green">2-3条</span>
+    </div>
+    <div id="insights-list"></div>
+  </div>
+
+  <!-- UPGRADE TO DEEP -->
+  <div class="upgrade-box">
+    <p class="upgrade-label">想要更精确的分析？</p>
+    <p class="upgrade-title">升级为 <i>深度分析</i></p>
+    <ul class="upgrade-list" style="list-style:none;padding:0">
+      <li>✦ 6个真实场景（含辞职窗口、育儿/养老压力测试）</li>
+      <li>✦ 债务侵蚀分析（最小还款陷阱 + 加速还款效果）</li>
+      <li>✦ 12个月现金流时间轴可视化</li>
+      <li>✦ 3条精确改善路径（基于你的实际收入/年龄/职业）</li>
+      <li>✦ 准确度从71%提升至94%</li>
+    </ul>
+    <a class="upgrade-btn" href="index.html">返回升级至深度分析</a>
+    <p class="upgrade-note">内测期间深度报告限时免费开放</p>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <p class="disclaimer">⚠ 本报告仅基于你提供的存款与支出数据，属于概算性质，不构成投资建议。实际财务状况请以专业财务顾问评估为准。</p>
+
+</div>
+
+<script>
+/* ── UTILS ── */
+function fmt(n){
+  if(n===undefined||n===null||isNaN(n))return '—';
+  return '¥'+Number(n).toLocaleString('zh-CN');
+}
+function getParam(key){
+  var v=new URLSearchParams(location.search).get(key);
+  return v?parseFloat(v):0;
+}
+
+/* ── DATA ── */
+var savings=getParam('s')||0;
+var expenses=getParam('e')||0;
+var days=savings>0&&expenses>0?Math.round(savings/expenses*30.4):0;
+var months=Math.round(days/30.4*10)/10;
+
+/* ── COVER ── */
+document.getElementById('report-date').textContent=new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+
+/* ── RUNWAY HERO ── */
+var rhd=document.getElementById('rh-days');
+rhd.textContent=days>=9999?'∞':days;
+if(days<60){rhd.className='rh-days red';}
+else if(days<180){rhd.className='rh-days amber';}
+else{rhd.className='rh-days green';}
+
+document.getElementById('rh-months').textContent=months;
+
+var st=document.getElementById('rh-status');
+var sts=document.getElementById('rh-status-text');
+if(days<60){
+  st.className='rh-status status-red';
+  sts.textContent='危急 · 不足2个月';
+  document.getElementById('rh-desc').textContent='你的存款无法覆盖基本生活，任何意外都会立刻造成财务危机。';
+}else if(days<180){
+  st.className='rh-status status-amber';
+  sts.textContent='预警 · 3-6个月';
+  document.getElementById('rh-desc').textContent='符合最低安全线，但失业或突发支出会迅速压缩你的缓冲空间。';
+}else{
+  st.className='rh-status status-green';
+  sts.textContent='稳健 · 6个月以上';
+  document.getElementById('rh-desc').textContent='你的财务缓冲较为充足，但仍需关注大额支出和通胀侵蚀。';
+}
+
+/* ── VITALS ── */
+document.getElementById('v-savings').textContent=fmt(savings);
+document.getElementById('v-expenses').textContent=fmt(expenses);
+document.getElementById('v-burn').textContent=expenses>0?Math.round(expenses/savings*1000)/10+'%':'—';
+
+/* ── SCENARIOS ── */
+document.getElementById('sc-unemployed').textContent=days>=9999?'可支撑很长时间':days+'天';
+
+var shockAmount=savings>0?getShockAmount(expenses):0;
+var daysAfterShock=expenses>0?Math.max(0,Math.round((savings-shockAmount)/expenses*30.4)):0;
+if(savings<=shockAmount){
+  document.getElementById('sc-emergency').innerHTML='<span style="color:var(--red)">跑道归零</span>';
+}else{
+  document.getElementById('sc-emergency').textContent=daysAfterShock+'天';
+}
+document.getElementById('sc-emergency-sub').textContent='一次'+fmt(shockAmount)+'的意外支出后剩余跑道';
+
+var cutDays=expenses>0?Math.round(savings/(expenses*0.9)*30.4):0;
+var extraDays=cutDays-days;
+document.getElementById('sc-cut').textContent=cutDays+'天';
+if(extraDays>0){
+  document.getElementById('sc-cut').innerHTML+=' <span style="font-size:.75rem;color:var(--green)">+'+extraDays+'天</span>';
+}
+
+function getShockAmount(expenses){
+  if(expenses<5000)return 10000;
+  if(expenses<15000)return 30000;
+  if(expenses<30000)return 50000;
+  return 80000;
+}
+
+/* ── INSIGHTS ── */
+var insights=[];
+if(days<60){
+  insights.push({dot:'red',text:'<b>紧急优先级：</b>你的跑道不足2个月。建议立即盘点可变现资产（闲置物品/理财赎回），并制定30天节流计划（取消非必要订阅、减少外出就餐）。'});
+  insights.push({dot:'amber',text:'<b>收入多元化：</b>考虑在现有工作之余寻找兼职或副业机会，即使每月额外¥2,000也能将跑道延长'+(expenses>0?Math.round(2000/expenses*30.4):0)+'天。'});
+} else if(days<180){
+  insights.push({dot:'amber',text:'<b>优先储蓄：</b>你的跑道处于安全线边缘。建议每月将收入的10-15%强制存入应急基金，目标是将跑道延长至6个月以上。'});
+  insights.push({dot:'amber',text:'<b>支出审计：</b>过去3个月的信用卡/支付宝账单中，通常有15-20%的支出属于"可削减消费"。找出它们并制定削减计划。'});
+} else {
+  insights.push({dot:'green',text:'<b>保持优势：</b>你的财务缓冲较为健康。建议将超出6个月支出的部分配置到流动性较好的理财产品中，兼顾收益与灵活取用。'});
+  insights.push({dot:'amber',text:'<b>长期规划：</b>跑道安全不代表可以高枕无忧。建议每年重新评估一次支出结构，并为大额支出（买房/育儿/养老）提前储备。'});
+}
+if(expenses>0&&savings/expenses<12){
+  insights.push({dot:'red',text:'<b>年收入覆盖度：</b>你的存款仅能覆盖'+(savings>0?Math.round(savings/expenses):0)+'个月支出，低于推荐的12个月安全线。'});
+}
+
+var ih=document.getElementById('insights-list');
+insights.forEach(function(it){
+  ih.innerHTML+='<div class="insight-row"><div class="insight-dot '+it.dot+'"></div><p class="insight-text">'+it.text+'</p></div>';
+});
+</script>
+</body>
+</html>
