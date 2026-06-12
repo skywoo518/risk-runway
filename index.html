@@ -93,6 +93,19 @@ h1 i{font-style:italic;color:var(--red)}
 .runway-days.danger{color:#e05c4a}
 .runway-days.warning{color:#e8a93a}
 .runway-days.safe{color:#4ec98a}
+.runway-months{
+  font-family:var(--serif);
+  font-size:clamp(1.5rem,5vw,2.5rem);
+  font-weight:normal;
+  letter-spacing:-.02em;
+  line-height:1;
+  color:rgba(255,255,255,.5);
+  margin-top:.5rem;
+  transition:color .25s;
+}
+.runway-months.danger{color:rgba(224,92,74,.6)}
+.runway-months.warning{color:rgba(232,169,58,.6)}
+.runway-months.safe{color:rgba(78,201,138,.6)}
 .runway-unit{
   font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;
   color:rgba(255,255,255,.4);margin-top:.5rem;
@@ -398,6 +411,7 @@ footer a{color:var(--dim);text-decoration:underline}
   <div class="runway-number-wrap">
     <p class="runway-eyebrow">Your financial runway</p>
     <div class="runway-days safe" id="runway-days">—</div>
+    <div class="runway-months" id="runway-months">—</div>
     <p class="runway-unit">days of survival window</p>
     <div class="runway-status" id="runway-status">
       <span class="status-dot"></span>
@@ -640,7 +654,7 @@ footer a{color:var(--dim);text-decoration:underline}
   }
 })();
 
-var savings=5000,expenses=3500;
+var savings=5000,expenses=3500,runwayDays=0;
 
 function fmt(n){
   return '$' + Math.round(n).toLocaleString()
@@ -648,14 +662,17 @@ function fmt(n){
 
 function calc(){
   var days=expenses>0?Math.round(savings/expenses*30.4):9999;
+  runwayDays=days;
   var savingsRate=expenses>0?Math.round((savings-expenses)/expenses*100):100;
   var gap=savings-expenses;
 
   var daysEl=document.getElementById('runway-days');
+  var monthsEl=document.getElementById('runway-months');
   var statusEl=document.getElementById('runway-status');
   var statusTxt=document.getElementById('status-text');
 
   daysEl.className='runway-days';
+  monthsEl.className='runway-months';
   statusEl.className='runway-status';
 
   var zone,statusMsg,color;
@@ -668,6 +685,11 @@ function calc(){
   daysEl.classList.add(color);
   statusEl.classList.add(color);
   statusTxt.textContent=statusMsg;
+
+  // Calculate and display months
+  var months=days>=9999?9999:days/30.4;
+  monthsEl.textContent=days>=9999?'∞':('≈ ' + months.toFixed(1) + ' months');
+  monthsEl.classList.add(color);
 
   var rateEl=document.getElementById('ctx-rate');
   var gapEl=document.getElementById('ctx-gap');
@@ -1099,7 +1121,9 @@ function showShareCard(){
   if(!r){alert('Please enter your savings and expenses first');return}
   document.getElementById('sc-rank').textContent=r.emoji;
   document.getElementById('sc-name').textContent=r.name;
-  document.getElementById('sc-days').textContent='Runway: '+runwayDays+' days';
+  var daysDisplay=runwayDays>=9999?'∞':runwayDays;
+  var monthsDisplay=runwayDays>=9999?'∞':(runwayDays/30.4).toFixed(1);
+  document.getElementById('sc-days').textContent='Runway: '+daysDisplay+' days (≈'+monthsDisplay+' months)';
   document.getElementById('share-card-overlay').classList.add('visible');
 }
 function closeShareCard(){document.getElementById('share-card-overlay').classList.remove('visible')}
