@@ -509,8 +509,8 @@ footer a{color:var(--dim);text-decoration:underline}
       <input type="number" id="m-dp" placeholder="如 3000，无负债填0" min="0" step="100">
     </div>
     <div class="modal-field">
-      <label>邮箱（可选，用于接收报告提醒）</label>
-      <input type="email" id="m-email" placeholder="your@email.com">
+      <label>邮箱 <span style="color:var(--red)">*</span></label>
+      <input type="email" id="m-email" placeholder="your@email.com" required>
     </div>
 
     <button class="modal-submit" onclick="submitModal()">立即生成报告 →</button>
@@ -644,9 +644,17 @@ function getShockAmount(expenses){
   return 80000;
 }
 
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 // ── MODAL ──
 function openModal(){
-  // Pre-fill savings/expenses info (visible to user but not editable in modal)
+  // Pre-fill email from localStorage if user already got free report
+  var saved = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');
+  if(saved.email){
+    document.getElementById('m-email').value = saved.email;
+  }
   document.getElementById('modal-overlay').classList.add('visible');
   // If debt is 0, auto-fill dp as 0
   document.getElementById('m-debt').addEventListener('input', function(){
@@ -683,6 +691,9 @@ function submitModal(){
   // If debt > 0, dp should be > 0
   if(debt > 0 && dp <= 0){alert('您有负债，请填写月还款额');return}
 
+  // Validate email (required)
+  if(!email || !isValidEmail(email)){alert('请输入有效的邮箱地址');return}
+
   // Store all data in localStorage
   var userData = {
     s: savings,
@@ -718,7 +729,7 @@ document.getElementById('free-modal-overlay').addEventListener('click', function
 function submitFreeModal(){
   var email = document.getElementById('free-email').value.trim();
   if(!email){alert('请输入邮箱地址');return}
-  if(!email.includes('@')){alert('请输入有效的邮箱地址');return}
+  if(!isValidEmail(email)){alert('请输入有效的邮箱地址');return}
 
   // Store email for potential future use
   var userData = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');

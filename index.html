@@ -509,8 +509,8 @@ footer a{color:var(--dim);text-decoration:underline}
       <input type="number" id="m-dp" placeholder="e.g. 500, or 0" min="0" step="50">
     </div>
     <div class="modal-field">
-      <label>Email (optional, for report reminders)</label>
-      <input type="email" id="m-email" placeholder="your@email.com">
+      <label>Email <span style="color:var(--red)">*</span></label>
+      <input type="email" id="m-email" placeholder="your@email.com" required>
     </div>
 
     <button class="modal-submit" onclick="submitModal()">Generate my report now →</button>
@@ -644,8 +644,17 @@ function getShockAmount(expenses){
   return 50000;
 }
 
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 // ── MODAL ──
 function openModal(){
+  // Pre-fill email from localStorage if user already got free report
+  var saved = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');
+  if(saved.email){
+    document.getElementById('m-email').value = saved.email;
+  }
   document.getElementById('modal-overlay').classList.add('visible');
   // If debt is 0, auto-fill dp as 0
   document.getElementById('m-debt').addEventListener('input', function(){
@@ -682,6 +691,9 @@ function submitModal(){
   // If debt > 0, dp should be > 0
   if(debt > 0 && dp <= 0){alert('You have debt — please enter your monthly repayment amount');return}
 
+  // Validate email (required)
+  if(!email || !isValidEmail(email)){alert('Please enter a valid email address');return}
+
   // Store all data in localStorage
   var userData = {
     s: savings,
@@ -717,7 +729,7 @@ document.getElementById('free-modal-overlay').addEventListener('click', function
 function submitFreeModal(){
   var email = document.getElementById('free-email').value.trim();
   if(!email){alert('Please enter your email address');return}
-  if(!email.includes('@')){alert('Please enter a valid email address');return}
+  if(!isValidEmail(email)){alert('Please enter a valid email address');return}
 
   // Store email for potential future use
   var userData = JSON.parse(localStorage.getItem('riskRunwayData')||'{}');
