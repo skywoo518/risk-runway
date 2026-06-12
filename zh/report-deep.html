@@ -314,6 +314,26 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     </div>
   </div>
 
+  <!-- SCENARIO 7: GAP YEAR / PAUSE WORK -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">场景七 — 暂停工作（Gap Year）</span>
+      <span class="section-badge badge-red">人生选择</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">暂停6个月 + 3个月求职</p><p class="sr-sub">假设旅行/学习额外支出 + 恢复期收入为0</p></div>
+      <p class="sr-val" id="sc7-runway">—</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">总消耗金额</p><p class="sr-sub">9个月零收入期间的总支出</p></div>
+      <p class="sr-val" id="sc7-cost">—</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">回来后剩余跑道</p><p class="sr-sub">消耗后存款还能撑多久</p></div>
+      <p class="sr-val" id="sc7-remain">—</p>
+    </div>
+  </div>
+
   <!-- 12-MONTH CASHFLOW TIMELINE (bar chart) -->
   <div class="section">
     <div class="section-head">
@@ -664,6 +684,18 @@ document.getElementById('sc6-runway').className = 'sr-val ' + (sc6Runway <= 90 ?
 document.getElementById('sc6-gap').textContent = '−' + fmt(exp15 - expenses) + '/月（仅支出上涨部分）';
 document.getElementById('sc6-gap').className = 'sr-val ' + (exp15 > income ? 'red' : 'amber');
 
+/* ── SCENARIO 7: GAP YEAR / PAUSE WORK ── */
+var gapPause = 9; // 6 months gap + 3 months job search
+var gapExtraExpense = Math.round(expenses * 0.3); // extra spending during gap (travel/lifestyle)
+var gapTotalBurn = (expenses + gapExtraExpense + debtPay) * gapPause;
+var gapRunwayAfter = (savings - gapTotalBurn) > 0 ? Math.round((savings - gapTotalBurn) / trueBurn * 30.4) : 0;
+document.getElementById('sc7-runway').textContent = gapRunwayAfter > 0 ? gapRunwayAfter + '天' : '跑道已耗尽';
+document.getElementById('sc7-runway').className = 'sr-val ' + (gapRunwayAfter <= 0 ? 'red' : gapRunwayAfter <= 90 ? 'red' : gapRunwayAfter <= 180 ? 'amber' : 'green');
+document.getElementById('sc7-cost').textContent = fmt(gapTotalBurn);
+document.getElementById('sc7-cost').className = 'sr-val ' + (gapTotalBurn > savings ? 'red' : 'amber');
+document.getElementById('sc7-remain').textContent = gapRunwayAfter > 0 ? gapRunwayAfter + '天' : '⚠️ 财务安全被击穿';
+document.getElementById('sc7-remain').className = 'sr-val ' + (gapRunwayAfter <= 0 ? 'red' : gapRunwayAfter <= 180 ? 'amber' : 'green');
+
 /* ── OPTIMIZATION 5: 12-MONTH CASHFLOW TIMELINE (bar chart) ── */
 (function buildTimeline() {
   var chartEl = document.getElementById('tl-chart');
@@ -820,5 +852,12 @@ function submitPrecision() {
   window.location.reload();
 }
 </script>
+
+<!-- REFERRAL PROMPT -->
+<div style="text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid var(--border);color:var(--dim);font-size:.82rem;line-height:1.6">
+  <p style="margin-bottom:.5rem">📬 觉得这份分析有帮助？</p>
+  <p>转发给正在考虑<strong style="color:var(--ink)">职业转型</strong>或<strong style="color:var(--ink)">Gap Year</strong>的朋友——他们可能正需要看到这个数字。</p>
+</div>
+
 </body>
 </html>

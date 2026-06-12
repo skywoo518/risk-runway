@@ -314,6 +314,26 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     </div>
   </div>
 
+  <!-- SCENARIO 7: GAP YEAR / PAUSE WORK -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Scenario 7 — Pause work (Gap Year)</span>
+      <span class="section-badge badge-red">Life choice</span>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Pause 6 months + 3 months job search</p><p class="sr-sub">Assumes extra spending on travel/lifestyle + 0 income during recovery</p></div>
+      <p class="sr-val" id="sc7-runway">—</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Total cost</p><p class="sr-sub">Total expenses during 9 months of zero income</p></div>
+      <p class="sr-val" id="sc7-cost">—</p>
+    </div>
+    <div class="scenario-row">
+      <div><p class="sr-name">Runway remaining after return</p><p class="sr-sub">How long savings last after the gap</p></div>
+      <p class="sr-val" id="sc7-remain">—</p>
+    </div>
+  </div>
+
   <!-- 12-MONTH CASHFLOW TIMELINE (bar chart) -->
   <div class="section">
     <div class="section-head">
@@ -659,6 +679,18 @@ document.getElementById('sc6-runway').className = 'sr-val ' + (sc6Runway <= 90 ?
 document.getElementById('sc6-gap').textContent = '-' + fmt(exp15 - expenses) + '/mo (inflation portion only)';
 document.getElementById('sc6-gap').className = 'sr-val ' + (exp15 > income ? 'red' : 'amber');
 
+/* ── SCENARIO 7: GAP YEAR / PAUSE WORK ── */
+var gapPause = 9; // 6 months gap + 3 months job search
+var gapExtraExpense = Math.round(expenses * 0.3); // extra spending during gap
+var gapTotalBurn = (expenses + gapExtraExpense + debtPay) * gapPause;
+var gapRunwayAfter = (savings - gapTotalBurn) > 0 ? Math.round((savings - gapTotalBurn) / trueBurn * 30.4) : 0;
+document.getElementById('sc7-runway').textContent = gapRunwayAfter > 0 ? gapRunwayAfter + ' days' : 'Runway depleted';
+document.getElementById('sc7-runway').className = 'sr-val ' + (gapRunwayAfter <= 0 ? 'red' : gapRunwayAfter <= 90 ? 'red' : gapRunwayAfter <= 180 ? 'amber' : 'green');
+document.getElementById('sc7-cost').textContent = fmt(gapTotalBurn);
+document.getElementById('sc7-cost').className = 'sr-val ' + (gapTotalBurn > savings ? 'red' : 'amber');
+document.getElementById('sc7-remain').textContent = gapRunwayAfter > 0 ? gapRunwayAfter + ' days' : '⚠️ Financial safety breached';
+document.getElementById('sc7-remain').className = 'sr-val ' + (gapRunwayAfter <= 0 ? 'red' : gapRunwayAfter <= 180 ? 'amber' : 'green');
+
 /* ── OPTIMIZATION 5: 12-MONTH CASHFLOW TIMELINE ── */
 (function buildTimeline() {
   var chartEl = document.getElementById('tl-chart');
@@ -808,5 +840,12 @@ function submitPrecision() {
   window.location.reload();
 }
 </script>
+
+<!-- REFERRAL PROMPT -->
+<div style="text-align:center;padding:1.5rem;margin-top:2rem;border-top:1px solid var(--border);color:var(--dim);font-size:.82rem;line-height:1.6">
+  <p style="margin-bottom:.5rem">📬 Found this analysis helpful?</p>
+  <p>Share it with a friend who's also thinking about a <strong style="color:var(--ink)">career change</strong> or <strong style="color:var(--ink)">gap year</strong> — they might need to see this number.</p>
+</div>
+
 </body>
 </html>

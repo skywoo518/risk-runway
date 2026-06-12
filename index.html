@@ -121,8 +121,14 @@ h1 i{font-style:italic;color:var(--red)}
   margin-bottom:.6rem;
 }
 .slider-label{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
-.slider-value{font-family:var(--serif);font-size:1.3rem;letter-spacing:-.02em;color:var(--ink)}
+.slider-value{font-family:var(--serif);font-size:1.3rem;letter-spacing:-.02em;color:var(--ink);display:flex;align-items:center;gap:.5rem}
 .slider-value span{font-size:.85rem;color:var(--dim);font-family:var(--sans)}
+.slider-num-input{
+  width:6rem;padding:.25rem .4rem;font-family:var(--serif);font-size:1rem;
+  border:1px solid var(--border);border-radius:4px;background:#fff;color:var(--ink);
+  text-align:right;outline:none;
+}
+.slider-num-input:focus{border-color:var(--ink)}
 input[type=range]{
   width:100%;height:3px;
   -webkit-appearance:none;appearance:none;
@@ -202,6 +208,23 @@ input[type=range]::-moz-range-thumb{
 .cta-note{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:.5rem}
 .cta-note+.cta-note{margin-bottom:2rem}
 .free-modal-banner{background:var(--amber-soft);border:1px solid #f5d99a;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.5rem;text-align:center;font-size:.82rem;color:var(--amber);line-height:1.5}
+.beta-badge{display:inline-block;background:#fff;color:var(--red);font-size:.65rem;padding:2px 6px;border-radius:3px;border:1px solid var(--red);margin-left:.3rem;vertical-align:middle;letter-spacing:.02em;font-weight:600;animation:pulse-badge 2s ease-in-out infinite}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.7}}
+.rank-section{text-align:center;margin-bottom:1.75rem;padding:1.25rem;background:var(--paper);border:1px solid var(--border);border-radius:10px}
+.rank-badge{font-size:2rem;margin-bottom:.5rem}
+.rank-name{font-family:var(--serif);font-size:1.15rem;color:var(--ink);margin-bottom:.3rem;font-weight:600}
+.rank-desc{font-size:.78rem;color:var(--dim);line-height:1.5;margin-bottom:1rem}
+.rank-share-btn{background:var(--ink);color:#fff;border:none;padding:.6rem 1.25rem;border-radius:6px;font-size:.85rem;cursor:pointer;font-family:var(--sans)}
+.rank-share-btn:hover{opacity:.88}
+.share-card-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1001;display:flex;align-items:center;justify-content:center}
+.share-card-box{background:#fff;border-radius:14px;padding:2rem 1.5rem;text-align:center;max-width:340px;width:90%;position:relative}
+.share-card-close{position:absolute;top:.75rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--dim)}
+.share-card-rank{font-size:2.5rem;margin-bottom:.5rem}
+.share-card-name{font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin-bottom:.3rem;font-weight:700}
+.share-card-days{font-size:.9rem;color:var(--dim);margin-bottom:1rem}
+.share-card-link{font-size:.72rem;color:var(--dim);margin-bottom:1.25rem;word-break:break-all}
+.share-card-qr{width:80px;height:80px;margin:0 auto .75rem;background:var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--dim)}
+.share-card-cta{font-size:.78rem;color:var(--ink);font-weight:500;margin-top:.75rem}
 
 /* ── SAMPLE REPORT ── */
 .sample-toggle{
@@ -336,6 +359,7 @@ footer{
   font-size:.72rem;color:var(--dim);
 }
 footer a{color:var(--dim);text-decoration:underline}
+.footer-promise{color:var(--ink)!important;font-size:.78rem!important;max-width:480px;margin:0 auto .75rem;font-weight:500}
 
 /* ── MOBILE ── */
 @media(max-width:520px){
@@ -385,14 +409,14 @@ footer a{color:var(--dim);text-decoration:underline}
     <div class="slider-field">
       <div class="slider-top">
         <span class="slider-label">Total savings / cash on hand</span>
-        <span class="slider-value" id="savings-val">$5,000 <span>saved</span></span>
+        <span class="slider-value"><input type="number" class="slider-num-input" id="savings-input" value="5000" min="0" max="100000" step="500"> <span>saved</span></span>
       </div>
       <input type="range" id="savings" min="0" max="100000" step="500" value="5000">
     </div>
     <div class="slider-field">
       <div class="slider-top">
         <span class="slider-label">Monthly essential expenses</span>
-        <span class="slider-value" id="expenses-val">$3,500 <span>/mo</span></span>
+        <span class="slider-value"><input type="number" class="slider-num-input" id="expenses-input" value="3500" min="500" max="20000" step="100"> <span>/mo</span></span>
       </div>
       <input type="range" id="expenses" min="500" max="20000" step="100" value="3500">
     </div>
@@ -430,13 +454,21 @@ footer a{color:var(--dim);text-decoration:underline}
     </div>
   </div>
 
+  <!-- SURVIVAL RANK -->
+  <div class="rank-section" id="rank-section" style="display:none">
+    <div class="rank-badge" id="rank-badge">🏋</div>
+    <p class="rank-name" id="rank-name">—</p>
+    <p class="rank-desc" id="rank-desc">Calculated based on your runway days</p>
+    <button class="rank-share-btn" onclick="showShareCard()">📤 Generate share card</button>
+  </div>
+
   <!-- CTA BUTTONS -->
   <div class="cta-group">
     <button class="cta-btn secondary" onclick="openFreeModal()">Get free basic report →</button>
-    <button class="cta-btn" onclick="openModal()">Get deep analysis — $13.99 →</button>
+    <button class="cta-btn" onclick="openModal()">Get deep analysis — $13.99 <span class="beta-badge">First 300 free</span> →</button>
   </div>
-  <p class="cta-note">Basic: 3 scenarios · 71% accuracy · need email &nbsp;|&nbsp; Deep: 6 scenarios · 94% accuracy · need 8 data points</p>
-  <p class="cta-note">Deep report free during beta period</p>
+  <p class="cta-note">Basic: Job loss + Emergency expense + Action items · need email &nbsp;|&nbsp; Deep: + Debt erosion + 12-month cash flow + 3 recovery paths + Personalized tips · need 8 data points</p>
+  <p class="cta-note">Deep report free for the first 300 users · then $13.99</p>
 
   <!-- SAMPLE PREVIEW (only deep version) -->
   <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
@@ -452,7 +484,7 @@ footer a{color:var(--dim);text-decoration:underline}
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">×</button>
 
-    <div class="modal-banner">🎉 Free during beta — no payment required. Fill in your info to get the full deep report.</div>
+    <div class="modal-banner">🎉 Free for the first 300 users — no payment required. Fill in your info to get the full deep report.</div>
 
     <p class="modal-title">Generate your deep risk report</p>
     <p class="modal-subtitle">Adding these details upgrades your report from "estimate" to "precise" — accuracy jumps from 71% to 94%.</p>
@@ -538,6 +570,19 @@ footer a{color:var(--dim);text-decoration:underline}
   </div>
 </div>
 
+<!-- SHARE CARD OVERLAY -->
+<div class="share-card-overlay" id="share-card-overlay">
+  <div class="share-card-box">
+    <button class="share-card-close" onclick="closeShareCard()">×</button>
+    <div class="share-card-rank" id="sc-rank">🏋</div>
+    <p class="share-card-name" id="sc-name">—</p>
+    <p class="share-card-days" id="sc-days">—</p>
+    <div class="share-card-qr">QR</div>
+    <p class="share-card-link">Test your survival rank: risk-runway</p>
+    <p class="share-card-cta">Share with friends — see who's more financially prepared 💪</p>
+  </div>
+</div>
+
 <!-- HOW IT WORKS -->
 <section class="how-section">
   <p style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:2rem">How it works</p>
@@ -561,6 +606,7 @@ footer a{color:var(--dim);text-decoration:underline}
 </section>
 
 <footer>
+  <p class="footer-promise">🔒 Only Facts Pledge: We never sell your data, never recommend financial products, and never earn commissions. Your data is processed only in your browser.</p>
   <p>© 2026 RunwayAI &nbsp;·&nbsp; For informational purposes only &nbsp;·&nbsp; Not financial advice &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; <a href="#">Terms</a></p>
 </footer>
 
@@ -614,6 +660,19 @@ function calc(){
 
   // Update free scenario cards
   updateFreeCards(days, expenses, savings);
+
+  // Update survival rank
+  var rank=getRank(days);
+  var rankSection=document.getElementById('rank-section');
+  if(rank){
+    rankSection.style.display='block';
+    document.getElementById('rank-badge').textContent=rank.emoji;
+    document.getElementById('rank-name').textContent=rank.name;
+    document.getElementById('rank-name').style.color=rank.color;
+    document.getElementById('rank-desc').textContent=rank.desc;
+  } else {
+    rankSection.style.display='none';
+  }
 }
 
 function updateFreeCards(days, expenses, savings){
@@ -964,19 +1023,58 @@ function updateSampleReport(){
 // ── SLIDER WIRING ──
 var savingsSlider=document.getElementById('savings');
 var expensesSlider=document.getElementById('expenses');
+var savingsInput=document.getElementById('savings-input');
+var expensesInput=document.getElementById('expenses-input');
 
 savingsSlider.addEventListener('input',function(){
   savings=parseInt(this.value);
-  document.getElementById('savings-val').innerHTML=fmt(savings)+' <span>saved</span>';
+  savingsInput.value=savings;
   calc();
 });
 expensesSlider.addEventListener('input',function(){
   expenses=parseInt(this.value);
-  document.getElementById('expenses-val').innerHTML=fmt(expenses)+' <span>/mo</span>';
+  expensesInput.value=expenses;
+  calc();
+});
+savingsInput.addEventListener('input',function(){
+  var v=parseInt(this.value);
+  if(isNaN(v)||v<0)v=0;
+  if(v>100000)v=100000;
+  savings=v;
+  savingsSlider.value=v;
+  calc();
+});
+expensesInput.addEventListener('input',function(){
+  var v=parseInt(this.value);
+  if(isNaN(v)||v<500)v=500;
+  if(v>20000)v=20000;
+  expenses=v;
+  expensesSlider.value=v;
   calc();
 });
 
 calc();
+
+// ── SURVIVAL RANK ──
+function getRank(days){
+  if(days<=0) return null;
+  if(days<30) return {emoji:'🤹',name:'High Wire Walker',desc:'Your runway is under 30 days. Any surprise could break your financial balance.',color:'var(--red)'};
+  if(days<90) return {emoji:'😐',name:'Edge Dweller',desc:'You re walking on the edge of moonlight. One paycheck gap and you re in trouble.',color:'var(--amber)'};
+  if(days<180) return {emoji:'😎',name:'Urban Wanderer',desc:'You have a 3-6 month buffer. Most urban workers don t reach this level.',color:'var(--amber)'};
+  if(days<365) return {emoji:'🏋',name:'Risk Runner',desc:'Your runway exceeds 6 months. You re already ahead of 90% of urban workers.',color:'var(--green)'};
+  return {emoji:'🏕',name:'Doomsday Prepper',desc:'Your runway exceeds 1 year. No surprise can easily break your financial defense.',color:'var(--green)'};
+}
+
+function showShareCard(){
+  var r=getRank(runwayDays);
+  if(!r){alert('Please enter your savings and expenses first');return}
+  document.getElementById('sc-rank').textContent=r.emoji;
+  document.getElementById('sc-name').textContent=r.name;
+  document.getElementById('sc-days').textContent='Runway: '+runwayDays+' days';
+  document.getElementById('share-card-overlay').classList.add('visible');
+}
+function closeShareCard(){document.getElementById('share-card-overlay').classList.remove('visible')}
+document.getElementById('share-card-overlay').addEventListener('click',function(e){if(e.target===this)closeShareCard()});
 </script>
 </body>
 </html>

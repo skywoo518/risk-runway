@@ -121,8 +121,14 @@ h1 i{font-style:italic;color:var(--red)}
   margin-bottom:.6rem;
 }
 .slider-label{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
-.slider-value{font-family:var(--serif);font-size:1.3rem;letter-spacing:-.02em;color:var(--ink)}
+.slider-value{font-family:var(--serif);font-size:1.3rem;letter-spacing:-.02em;color:var(--ink);display:flex;align-items:center;gap:.5rem}
 .slider-value span{font-size:.85rem;color:var(--dim);font-family:var(--sans)}
+.slider-num-input{
+  width:6rem;padding:.25rem .4rem;font-family:var(--serif);font-size:1rem;
+  border:1px solid var(--border);border-radius:4px;background:#fff;color:var(--ink);
+  text-align:right;outline:none;
+}
+.slider-num-input:focus{border-color:var(--ink)}
 input[type=range]{
   width:100%;height:3px;
   -webkit-appearance:none;appearance:none;
@@ -202,6 +208,23 @@ input[type=range]::-moz-range-thumb{
 .cta-note{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:.5rem}
 .cta-note+.cta-note{margin-bottom:2rem}
 .free-modal-banner{background:var(--amber-soft);border:1px solid #f5d99a;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.5rem;text-align:center;font-size:.82rem;color:var(--amber);line-height:1.5}
+.beta-badge{display:inline-block;background:#fff;color:var(--red);font-size:.65rem;padding:2px 6px;border-radius:3px;border:1px solid var(--red);margin-left:.3rem;vertical-align:middle;letter-spacing:.02em;font-weight:600;animation:pulse-badge 2s ease-in-out infinite}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.7}}
+.rank-section{text-align:center;margin-bottom:1.75rem;padding:1.25rem;background:var(--paper);border:1px solid var(--border);border-radius:10px}
+.rank-badge{font-size:2rem;margin-bottom:.5rem}
+.rank-name{font-family:var(--serif);font-size:1.15rem;color:var(--ink);margin-bottom:.3rem;font-weight:600}
+.rank-desc{font-size:.78rem;color:var(--dim);line-height:1.5;margin-bottom:1rem}
+.rank-share-btn{background:var(--ink);color:#fff;border:none;padding:.6rem 1.25rem;border-radius:6px;font-size:.85rem;cursor:pointer;font-family:var(--sans)}
+.rank-share-btn:hover{opacity:.88}
+.share-card-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1001;display:flex;align-items:center;justify-content:center}
+.share-card-box{background:#fff;border-radius:14px;padding:2rem 1.5rem;text-align:center;max-width:340px;width:90%;position:relative}
+.share-card-close{position:absolute;top:.75rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--dim)}
+.share-card-rank{font-size:2.5rem;margin-bottom:.5rem}
+.share-card-name{font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin-bottom:.3rem;font-weight:700}
+.share-card-days{font-size:.9rem;color:var(--dim);margin-bottom:1rem}
+.share-card-link{font-size:.72rem;color:var(--dim);margin-bottom:1.25rem;word-break:break-all}
+.share-card-qr{width:80px;height:80px;margin:0 auto .75rem;background:var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--dim)}
+.share-card-cta{font-size:.78rem;color:var(--ink);font-weight:500;margin-top:.75rem}
 
 /* ── SAMPLE REPORT ── */
 .sample-toggle{
@@ -336,6 +359,7 @@ footer{
   font-size:.72rem;color:var(--dim);
 }
 footer a{color:var(--dim);text-decoration:underline}
+.footer-promise{color:var(--ink)!important;font-size:.78rem!important;max-width:480px;margin:0 auto .75rem;font-weight:500}
 
 /* ── MOBILE ── */
 @media(max-width:520px){
@@ -385,14 +409,14 @@ footer a{color:var(--dim);text-decoration:underline}
     <div class="slider-field">
       <div class="slider-top">
         <span class="slider-label">存款总额 / 可用现金</span>
-        <span class="slider-value" id="savings-val">¥50,000 <span>存款</span></span>
+        <span class="slider-value"><input type="number" class="slider-num-input" id="savings-input" value="50000" min="0" max="500000" step="1000"> <span>存款</span></span>
       </div>
       <input type="range" id="savings" min="0" max="500000" step="1000" value="50000">
     </div>
     <div class="slider-field">
       <div class="slider-top">
         <span class="slider-label">每月必要支出</span>
-        <span class="slider-value" id="expenses-val">¥8,000 <span>/月</span></span>
+        <span class="slider-value"><input type="number" class="slider-num-input" id="expenses-input" value="8000" min="1000" max="50000" step="500"> <span>/月</span></span>
       </div>
       <input type="range" id="expenses" min="1000" max="50000" step="500" value="8000">
     </div>
@@ -430,13 +454,21 @@ footer a{color:var(--dim);text-decoration:underline}
     </div>
   </div>
 
+  <!-- SURVIVAL RANK -->
+  <div class="rank-section" id="rank-section" style="display:none">
+    <div class="rank-badge" id="rank-badge">🪂</div>
+    <p class="rank-name" id="rank-name">—</p>
+    <p class="rank-desc" id="rank-desc">根据您的跑道天数计算得出</p>
+    <button class="rank-share-btn" onclick="showShareCard()">📤 生成分享卡片</button>
+  </div>
+
   <!-- CTA BUTTONS -->
   <div class="cta-group">
     <button class="cta-btn secondary" onclick="openFreeModal()">免费获取基础报告 →</button>
-    <button class="cta-btn" onclick="openModal()">获取深度分析 — ¥13.99 →</button>
+    <button class="cta-btn" onclick="openModal()">获取深度分析 — ¥13.99 <span class="beta-badge">前300名免费</span> →</button>
   </div>
-  <p class="cta-note">基础版：3个场景 · 71%准确度 · 需邮箱 &nbsp;|&nbsp; 深度版：6个场景 · 94%准确度 · 需8个数据点</p>
-  <p class="cta-note">内测期间深度版限时免费开放</p>
+  <p class="cta-note">基础版：失业推演 + 突发支出 + 行动建议 · 需邮箱 &nbsp;|&nbsp; 深度版：+ 债务侵蚀 + 12月现金流 + 3条恢复路径 + 个性化优化 · 需8个数据点</p>
+  <p class="cta-note">深度版前300名用户免费 · 之后恢复 ¥13.99</p>
 
   <!-- SAMPLE PREVIEW (only deep version) -->
   <button class="sample-toggle" id="sample-toggle" onclick="toggleSample()">
@@ -452,7 +484,7 @@ footer a{color:var(--dim);text-decoration:underline}
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">×</button>
 
-    <div class="modal-banner">🎉 内测期间免费开放，无需支付。填写信息即可获得完整深度报告。</div>
+    <div class="modal-banner">🎉 前300名用户免费，无需支付。填写信息即可获得完整深度报告。</div>
 
     <p class="modal-title">生成你的深度风险报告</p>
     <p class="modal-subtitle">补充以下信息，报告将从「概算」升级为「精确」——准确度从71%提升至94%。</p>
@@ -538,6 +570,19 @@ footer a{color:var(--dim);text-decoration:underline}
   </div>
 </div>
 
+<!-- SHARE CARD OVERLAY -->
+<div class="share-card-overlay" id="share-card-overlay">
+  <div class="share-card-box">
+    <button class="share-card-close" onclick="closeShareCard()">×</button>
+    <div class="share-card-rank" id="sc-rank">🪂</div>
+    <p class="share-card-name" id="sc-name">—</p>
+    <p class="share-card-days" id="sc-days">—</p>
+    <div class="share-card-qr">QR</div>
+    <p class="share-card-link">测测你的生存段位：risk-runway</p>
+    <p class="share-card-cta">转发给朋友，看看谁的财务安全感更强 💪</p>
+  </div>
+</div>
+
 <!-- HOW IT WORKS -->
 <section class="how-section">
   <p style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:2rem">如何使用</p>
@@ -561,6 +606,7 @@ footer a{color:var(--dim);text-decoration:underline}
 </section>
 
 <footer>
+  <p class="footer-promise">🔒 Only Facts 承诺：我们不出售用户数据，不推荐金融产品，不从中获取任何佣金。你的数据仅在你的浏览器中处理。</p>
   <p>© 2026 风险跑道 &nbsp;·&nbsp; 仅供信息参考 &nbsp;·&nbsp; 不构成财务建议 &nbsp;·&nbsp; <a href="#">隐私政策</a> &nbsp;·&nbsp; <a href="#">使用条款</a></p>
 </footer>
 
@@ -614,6 +660,19 @@ function calc(){
 
   // Update free scenario cards
   updateFreeCards(days, expenses, savings);
+
+  // Update survival rank
+  var rank=getRank(days);
+  var rankSection=document.getElementById('rank-section');
+  if(rank){
+    rankSection.style.display='block';
+    document.getElementById('rank-badge').textContent=rank.emoji;
+    document.getElementById('rank-name').textContent=rank.name;
+    document.getElementById('rank-name').style.color=rank.color;
+    document.getElementById('rank-desc').textContent=rank.desc;
+  } else {
+    rankSection.style.display='none';
+  }
 }
 
 function updateFreeCards(days, expenses, savings){
@@ -964,19 +1023,58 @@ function updateSampleReport(){
 // ── SLIDER WIRING ──
 var savingsSlider=document.getElementById('savings');
 var expensesSlider=document.getElementById('expenses');
+var savingsInput=document.getElementById('savings-input');
+var expensesInput=document.getElementById('expenses-input');
 
 savingsSlider.addEventListener('input',function(){
   savings=parseInt(this.value);
-  document.getElementById('savings-val').innerHTML=fmt(savings)+' <span>存款</span>';
+  savingsInput.value=savings;
   calc();
 });
 expensesSlider.addEventListener('input',function(){
   expenses=parseInt(this.value);
-  document.getElementById('expenses-val').innerHTML=fmt(expenses)+' <span>/月</span>';
+  expensesInput.value=expenses;
+  calc();
+});
+savingsInput.addEventListener('input',function(){
+  var v=parseInt(this.value);
+  if(isNaN(v)||v<0)v=0;
+  if(v>500000)v=500000;
+  savings=v;
+  savingsSlider.value=v;
+  calc();
+});
+expensesInput.addEventListener('input',function(){
+  var v=parseInt(this.value);
+  if(isNaN(v)||v<1000)v=1000;
+  if(v>50000)v=50000;
+  expenses=v;
+  expensesSlider.value=v;
   calc();
 });
 
 calc();
+
+// ── SURVIVAL RANK ──
+function getRank(days){
+  if(days<=0) return null;
+  if(days<30) return {emoji:'🤹',name:'财务钢丝行者',desc:'你的跑道不足30天，每一次意外都可能让财务失衡。',color:'var(--red)'};
+  if(days<90) return {emoji:'😐',name:'月光边缘徘徊者',desc:'你在月光边缘行走，一份工资断档就会陷入困境。',color:'var(--amber)'};
+  if(days<180) return {emoji:'😎',name:'都市从容族',desc:'你有3-6个月的缓冲，多数都市人达不到这个水平。',color:'var(--amber)'};
+  if(days<365) return {emoji:'🏋',name:'风险跑者',desc:'你的跑道超过6个月，已经超过90%的城市职场人。',color:'var(--green)'};
+  return {emoji:'🏕',name:'末日准备狂',desc:'你的跑道超过1年，无论什么意外都无法轻易击穿你的财务防线。',color:'var(--green)'};
+}
+
+function showShareCard(){
+  var r=getRank(runwayDays);
+  if(!r){alert('请先输入存款和支出数据');return}
+  document.getElementById('sc-rank').textContent=r.emoji;
+  document.getElementById('sc-name').textContent=r.name;
+  document.getElementById('sc-days').textContent='跑道：'+runwayDays+'天';
+  document.getElementById('share-card-overlay').classList.add('visible');
+}
+function closeShareCard(){document.getElementById('share-card-overlay').classList.remove('visible')}
+document.getElementById('share-card-overlay').addEventListener('click',function(e){if(e.target===this)closeShareCard()});
 </script>
 </body>
 </html>
