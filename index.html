@@ -35,6 +35,8 @@ nav{
 .logo{font-family:var(--serif);font-size:1.15rem;letter-spacing:-.02em;color:var(--ink)}
 .logo b{color:var(--red);font-weight:normal}
 .nav-tag{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);padding:.25rem .75rem;border-radius:2rem}
+.runner-badge{font-size:.72rem;font-family:var(--sans);letter-spacing:.04em;padding:.25rem .75rem;border-radius:2rem;border:1px solid var(--border);color:var(--dim);transition:color .2s,border-color .2s}
+.runner-badge.paid{color:var(--green);border-color:var(--green)}
 
 /* ── HERO ── */
 .hero{
@@ -431,7 +433,10 @@ footer a{color:var(--dim);text-decoration:underline}
 
 <nav>
   <div class="logo">Runway<b>AI</b></div>
-  <span class="nav-tag">No signup · Data stays in your browser</span>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <span id="runner-badge" class="runner-badge" style="display:none">Runner#────</span>
+    <span class="nav-tag">No signup · Data stays in your browser</span>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -663,6 +668,50 @@ footer a{color:var(--dim);text-decoration:underline}
 </footer>
 
 <script>
+/* ── RUNNER# ASSIGNMENT + RETURNING USER ── */
+(function(){
+  var STORAGE_KEY = 'rrRunner';
+  var PAID_KEY = 'rrPaid';
+  var FIRST_VISIT = 'rrFirstVisit';
+  var LAST_VISIT = 'rrLastVisit';
+
+  // Check if Runner# exists
+  var runner = localStorage.getItem(STORAGE_KEY);
+
+  if (!runner) {
+    // First visit: assign Runner#
+    var num = Math.floor(1000 + Math.random() * 9000);
+    runner = '#' + num;
+    localStorage.setItem(STORAGE_KEY, runner);
+    localStorage.setItem(FIRST_VISIT, Date.now());
+  }
+
+  // Update nav badge
+  var badge = document.getElementById('runner-badge');
+  if (badge) {
+    var isPaid = localStorage.getItem(PAID_KEY) === 'true';
+    badge.textContent = 'Runner' + runner;
+    badge.className = 'runner-badge' + (isPaid ? ' paid' : '');
+    badge.style.display = 'inline-block';
+  }
+
+  // Check if returning user (visited before, not first page load)
+  var lastVisit = parseInt(localStorage.getItem(LAST_VISIT)) || 0;
+  var now = Date.now();
+  if (lastVisit > 0 && now - lastVisit > 1000) {
+    // Returning user: show welcome back message
+    setTimeout(function() {
+      var msg = document.createElement('div');
+      msg.id = 'welcome-back';
+      msg.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--green);border-radius:8px;padding:.75rem 1.25rem;font-size:.85rem;color:var(--green);z-index:200;box-shadow:0 4px 16px rgba(26,122,74,.15);transition:opacity .3s';
+      msg.innerHTML = '👋 Welcome back, Runner' + runner + '! Ready to check your runway?';
+      document.body.appendChild(msg);
+      setTimeout(function(){ msg.style.opacity = '0'; setTimeout(function(){ msg.remove(); }, 300); }, 3000);
+    }, 800);
+  }
+  localStorage.setItem(LAST_VISIT, now);
+})();
+
 /* ── DYNAMIC SLOTS COUNTER ── */
 (function(){
   var STORAGE_KEY = 'rrSlots';

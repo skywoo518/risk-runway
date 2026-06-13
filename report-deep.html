@@ -24,6 +24,8 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 .report-badge{font-size:.68rem;letter-spacing:.1em;color:var(--green);border:1px solid #b8e8ce;padding:.2rem .7rem;border-radius:2rem;background:var(--green-soft)}
 .report-badge.beta{color:var(--amber);border-color:#f5d99a;background:var(--amber-soft)}
 .nav-badges{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.runner-badge{font-size:.68rem;font-family:var(--sans);letter-spacing:.04em;padding:.2rem .7rem;border-radius:2rem;border:1px solid var(--border);color:var(--dim);transition:color .2s,border-color .2s}
+.runner-badge.paid{color:var(--green);border-color:var(--green)}
 
 .report-wrap{max-width:680px;margin:0 auto;padding:2.5rem 2rem 5rem}
 
@@ -136,6 +138,7 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 <nav>
   <div class="logo">Runway<b>AI</b></div>
   <div class="nav-badges">
+    <span id="runner-badge" class="runner-badge" style="display:none">Runner#────</span>
     <span class="report-badge beta">Beta User</span>
     <span class="report-badge">Deep Analysis · Based on your real data</span>
   </div>
@@ -568,6 +571,29 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 </div>
 
 <script>
+/* ── RUNNER# DISPLAY + PAID FLAG ── */
+(function(){
+  // Assign Runner# if first visit
+  var runner = localStorage.getItem('rrRunner');
+  if (!runner) {
+    var num = Math.floor(1000 + Math.random() * 9000);
+    runner = '#' + num;
+    localStorage.setItem('rrRunner', runner);
+    localStorage.setItem('rrFirstVisit', Date.now());
+  }
+
+  // SET PAID FLAG (deep report accessed)
+  localStorage.setItem('rrPaid', 'true');
+
+  // Update nav badge
+  var badge = document.getElementById('runner-badge');
+  if (badge) {
+    badge.textContent = 'Runner' + runner;
+    badge.className = 'runner-badge paid';
+    badge.style.display = 'inline-block';
+  }
+})();
+
 /* ── DATA READING FROM LOCALSTORAGE ── */
 var reportData = null;
 try {

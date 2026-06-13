@@ -18,6 +18,8 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-heigh
 nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--paper)}
 .logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}.logo b{color:var(--red);font-weight:normal}
 .report-badge{font-size:.68rem;letter-spacing:.1em;color:var(--amber);border:1px solid #f5d99a;padding:.2rem .7rem;border-radius:2rem;background:var(--amber-soft)}
+.runner-badge{font-size:.68rem;font-family:var(--sans);letter-spacing:.04em;padding:.2rem .7rem;border-radius:2rem;border:1px solid var(--border);color:var(--dim);transition:color .2s,border-color .2s}
+.runner-badge.paid{color:var(--green);border-color:var(--green)}
 
 .report-wrap{max-width:640px;margin:0 auto;padding:2.5rem 2rem 5rem}
 
@@ -151,7 +153,10 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 
 <nav>
   <div class="logo">Runway<b>Risk</b></div>
-  <span class="report-badge">Basic Analysis</span>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <span id="runner-badge" class="runner-badge" style="display:none">Runner#────</span>
+    <span class="report-badge">Basic Analysis</span>
+  </div>
 </nav>
 
 <div class="report-wrap">
@@ -380,6 +385,20 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 </div>
 
 <script>
+/* ── RUNNER# DISPLAY ── */
+(function(){
+  var runner = localStorage.getItem('rrRunner');
+  if (runner) {
+    var badge = document.getElementById('runner-badge');
+    if (badge) {
+      var isPaid = localStorage.getItem('rrPaid') === 'true';
+      badge.textContent = 'Runner' + runner;
+      badge.className = 'runner-badge' + (isPaid ? ' paid' : '');
+      badge.style.display = 'inline-block';
+    }
+  }
+})();
+
 /* ── UTILS ── */
 function fmt(n){
   if(n===undefined||n===null||isNaN(n))return '—';
