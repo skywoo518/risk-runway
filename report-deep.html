@@ -344,14 +344,17 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     </div>
   </div>
 
-  <!-- CONSUMPTION CALM CARD (default expanded, moved from bottom) -->
-  <div id="calm-card" style="background:#fff;border:2px solid var(--green);border-radius:10px;margin-top:1.5rem;overflow:hidden;box-shadow:0 4px 16px rgba(26,122,74,.15)">
-    <div class="section-head" style="background:var(--green-soft);padding:1rem 1.25rem">
-      <span class="section-title" style="color:var(--green);font-weight:600">🧘 Before You Buy — Consumption Calm Test</span>
-      <span class="section-badge badge-green">Interactive · Default expanded</span>
+  <!-- CONSUMPTION CALM CARD (mystery: default collapsed, click to reveal) -->
+  <div id="calm-card" style="background:#fff;border:2px solid var(--green);border-radius:10px;margin-top:1.5rem;overflow:hidden;box-shadow:0 4px 16px rgba(26,122,74,.12)">
+    <div class="section-head" style="background:var(--green-soft);padding:1rem 1.25rem;cursor:pointer" onclick="toggleCalmCard()">
+      <div>
+        <span class="section-title" style="color:var(--green);font-weight:600">🧘 Before You Buy — hidden insight inside</span>
+        <p style="font-size:.72rem;color:#666;margin-top:.3rem;line-height:1.5;max-width:520px">Your runway is <b id="calm-days-preview">—</b> days. Most people don't know if their next purchase is helping or hurting them. Click to find out yours.</p>
+      </div>
+      <span class="section-badge badge-green" id="calm-toggle-text" style="white-space:nowrap;flex-shrink:0">Click to reveal →</span>
     </div>
-    <div id="calm-card-body" style="padding:1.25rem">
-      <p style="font-size:.85rem;color:#444;margin-bottom:1.25rem;line-height:1.7">Your runway is <b id="calm-days" style="color:var(--ink)">—</b> days. Before your next purchase, answer these 5 questions to calculate your rational consumption index:</p>
+    <div id="calm-card-body" style="display:none;padding:1.25rem">
+      <p style="font-size:.85rem;color:#444;margin-bottom:1.25rem;line-height:1.7">Your runway is <b id="calm-days" style="color:var(--ink)">—</b> days. Answer these 5 questions before your next purchase. Your rational consumption index will be calculated:</p>
       <div id="calm-questions" style="display:flex;flex-direction:column;gap:.85rem;margin-bottom:1.25rem"></div>
       <div id="calm-result" style="display:none;background:var(--paper);border-radius:8px;padding:1.25rem;margin-bottom:1.25rem;font-size:.88rem;color:var(--ink);line-height:1.7;border:1px solid var(--border)"></div>
       <button onclick="calcCalm()" id="calm-btn" style="width:100%;padding:.85rem;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:.9rem;cursor:pointer;font-family:var(--sans);font-weight:500;transition:opacity .15s">Calculate my rational consumption index →</button>
@@ -696,6 +699,9 @@ document.getElementById('accuracy-text').textContent = 'Analysis accuracy: ' + M
 var daysEl = document.getElementById('rh-days');
 daysEl.textContent = days >= 9999 ? '∞' : days;
 daysEl.className = 'rh-days ' + dayColorClass(days);
+// Also update Before You Buy preview (collapsed state)
+var previewEl = document.getElementById('calm-days-preview');
+if (previewEl) previewEl.textContent = days >= 9999 ? '∞' : days;
 document.getElementById('rh-status').textContent = zoneText(days);
 document.getElementById('rh-status').className = 'rh-status ' + zoneClass(days);
 document.getElementById('rh-emotional').textContent = emotionalLabel(days);
@@ -1029,7 +1035,7 @@ function toggleCalmCard(){
     if(dEl) dEl.textContent = document.getElementById('rh-days').textContent;
   } else {
     body.style.display = 'none';
-    txt.textContent = 'Expand →';
+    txt.textContent = 'Click to reveal →';
   }
 }
 
