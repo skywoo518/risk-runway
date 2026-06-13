@@ -240,7 +240,44 @@ input[type=range]::-moz-range-thumb{
 .share-card-qr{width:80px;height:80px;margin:0 auto .75rem;background:var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--dim)}
 .share-card-cta{font-size:.78rem;color:var(--ink);font-weight:500;margin-top:.75rem}
 
-/* ── SAMPLE REPORT ── */
+/* ── DEMO: show a realistic example ── */
+function showDemo(){
+  // Fill realistic demo values
+  document.getElementById('savings-input').value = 5000;
+  document.getElementById('savings').value = 5000;
+  document.getElementById('expenses-input').value = 3500;
+  document.getElementById('expenses').value = 3500;
+
+  // Trigger calculation
+  updateRunway();
+
+  // Show result with CTA
+  var days = Math.round(5000/3500*30.4);
+  var runEl = document.getElementById('runway-days');
+  runEl.textContent = days;
+  runEl.className = 'runway-days amber';
+
+  var statusEl = document.getElementById('status-text');
+  statusEl.textContent = 'Demo: ' + days + ' days. Real report shows all 7 scenarios.';
+
+  // Scroll to result
+  document.querySelector('.runway-number-wrap').scrollIntoView({behavior:'smooth'});
+
+  // Show a demo CTA after 1.5s
+  setTimeout(function(){
+    var ctx = document.querySelector('.context-row');
+    if(ctx && !document.getElementById('demo-cta')){
+      var div = document.createElement('div');
+      div.id = 'demo-cta';
+      div.style.cssText = 'background:var(--ink);color:#fff;border-radius:8px;padding:1rem 1.25rem;margin-top:1rem;text-align:center';
+      div.innerHTML = '<p style="font-size:.82rem;margin-bottom:.5rem;opacity:.7">Demo: savings $5,000 / expenses $3,500</p>'
+        + '<p style="font-size:.95rem;margin-bottom:.75rem">Your real data may be very different. <b>Get your free basic report →</b></p>'
+        + '<button onclick="openFreeModal()" style="padding:.6rem 1.5rem;background:#fff;color:var(--ink);border:none;border-radius:6px;font-size:.88rem;cursor:pointer;font-family:var(--sans)">Get my real numbers →</button>';
+      ctx.parentNode.insertBefore(div, ctx.nextSibling);
+    }
+  }, 1500);
+}
+
 .sample-toggle{
   display:inline-flex;align-items:center;gap:.4rem;
   font-size:.82rem;color:var(--dim);
@@ -480,6 +517,7 @@ footer a{color:var(--dim);text-decoration:underline}
   <!-- CTA BUTTONS -->
   <div class="cta-group">
     <button class="cta-btn secondary" onclick="openFreeModal()">Get free basic report →</button>
+    <button class="cta-btn demo" onclick="showDemo()" style="background:#fff;color:var(--ink);border:1.5px dashed var(--dim);animation:pulse-border 2s ease-in-out infinite">🎯 Try a real example first →</button>
     <button class="cta-btn" onclick="openModal()">Get deep analysis — $13.99 →</button>
   </div>
   <p class="cta-note">Deep report includes 6 scenarios + 12-month timeline + debt analysis + 3 recovery paths · one-time payment</p>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Latte Factor Calculator — Risk Runway</title>
+<style>
+/* ── RESET & VARS ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1918;--dim:#b8b5ac;--dimmer:#d4d1c8;--paper:#f5f4f0;
+  --border:#e8e5dc;--red:#c0504d;--amber:#d09b35;--green:#4a8c5c;
+  --sans:"Inter",system-ui,-apple-system,sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.6;max-width:640px;margin:0 auto;padding:2rem 1.25rem 4rem}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;margin-bottom:2rem;border-bottom:1px solid var(--border)}
+.logo{font-family:var(--serif);font-size:1.1rem;letter-spacing:-.02em}
+.logo b{font-weight:700}
+.nav-back{font-size:.82rem;color:var(--dim);text-decoration:none;border:1px solid var(--border);padding:.35rem .85rem;border-radius:2rem;transition:all .15s}
+.nav-back:hover{color:var(--ink);border-color:var(--ink)}
+
+/* ── HERO ── */
+.hero{text-align:center;margin-bottom:2.5rem}
+.hero-label{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:.5rem}
+h1{font-family:var(--serif);font-size:1.6rem;font-weight:normal;line-height:1.35;margin-bottom:.75rem;letter-spacing:-.01em}
+.hero-sub{font-size:.88rem;color:var(--dim);line-height:1.7;max-width:440px;margin:0 auto}
+
+/* ── CALCULATOR ── */
+.calc-box{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+.calc-title{font-family:var(--serif);font-size:1.05rem;margin-bottom:1.2rem;color:var(--ink)}
+.calc-field{margin-bottom:1rem}
+.calc-field label{display:block;font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.3rem}
+.calc-field input{width:100%;padding:.65rem 1rem;font-size:1rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;transition:border-color .15s}
+.calc-field input:focus{border-color:var(--ink)}
+.calc-row{display:flex;gap:.75rem}
+.calc-row .calc-field{flex:1}
+.calc-btn{width:100%;padding:.85rem;background:var(--ink);color:#fff;font-family:var(--sans);font-size:.92rem;border:none;border-radius:6px;cursor:pointer;transition:opacity .15s;margin-top:.5rem}
+.calc-btn:hover{opacity:.88}
+
+/* ── RESULT ── */
+.result-box{display:none;background:var(--ink);color:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;text-align:center}
+.result-box.visible{display:block}
+.result-eyebrow{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.5rem}
+.result-number{font-family:var(--serif);font-size:2.8rem;letter-spacing:-.02em;line-height:1;margin-bottom:.3rem}
+.result-label{font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:1.2rem}
+.result-detail{font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:1rem;text-align:left}
+.result-cta{font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:.75rem}
+.result-btn{display:inline-block;padding:.7rem 1.5rem;background:#fff;color:var(--ink);text-decoration:none;border-radius:6px;font-size:.88rem;font-weight:500;transition:opacity .15s}
+.result-btn:hover{opacity:.88}
+
+/* ── EXAMPLES ── */
+.examples{margin-top:2rem}
+.examples-title{font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.75rem;text-transform:uppercase}
+.example-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:.85rem 1rem;margin-bottom:.5rem;cursor:pointer;transition:border-color .15s}
+.example-card:hover{border-color:var(--ink)}
+.example-name{font-size:.85rem;color:var(--ink);margin-bottom:.2rem}
+.example-detail{font-size:.72rem;color:var(--dim)}
+
+/* ── TIP ── */
+.tip{background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;font-size:.78rem;color:var(--dim);line-height:1.7;margin-top:1.5rem}
+.tip b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Runway<b>AI</b></div>
+  <a href="https://fengxianpaodao.com" class="nav-back">← Back</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-label">Latte Factor Calculator</p>
+  <h1>That $6 habit?<br>It's costing you <i>weeks</i> of runway.</h1>
+  <p class="hero-sub">Small, repeated expenses are invisible — until you see what they cost you in survival days.</p>
+</section>
+
+<!-- CALCULATOR -->
+<div class="calc-box">
+  <p class="calc-title">Calculate your latte factor</p>
+  <div class="calc-row">
+    <div class="calc-field">
+      <label>Daily amount ($)</label>
+      <input type="number" id="lf-daily" value="6" min="0" step="0.5">
+    </div>
+    <div class="calc-field">
+      <label>Frequency (days/week)</label>
+      <input type="number" id="lf-freq" value="5" min="1" max="7" step="1">
+    </div>
+  </div>
+  <div class="calc-field">
+    <label>How many years have you been doing this?</label>
+    <input type="number" id="lf-years" value="3" min="0" max="50" step="1">
+  </div>
+  <div class="calc-field">
+    <label>Alternative: what would you invest it in instead? (annual return %)</label>
+    <input type="number" id="lf-return" value="7" min="0" max="20" step="0.5">
+  </div>
+  <button class="calc-btn" onclick="calcLatteFactor()">Calculate my latte factor →</button>
+</div>
+
+<!-- RESULT -->
+<div class="result-box" id="lf-result">
+  <p class="result-eyebrow">Your latte factor</p>
+  <p class="result-number" id="lf-result-days">—</p>
+  <p class="result-label" id="lf-result-label">days of runway lost</p>
+  <div class="result-detail" id="lf-result-detail"></div>
+  <p class="result-cta">Want to see your full runway?</p>
+  <a href="https://fengxianpaodao.com" class="result-btn">Calculate my risk runway →</a>
+</div>
+
+<!-- EXAMPLES -->
+<div class="examples">
+  <p class="examples-title">Common latte factors</p>
+  <div class="example-card" onclick="loadExample(6,5,3)">
+    <p class="example-name">☕ Daily coffee shop visit</p>
+    <p class="example-detail">$6/day, 5 days/week → $1,560/year</p>
+  </div>
+  <div class="example-card" onclick="loadExample(15,7,2)">
+    <p class="example-name">📱 Subscription streaming + music</p>
+    <p class="example-detail">$15/day equivalent, 7 days/week → $8,580/year</p>
+  </div>
+  <div class="example-card" onclick="loadExample(12,7,5)">
+    <p class="example-name">🍱 Lunch takeout (vs. meal prep)</p>
+    <p class="example-detail">$12/day extra, 7 days/week → $4,380/year</p>
+  </div>
+  <div class="example-card" onclick="loadExample(50,4,1)">
+    <p class="example-name">🎮 Impulse online purchases</p>
+    <p class="example-detail">$50/week, 4 weeks/month → $2,400/year</p>
+  </div>
+</div>
+
+<!-- TIP -->
+<div class="tip">
+  <b>Why this matters:</b> Most people think "it's only $6" — but $6/day = $1,560/year = <b>cutting your runway by 5-15 days</b> (depending on your expenses). Small leaks sink big ships.
+</div>
+
+<script>
+function calcLatteFactor(){
+  var daily = parseFloat(document.getElementById('lf-daily').value) || 0;
+  var freq = parseInt(document.getElementById('lf-freq').value) || 5;
+  var years = parseInt(document.getElementById('lf-years').value) || 0;
+  var ret = parseFloat(document.getElementById('lf-return').value) || 7;
+
+  if(daily <= 0){alert('Please enter a valid daily amount');return;}
+
+  // Annual cost
+  var annualCost = daily * freq * 52;
+  // Total wasted (simple, no compounding)
+  var totalWasted = annualCost * years;
+  // If invested instead (very rough compound)
+  var investedValue = 0;
+  for(var i=0;i<years;i++){investedValue = (investedValue + annualCost) * (1+ret/100);}
+  var opportunityCost = Math.round(investedValue - totalWasted);
+  // Runway days lost (assuming $3,500 monthly expenses)
+  var monthlyExpenses = 3500; // default, can be overridden by URL param
+  var urlExpenses = new URLSearchParams(location.search).get('e');
+  if(urlExpenses && !isNaN(urlExpenses)){monthlyExpenses = parseFloat(urlExpenses);}
+  var daysLost = Math.round(totalWasted / monthlyExpenses * 30.4);
+  var daysLostPerYear = Math.round(annualCost / monthlyExpenses * 30.4);
+
+  // Display
+  var resultBox = document.getElementById('lf-result');
+  resultBox.classList.add('visible');
+
+  document.getElementById('lf-result-days').textContent = daysLost >= 9999 ? '∞' : daysLost;
+
+  var label = daysLost >= 365 ? Math.round(daysLost/365*10)/10 + ' years of runway lost' : daysLost + ' days of runway lost';
+  document.getElementById('lf-result-label').textContent = label;
+
+  var detail = '';
+  detail += '• Annual cost: $' + annualCost.toLocaleString() + '<br>';
+  detail += '• Total wasted over ' + years + ' years: $' + totalWasted.toLocaleString() + '<br>';
+  if(years > 0){detail += '• If invested at ' + ret + '% return: $' + Math.round(investedValue).toLocaleString() + '<br>';}
+  detail += '• <b>You lose ~' + daysLostPerYear + ' days of runway every year</b> because of this habit.';
+  document.getElementById('lf-result-detail').innerHTML = detail;
+
+  // Scroll to result
+  resultBox.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function loadExample(daily, freq, years){
+  document.getElementById('lf-daily').value = daily;
+  document.getElementById('lf-freq').value = freq;
+  document.getElementById('lf-years').value = years;
+  calcLatteFactor();
+}
+
+// Auto-calculate on load with defaults
+setTimeout(calcLatteFactor, 300);
+</script>
+
+</body>
+</html>
