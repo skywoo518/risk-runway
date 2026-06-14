@@ -364,49 +364,6 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     </div>
   </div>
 
-  <!-- HEALTH QUESTIONNAIRE (moved from Improve Precision module) -->
-  <div style="background:#fff;border:1px solid var(--border);border-radius:10px;margin-top:1.5rem;overflow:hidden">
-    <div class="section-head" style="padding:1rem 1.25rem;background:var(--paper)">
-      <span class="section-title">🏥 Health Profile (Optional)</span>
-      <span class="section-badge badge-green">Improves accuracy</span>
-    </div>
-    <div style="padding:1.25rem">
-      <p style="font-size:.78rem;color:var(--dim);margin-bottom:1.25rem;line-height:1.6">Answer these 3 questions to improve your health-risk analysis in future reports.</p>
-      <div style="margin-bottom:.85rem">
-        <label style="font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.3rem;display:block">How would you rate your current health?</label>
-        <select id="health-q1" style="width:100%;padding:.55rem .85rem;font-size:.85rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff;outline:none">
-          <option value="">Skip</option>
-          <option value="excellent">Excellent — rarely get sick</option>
-          <option value="good">Good — minor issues occasionally</option>
-          <option value="fair">Fair — managing 1-2 conditions</option>
-          <option value="poor">Poor — multiple health issues</option>
-        </select>
-      </div>
-      <div style="margin-bottom:.85rem">
-        <label style="font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.3rem;display:block">Do you have any of these high-cost health conditions?</label>
-        <select id="health-q2" style="width:100%;padding:.55rem .85rem;font-size:.85rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff;outline:none">
-          <option value="">Skip</option>
-          <option value="none">None / not applicable</option>
-          <option value="chronic">Chronic condition (diabetes, hypertension, etc.)</option>
-          <option value="mental">Mental health condition (anxiety, depression, etc.)</option>
-          <option value="surgery">Planned surgery in next 12 months</option>
-          <option value="elderly-care">Paying for elderly parent care</option>
-        </select>
-      </div>
-      <div style="margin-bottom:1.25rem">
-        <label style="font-size:.72rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.3rem;display:block">How much do you estimate spending on health/month?</label>
-        <select id="health-q3" style="width:100%;padding:.55rem .85rem;font-size:.85rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff;outline:none">
-          <option value="">Skip</option>
-          <option value="0-50">$0-50 — minimal</option>
-          <option value="50-200">$50-200 — moderate</option>
-          <option value="200-500">$200-500 — significant</option>
-          <option value="500+">$500+ — high burden</option>
-        </select>
-      </div>
-      <button onclick="saveHealthProfile()" style="width:100%;padding:.85rem;background:var(--ink);color:#fff;border:none;border-radius:6px;font-size:.88rem;cursor:pointer;font-family:var(--sans);font-weight:500">Save my health profile →</button>
-    </div>
-  </div>
-
   <!-- 12-MONTH CASHFLOW TIMELINE (bar chart) -->
   <div class="section">
     <div class="section-head">
@@ -463,7 +420,7 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
   <div class="section">
     <div class="section-head">
       <span class="section-title">Personalized risk insights</span>
-      <span class="section-badge badge-amber">AI analysis</span>
+      <span class="section-badge badge-amber">Smart analysis</span>
     </div>
     <div class="insight-row">
       <div class="insight-dot red"></div>
@@ -526,15 +483,6 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
 
 
 
-  <!-- CTA BLOCK: Next Step -->
-  <div id="cta-next-step" style="background:var(--ink);color:#fff;border-radius:10px;padding:2rem;text-align:center;margin-top:1.5rem">
-    <p class="cover-label" style="color:rgba(255,255,255,.5);margin-bottom:.75rem">Your next step</p>
-    <p class="cover-title" style="font-size:1.2rem;margin-bottom:1rem">Your runway is <b id="cta-days">—</b> days. Next time before buying, ask yourself:</p>
-    <p style="font-size:.92rem;color:rgba(255,255,255,.7);margin-bottom:1.5rem;line-height:1.8">"Will this purchase make my runway <b>longer</b> or <b>shorter</b>?"</p>
-    <a href="https://fengxianpaodao.com" id="cta-link" style="display:inline-block;padding:.85rem 2rem;background:#fff;color:var(--ink);text-decoration:none;border-radius:6px;font-size:.9rem;font-weight:500;transition:opacity .15s">Try Before You Buy →</a>
-    <p style="font-size:.68rem;color:rgba(255,255,255,.35);margin-top:.75rem">Free, no registration, 10 seconds to start</p>
-  </div>
-
   <p class="disclaimer">The above calculations are mathematical projections based on your input data and standard financial modeling assumptions. They are for informational and educational purposes only, and do not constitute financial, legal, investment, or tax advice. Individual circumstances vary significantly. Consult a licensed financial advisor, credit counselor, or other qualified professional before making major financial decisions. RunwayAI is not a registered investment advisor or financial planner.</p>
 
   <!-- PAID INTENT COLLECTION (Smoke Test) -->
@@ -556,16 +504,51 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
   <button class="precision-cta" id="precision-toggle" onclick="togglePrecision()">✏️ Add more info to improve report accuracy →</button>
   <div class="precision-fields" id="precision-fields">
     <p style="font-size:.72rem;color:var(--dim);margin-bottom:1rem;line-height:1.5">Fill in these fields and the report will recalculate. All data processed locally.</p>
-    <div class="modal-field">
-      <label>Monthly debt payment (total monthly repayment obligation)</label>
-      <input type="number" id="prec-dp" placeholder="Enter 0 if no debt" min="0" step="50">
+
+    <!-- Health Profile (affects medical scenario accuracy + future AI plugin) -->
+    <p style="font-size:.72rem;letter-spacing:.06em;color:var(--green);margin-bottom:.5rem;margin-top:.25rem;font-weight:600">🏥 Health Profile (Optional — improves medical risk scenarios)</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+      <div>
+        <label style="font-size:.7rem;color:var(--dim);margin-bottom:.2rem;display:block">Current health</label>
+        <select id="health-q1" style="width:100%;padding:.5rem .7rem;font-size:.82rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff">
+          <option value="">Skip</option>
+          <option value="excellent">Excellent</option>
+          <option value="good">Good</option>
+          <option value="fair">Fair</option>
+          <option value="poor">Poor</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:.7rem;color:var(--dim);margin-bottom:.2rem;display:block">High-cost conditions?</label>
+        <select id="health-q2" style="width:100%;padding:.5rem .7rem;font-size:.82rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff">
+          <option value="">Skip</option>
+          <option value="none">None</option>
+          <option value="chronic">Chronic</option>
+          <option value="mental">Mental health</option>
+          <option value="surgery">Planned surgery</option>
+          <option value="elderly-care">Elderly care</option>
+        </select>
+      </div>
     </div>
+    <div class="modal-field" style="margin-bottom:1rem">
+      <label>Est. monthly health spending</label>
+      <select id="health-q3" style="width:100%;padding:.55rem .85rem;font-size:.85rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);background:#fff">
+        <option value="">Skip</option>
+        <option value="0-50">$0-50 / month</option>
+        <option value="50-200">$50-200 / month</option>
+        <option value="200-500">$200-500 / month</option>
+        <option value="500+">$500+ / month</option>
+      </select>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:1.25rem 0">
+
     <div class="modal-field">
       <label>Email (optional, for report update reminders)</label>
       <input type="email" id="prec-email" placeholder="your@email.com">
     </div>
 
-    <button onclick="submitPrecision()" style="width:100%;padding:.85rem;background:var(--ink);color:#fff;font-family:var(--sans);font-size:.88rem;border:none;border-radius:6px;cursor:pointer">Update my report →</button>
+    <button onclick="submitPrecision()" style="width:100%;padding:.85rem;background:var(--green);color:#fff;font-family:var(--sans);font-size:.88rem;border:none;border-radius:6px;cursor:pointer;font-weight:500">Save &amp; update my report →</button>
   </div>
 
 </div>
@@ -978,32 +961,25 @@ function togglePrecision() {
 
 function submitPrecision() {
   var newEmail = document.getElementById('prec-email').value || '';
+
+  // Save health data (if available in Improve Precision form)
+  var hq1 = '', hq2 = '', hq3 = '';
+  if (document.getElementById('health-q1')) hq1 = document.getElementById('health-q1').value || '';
+  if (document.getElementById('health-q2')) hq2 = document.getElementById('health-q2').value || '';
+  if (document.getElementById('health-q3')) hq3 = document.getElementById('health-q3').value || '';
+
   reportData.email = newEmail;
+  if (hq1 || hq2 || hq3) {
+    reportData.health = { q1: hq1, q2: hq2, q3: hq3 };
+  }
   reportData.timestamp = Date.now();
   try { localStorage.setItem('riskRunwayData', JSON.stringify(reportData)); } catch(e) {}
-  window.location.reload();
-}
 
-/* ── HEALTH PROFILE SAVE ── */
-function saveHealthProfile() {
-  var hq1 = document.getElementById('health-q1').value || '';
-  var hq2 = document.getElementById('health-q2').value || '';
-  var hq3 = document.getElementById('health-q3').value || '';
-  if (!hq1 && !hq2 && !hq3) {
-    alert('Please answer at least one question, or select "Skip".');
-    return;
-  }
-  if (!reportData) return;
-  reportData.health = { q1: hq1, q2: hq2, q3: hq3 };
-  try { localStorage.setItem('riskRunwayData', JSON.stringify(reportData)); } catch(e) {}
-  // Show thank you message
+  // Show success message before reload
   var btn = event.target;
-  btn.textContent = '✓ Saved!';
+  btn.textContent = '✓ Saved! Reloading...';
   btn.style.background = 'var(--green)';
-  setTimeout(function() {
-    btn.textContent = 'Update health profile →';
-    btn.style.background = 'var(--ink)';
-  }, 1500);
+  setTimeout(function(){ window.location.reload(); }, 800);
 }
 
 /* ── PAID INTENT COLLECTION (Smoke Test) ── */
@@ -1097,32 +1073,63 @@ function calcCalm(){
     if(checked < 0){ alert('Please answer all questions'); return; }
     scores.push(checked);
   }
-  // Calculate index: lower score = more rational
+  // Calculate index: lower score (0) = most rational, higher score (2) = impulsive
   var total = scores.reduce(function(a,b){return a+b;},0);
-  var idx = Math.round((total / (calmQuestions.length * 2)) * 100);
+  var maxScore = calmQuestions.length * 2;
+  var idx = Math.round((total / maxScore) * 100);
   var resultEl = document.getElementById('calm-result');
   resultEl.style.display = 'block';
-  var daysNum = parseInt(document.getElementById('rh-days').textContent) || 0;
-  var exp = parseInt(localStorage.getItem('riskRunwayData') ? JSON.parse(localStorage.getItem('riskRunwayData')).expenses || 0 : 0);
-  var impact = Math.round(total * daysNum / 20); // rough impact estimate
+
+  // Safe math: avoid division by zero and NaN
+  var daysText = document.getElementById('rh-days').textContent.trim();
+  var daysNum = (daysText === '∞') ? 9999 : (parseInt(daysText) || 0);
+
+  var savedData = null;
+  try { savedData = JSON.parse(localStorage.getItem('riskRunwayData')||'{}'); } catch(e){}
+  var exp = savedData && savedData.e ? parseFloat(savedData.e) : 0;
+  var sampleCost = exp > 0 ? Math.round(exp * 0.08) : 50; // typical impulse purchase
+
+  // Impact: how many runway days this purchase would consume
+  var impactDays = (daysNum > 0 && exp > 0) ? Math.max(1, Math.round(sampleCost / exp * daysNum)) : Math.round(total * 2);
+
   var msg = '';
-  if(idx <= 30){
-    msg = '✅ <b>Rational consumption</b><br>Your answers suggest this purchase is well-considered. If it costs $' + Math.round(exp*0.1) + ', your runway drops by ~' + Math.round(exp*0.1/exp*daysNum) + ' days. Still comfortable?';
-  } else if(idx <= 60){
-    msg = '⚠️ <b>Moderate risk</b><br>Your answers suggest mixed motives. This purchase will shorten your runway by ~' + Math.round(impact) + ' days. Want to sleep on it?';
+  if(idx <= 33){
+    msg = '✅ <b>Rational Consumption Index: ' + (100-idx) + '%</b><br>Your answers suggest this purchase is well thought out. A $' + sampleCost + ' expense like this would reduce your runway by ~<b>' + impactDays + ' day(s)</b>. You can afford it comfortably.';
+  } else if(idx <= 66){
+    msg = '⚠️ <b>Rational Consumption Index: ' + (100-idx) + '%</b><br>Mixed signals. Before you buy, consider: could you get similar value for less? This purchase would shorten your runway by ~<b>' + impactDays + ' day(s)</b>. Want to sleep on it overnight?';
   } else {
-    msg = '🚨 <b>High impulse risk</b><br>Your answers suggest this is an emotional purchase. It could shorten your runway by ~' + Math.round(impact) + ' days. Recommend: wait 72 hours.';
+    msg = '🚨 <b>Rational Consumption Index: ' + (100-idx) + '%</b><br>Your answers suggest emotional triggers are driving this decision. It would cost you ~<b>' + impactDays + ' day(s)</b> of runway safety. <strong>Recommendation: wait 72 hours</strong> before deciding. If you still want it then, go ahead.';
   }
+
+  // Add micro-level insight about extending runway through rational choices
+  msg += '<br><br><span style="font-size:.78rem;color:var(--dim)">💡 Micro insight: Every time you choose NOT to make an impulse purchase, you\'re actively <b style="color:var(--green)">extending your runway</b>. Over 10 decisions like this, that\'s +' + (impactDays * 10) + ' days of financial safety.</span>';
+
   resultEl.innerHTML = msg;
-  document.getElementById('calm-btn').textContent = 'Retake test →';
+
+  var btn = document.getElementById('calm-btn');
+  btn.textContent = 'Retake test ↺';
+  btn.onclick = function(){ retakeCalmTest(); };
 }
 
-/* ── UPDATE CTA DAYS ON LOAD ── */
-(function updateCtaDays(){
-  var dEl = document.getElementById('cta-days');
+function retakeCalmTest(){
+  // Clear all radio selections
+  for(var i=0;i<calmQuestions.length;i++){
+    var radios = document.getElementsByName('calm-q'+i);
+    for(var j=0;j<radios.length;j++){ radios[j].checked = false; }
+  }
+  // Hide result, reset button
+  document.getElementById('calm-result').style.display = 'none';
+  var btn = document.getElementById('calm-btn');
+  btn.textContent = 'Calculate my rational consumption index →';
+  btn.onclick = calcCalm;
+}
+
+/* ── UPDATE PREVIEW DAYS ON LOAD ── */
+(function updatePreviewDays(){
+  var previewEl = document.getElementById('calm-days-preview');
   var calmdEl = document.getElementById('calm-days');
   var daysText = document.getElementById('rh-days').textContent;
-  if(dEl) dEl.textContent = daysText;
+  if(previewEl) previewEl.textContent = daysText;
   if(calmdEl) calmdEl.textContent = daysText;
 })();
 </script>
