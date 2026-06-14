@@ -198,10 +198,18 @@
         host.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
         document.body.appendChild(host);
       }
+      // Remove any previous widget first (Turnstile allows only one per container)
+      if(turnstileWidgetId !== null && window.turnstile && window.turnstile.remove){
+        try { window.turnstile.remove(turnstileWidgetId); } catch(e){}
+        turnstileWidgetId = null;
+      }
+      // Also clear the host's children in case remove() failed
+      try { host.innerHTML = ''; } catch(e){}
       try{
         turnstileWidgetId = window.turnstile.render(host, {
           sitekey: sitekey,
-          size: 'invisible',
+          size: 'flexible',
+          appearance: 'interaction-only',
           callback: function(token){ resolve(token); },
           'error-callback': function(){ resolve(''); },
           'expired-callback': function(){ resolve(''); }
@@ -243,23 +251,51 @@
       var apiBase = cfg.calmApi || CALM_API_DEFAULT;
       // Get Turnstile token (empty string if not configured — dev mode)
       var turnstileToken = await getTurnstileToken();
-      var res = await fetch(apiBase, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          itemName: f.name,
-          price: price,
-          buyReason: f.reason || undefined,
-          useMonths: f.useMonths || undefined,
-          dailyExpense: ctx.dailyExpense || undefined,
-          monthlyIncome: ctx.monthlyIncome || undefined,
-          runwayDays: ctx.runwayDays,
-          isPaid: isPaid,
-          turnstileToken: turnstileToken
-        })
-      });
+      // AbortController for 30s timeout (avoid infinite spin)
+      var ac = new AbortController();
+      var timeoutId = setTimeout(function(){ ac.abort(); }, 30000);
+      var res;
+      try {
+        res = await fetch(apiBase, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          },
+          body: JSON.stringify({
+            itemName: f.name,
+            price: price,
+            buyReason: f.reason || undefined,
+            useMonths: f.useMonths || undefined,
+            dailyExpense: ctx.dailyExpense || undefined,
+            monthlyIncome: ctx.monthlyIncome || undefined,
+            runwayDays: ctx.runwayDays,
+            isPaid: isPaid,
+            turnstileToken: turnstileToken
+          }),
+          signal: ac.signal,
+          credentials: 'omit',
+          mode: 'cors'
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
-      var data = await res.json();
+      var data;
+      try { data = await res.json(); }
+      catch(parseErr) {
+        el(cfg.resultId).innerHTML =
+          '<div style="background:#fdf0ee;border:1px solid #f5bcb8;border-radius:8px;padding:1.25rem;text-align:center">' +
+          '<p style="font-size:.9rem;color:#c0392b;margin:0 0 .5rem;font-weight:500">Request failed (HTTP '+res.status+')</p>' +
+          '<p style="font-size:.8rem;color:#666;margin:0">The server response was not valid JSON. This usually means a security check interrupted the request. Please refresh and try again.</p>' +
+          '<button onclick="window.RiskRunwayCalm.reset()" style="margin-top:.75rem;padding:.6rem 1.5rem;background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:6px;font-size:.85rem;cursor:pointer">Try again</button>' +
+          '</div>';
+        setView('result');
+        return;
+      }
 
       if(!res.ok){
         var errMsg = data.message || data.error || 'Something went wrong. Please try again.';
@@ -286,9 +322,15 @@
 
     } catch(err){
       console.error('Calm error:', err);
+      var isTimeout = err && (err.name === 'AbortError' || (err.message||'').indexOf('aborted') >= 0);
+      var friendlyMsg = isTimeout
+        ? 'Request timed out after 30s. The AI is taking too long, or a security check is blocking the connection. Please try again.'
+        : (err && err.message)
+          ? 'Network error: ' + escapeHtml(err.message) + '. Please try again.'
+          : 'Network error. Please check your connection and try again.';
       el(cfg.resultId).innerHTML =
         '<div style="background:#fdf0ee;border:1px solid #f5bcb8;border-radius:8px;padding:1.25rem;text-align:center">' +
-        '<p style="font-size:.9rem;color:#c0392b;margin:0 0 .75rem">Network error. Please check your connection and try again.</p>' +
+        '<p style="font-size:.9rem;color:#c0392b;margin:0 0 .75rem">' + friendlyMsg + '</p>' +
         '<button onclick="window.RiskRunwayCalm.reset()" style="padding:.6rem 1.5rem;background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:6px;font-size:.85rem;cursor:pointer">Try again</button>' +
         '</div>';
       setView('result');
@@ -427,20 +469,35 @@
       try {
         var apiBase = cfg.emailApi || EMAIL_API_DEFAULT;
         var tt = await getTurnstileToken();
-        var res = await fetch(apiBase, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'calm_reminder',
-            email: userEmail,
-            itemName: itemName,
-            price: price,
-            runnerId: runnerId,
-            decisionId: lastAnalysis.decisionId,
-            lang: 'en',
-            turnstileToken: tt
-          })
-        });
+        var ac2 = new AbortController();
+        var t2 = setTimeout(function(){ ac2.abort(); }, 30000);
+        var res;
+        try {
+          res = await fetch(apiBase, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+              'Cache-Control': 'no-cache'
+            },
+            body: JSON.stringify({
+              type: 'calm_reminder',
+              email: userEmail,
+              itemName: itemName,
+              price: price,
+              runnerId: runnerId,
+              decisionId: lastAnalysis.decisionId,
+              lang: 'en',
+              turnstileToken: tt
+            }),
+            signal: ac2.signal,
+            credentials: 'omit',
+            mode: 'cors'
+          });
+        } finally {
+          clearTimeout(t2);
+        }
         var data = await res.json();
         if(data.success){
           alert('Frozen. We\'ll email you a reminder in 72 hours.\n\nEmail: ' + userEmail + '\n\nWhen the email arrives, click "Report your decision" to tell us what you decided — and watch your runway update.');
@@ -449,7 +506,8 @@
         }
       } catch(err){
         console.error(err);
-        alert('Frozen locally. (Email reminder failed due to network error)');
+        var isT = err && (err.name === 'AbortError' || (err.message||'').indexOf('aborted') >= 0);
+        alert('Frozen locally. (Email reminder failed: ' + (isT ? '30s timeout — connection blocked' : 'network error') + ')');
       }
     } else {
       alert('Frozen. Come back in 72 hours and re-analyze. You can use the tool again anytime.');
@@ -583,3 +641,5 @@
     getTurnstileToken: getTurnstileToken
   };
 })();
+
+// [v2-cache-bust-20260614T1715] force re-upload with new size:'flexible' + cleanup

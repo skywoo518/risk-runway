@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="rr-turnstile-sitekey" content="1x00000000000000000000AA">
+<meta name="rr-turnstile-sitekey" content="0x4AAAAAADkZCjl1m1y7n4tL">
 <title>RunwayAI — Deep Financial Risk Analysis Report</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -354,15 +354,19 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     <p class="conclusion-text" id="conclusion-text">"—</p>
   </div>
 
-  <!-- BEFORE YOU BUY (AI consumption reflection) — placed after conclusion -->
+  <!-- BEFORE YOU BUY (AI consumption reflection) — collapsed by default, user clicks to open -->
   <div id="calm-card" style="background:#fff;border:2px solid var(--green);border-radius:10px;margin-top:1.5rem;overflow:hidden;box-shadow:0 4px 16px rgba(26,122,74,.12)">
-    <div class="section-head" style="background:var(--green-soft);padding:1rem 1.25rem">
-      <div>
-        <span class="section-title" style="color:var(--green);font-weight:600">🧘 Before You Buy — Talk to AI before you spend</span>
-        <p style="font-size:.72rem;color:#666;margin-top:.3rem;line-height:1.5;max-width:520px">Your runway is <b id="calm-days-preview">—</b> days. Before your next purchase, let our AI show you exactly what it costs in runway — and ask the questions you should be asking yourself.</p>
+    <div class="section-head" style="background:var(--green-soft);padding:1rem 1.25rem;cursor:pointer" id="calm-card-toggle" onclick="toggleBybPanel()">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
+        <div>
+          <span class="section-title" style="color:var(--green);font-weight:600">🧘 Before You Buy — Talk to AI before you spend</span>
+          <p style="font-size:.72rem;color:#666;margin-top:.3rem;line-height:1.5;max-width:520px" id="calm-card-subtitle">Your runway is <b id="calm-days-preview">—</b> days. Click to open: let AI show what any future purchase costs in runway.</p>
+        </div>
+        <span id="calm-toggle-icon" style="font-size:1.4rem;color:var(--green);transition:transform .2s">▸</span>
       </div>
     </div>
 
+    <div id="calm-panel" style="display:none">
     <div style="padding:1.5rem 1.25rem">
       <!-- INPUT FORM -->
       <div id="calm-input-area">
@@ -411,7 +415,24 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
         <div id="decision-result" style="display:none;margin-top:1rem"></div>
       </div>
     </div>
+    </div>
   </div>
+
+  <script>
+  /* ── Toggle Before You Buy panel ── */
+  function toggleBybPanel(){
+    var panel = document.getElementById('calm-panel');
+    var icon = document.getElementById('calm-toggle-icon');
+    if(!panel) return;
+    if(panel.style.display === 'none'){
+      panel.style.display = 'block';
+      if(icon) icon.style.transform = 'rotate(90deg)';
+    } else {
+      panel.style.display = 'none';
+      if(icon) icon.style.transform = 'rotate(0deg)';
+    }
+  }
+  </script>
 
   <!-- EMAIL MY REPORT -->
   <div id="email-report-section" style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-top:1.5rem;text-align:center">
@@ -1119,29 +1140,50 @@ async function emailMyReport(){
     var tt = (window.RiskRunwayCalm && window.RiskRunwayCalm.getTurnstileToken)
       ? await window.RiskRunwayCalm.getTurnstileToken()
       : '';
-    var res = await fetch('/api/email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'full_report',
-        email: email,
-        runnerId: localStorage.getItem('rrRunner') || '#0000',
-        data: {
-          savings: savings,
-          expenses: expenses,
-          income: income,
-          days: days,
-          dti: dti,
-          pressure: pressure,
-          stability: stability,
-          conclusion: document.getElementById('conclusion-text').textContent
+    var ac3 = new AbortController();
+    var t3 = setTimeout(function(){ ac3.abort(); }, 30000);
+    var res;
+    try {
+      res = await fetch('/api/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+          'Cache-Control': 'no-cache'
         },
-        lang: 'en',
-        turnstileToken: tt
-      })
-    });
+        body: JSON.stringify({
+          type: 'full_report',
+          email: email,
+          runnerId: localStorage.getItem('rrRunner') || '#0000',
+          data: {
+            savings: savings,
+            expenses: expenses,
+            income: income,
+            days: days,
+            dti: dti,
+            pressure: pressure,
+            stability: stability,
+            conclusion: document.getElementById('conclusion-text').textContent
+          },
+          lang: 'en',
+          turnstileToken: tt
+        }),
+        signal: ac3.signal,
+        credentials: 'omit',
+        mode: 'cors'
+      });
+    } finally {
+      clearTimeout(t3);
+    }
 
-    var result = await res.json();
+    var result;
+    try { result = await res.json(); }
+    catch(parseErr) {
+      statusEl.textContent = '❌ Server returned invalid response (HTTP '+res.status+'). A security check may have blocked the request. Please refresh and try again.';
+      statusEl.style.color = 'var(--red)';
+      return;
+    }
 
     if(result.success){
       statusEl.textContent = '✅ Report sent! Check your inbox (and spam folder).';
@@ -1154,7 +1196,10 @@ async function emailMyReport(){
     }
   } catch(err){
     console.error(err);
-    statusEl.textContent = '❌ Network error. Please check connection.';
+    var isT = err && (err.name === 'AbortError' || (err.message||'').indexOf('aborted') >= 0);
+    statusEl.textContent = isT
+      ? '❌ Request timed out after 30s. A security check may be blocking the connection. Please try again in a moment.'
+      : '❌ Network error. Please check connection.';
     statusEl.style.color = 'var(--red)';
   }
 }
@@ -1177,7 +1222,7 @@ async function emailMyReport(){
 </script>
 
 <style>@keyframes calm-spin{to{transform:rotate(360deg)}}</style>
-<script src="calm-module.js"></script>
+<script src="calm-module.js?v=2"></script>
 <script>
 /* ── INIT CALM MODULE (must come after module script) ── */
 window.RiskRunwayCalm.init({

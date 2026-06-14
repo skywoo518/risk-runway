@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="rr-turnstile-sitekey" content="1x00000000000000000000AA">
+<meta name="rr-turnstile-sitekey" content="0x4AAAAAADkZCjl1m1y7n4tL">
 <title>Runway Risk — Basic Financial Risk Report</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -642,7 +642,7 @@ function copyShare(el){
 </script>
 
 <style>@keyframes calm-spin{to{transform:rotate(360deg)}}</style>
-<script src="calm-module.js"></script>
+<script src="calm-module.js?v=2"></script>
 <script>
 /* ── INIT CALM MODULE (must come after module script) ── */
 window.RiskRunwayCalm.init({
@@ -660,6 +660,30 @@ window.RiskRunwayCalm.init({
   calmApi: '/api/calm',
   emailApi: '/api/email'
 });
+
+/* ── LOCK BYB if no report data (BYB needs context to be useful) ── */
+(function lockBybIfNoData(){
+  try {
+    var data = JSON.parse(localStorage.getItem('riskRunwayData') || '{}');
+    var hasReport = data && data.runwayDays && data.runwayDays > 0;
+    if(hasReport) return; // unlock, no-op
+    var card = document.getElementById('calm-card');
+    if(!card) return;
+    var sectionHead = card.querySelector('.section-head');
+    var body = sectionHead ? sectionHead.nextElementSibling : null;
+    if(body){
+      body.innerHTML =
+        '<div style="padding:1.5rem 1.25rem;text-align:center">' +
+        '<p style="font-size:.88rem;color:var(--ink);margin:0 0 1rem;line-height:1.6">' +
+        'Before You Buy uses <b>your</b> runway and expenses to evaluate purchases. ' +
+        'Your report data is required for meaningful AI analysis.' +
+        '</p>' +
+        '<a href="index.html" style="display:inline-block;width:100%;box-sizing:border-box;padding:.9rem;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:.95rem;cursor:pointer;font-family:var(--sans);font-weight:500;text-decoration:none;text-align:center">Run a fresh report first →</a>' +
+        '<p style="font-size:.7rem;color:var(--dim);margin-top:.6rem;letter-spacing:.04em">15 seconds · No email required</p>' +
+        '</div>';
+    }
+  } catch(e) { /* localStorage not available — leave module to handle */ }
+})();
 </script>
 
 </body>
