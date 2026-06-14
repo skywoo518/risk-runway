@@ -1,0 +1,16 @@
+{
+  "functions": {
+    "api/calm.js": {
+      "maxDuration": 30
+    },
+    "api/email.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}

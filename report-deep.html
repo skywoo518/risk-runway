@@ -347,20 +347,51 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     </div>
   </div>
 
-  <!-- CONSUMPTION CALM CARD (mystery: default collapsed, click to reveal) -->
+  <!-- BEFORE YOU BUY (AI consumption reflection) -->
   <div id="calm-card" style="background:#fff;border:2px solid var(--green);border-radius:10px;margin-top:1.5rem;overflow:hidden;box-shadow:0 4px 16px rgba(26,122,74,.12)">
-    <div class="section-head" style="background:var(--green-soft);padding:1rem 1.25rem;cursor:pointer" onclick="toggleCalmCard()">
+    <div class="section-head" style="background:var(--green-soft);padding:1rem 1.25rem">
       <div>
-        <span class="section-title" style="color:var(--green);font-weight:600">🧘 Before You Buy — hidden insight inside</span>
-        <p style="font-size:.72rem;color:#666;margin-top:.3rem;line-height:1.5;max-width:520px">Your runway is <b id="calm-days-preview">—</b> days. Most people don't know if their next purchase is helping or hurting them. Click to find out yours.</p>
+        <span class="section-title" style="color:var(--green);font-weight:600">🧘 Before You Buy — Talk to AI before you spend</span>
+        <p style="font-size:.72rem;color:#666;margin-top:.3rem;line-height:1.5;max-width:520px">Your runway is <b id="calm-days-preview">—</b> days. Before your next purchase, let our AI show you exactly what it costs in runway — and ask the questions you should be asking yourself.</p>
       </div>
-      <span class="section-badge badge-green" id="calm-toggle-text" style="white-space:nowrap;flex-shrink:0">Click to reveal →</span>
     </div>
-    <div id="calm-card-body" style="display:none;padding:1.25rem">
-      <p style="font-size:.85rem;color:#444;margin-bottom:1.25rem;line-height:1.7">Your runway is <b id="calm-days" style="color:var(--ink)">—</b> days. Answer these 5 questions before your next purchase. Your rational consumption index will be calculated:</p>
-      <div id="calm-questions" style="display:flex;flex-direction:column;gap:.85rem;margin-bottom:1.25rem"></div>
-      <div id="calm-result" style="display:none;background:var(--paper);border-radius:8px;padding:1.25rem;margin-bottom:1.25rem;font-size:.88rem;color:var(--ink);line-height:1.7;border:1px solid var(--border)"></div>
-      <button onclick="calcCalm()" id="calm-btn" style="width:100%;padding:.85rem;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:.9rem;cursor:pointer;font-family:var(--sans);font-weight:500;transition:opacity .15s">Calculate my rational consumption index →</button>
+
+    <div style="padding:1.5rem 1.25rem">
+      <!-- INPUT FORM -->
+      <div id="calm-input-area">
+        <div style="margin-bottom:1rem">
+          <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">What do you want to buy?</label>
+          <input type="text" id="calm-item-name" placeholder="e.g. Nike Zoom Pegasus 41" maxlength="200" style="width:100%;padding:.7rem 1rem;font-size:.95rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+          <div>
+            <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">Price ($)</label>
+            <input type="number" id="calm-item-price" placeholder="1299" min="0" step="0.01" style="width:100%;padding:.7rem 1rem;font-size:.95rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff">
+          </div>
+          <div>
+            <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">Expected use (months)</label>
+            <input type="number" id="calm-use-months" placeholder="12" min="0" max="600" style="width:100%;padding:.7rem 1rem;font-size:.95rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff">
+          </div>
+        </div>
+        <div style="margin-bottom:1.25rem">
+          <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">Why do you want it? <span style="color:var(--dimmer);font-weight:normal;text-transform:none">(optional, makes AI analysis more useful)</span></label>
+          <textarea id="calm-buy-reason" rows="2" placeholder="e.g. I want to start running for health reasons" maxlength="500" style="width:100%;padding:.7rem 1rem;font-size:.92rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff;resize:vertical;line-height:1.5"></textarea>
+        </div>
+
+        <button id="calm-submit-btn" onclick="submitCalmAnalysis()" style="width:100%;padding:.9rem;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:.95rem;cursor:pointer;font-family:var(--sans);font-weight:500;transition:opacity .15s">Let AI help me think →</button>
+
+        <p id="calm-rate-info" style="text-align:center;font-size:.7rem;color:var(--dim);margin-top:.6rem;letter-spacing:.04em"></p>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div id="calm-loading" style="display:none;text-align:center;padding:2rem 1rem">
+        <div style="display:inline-block;width:32px;height:32px;border:3px solid var(--green-soft);border-top-color:var(--green);border-radius:50%;animation:calm-spin .8s linear infinite;margin-bottom:1rem"></div>
+        <p style="font-size:.9rem;color:var(--ink);margin:0;font-weight:500">AI is reflecting on your decision...</p>
+        <p style="font-size:.75rem;color:var(--dim);margin-top:.4rem">This usually takes 5-10 seconds</p>
+      </div>
+
+      <!-- RESULT AREA -->
+      <div id="calm-result" style="display:none"></div>
     </div>
   </div>
 
@@ -1025,112 +1056,310 @@ function submitIntentEmail(){
   document.getElementById('intent-thanks').style.display='block';
 }
 
-/* ── CONSUMPTION CALM CARD ── */
-function toggleCalmCard(){
-  var body = document.getElementById('calm-card-body');
-  var txt = document.getElementById('calm-toggle-text');
-  if(body.style.display === 'none'){
-    body.style.display = 'block';
-    txt.textContent = 'Collapse ↑';
-    buildCalmQuestions();
-    var dEl = document.getElementById('calm-days');
-    if(dEl) dEl.textContent = document.getElementById('rh-days').textContent;
+/* ── BEFORE YOU BUY: AI Consumption Reflection ── */
+// State
+var calmAnalysisResult = null;
+var calmFreezeTimer = null;
+var CALM_API = '/api/calm';
+var CALM_EMAIL_API = '/api/email';
+
+// Update rate limit info on load
+function updateCalmRateInfo(){
+  var info = document.getElementById('calm-rate-info');
+  if(!info) return;
+  var isPaid = localStorage.getItem('rrPaid') === 'true';
+  var limit = isPaid ? 50 : 3;
+  // Try to read from local cache (best-effort)
+  var today = new Date().toISOString().slice(0, 10);
+  var cacheKey = 'rrCalmCount_' + today;
+  var used = parseInt(localStorage.getItem(cacheKey) || '0');
+  var remaining = Math.max(0, limit - used);
+  if(isPaid){
+    info.textContent = remaining > 0
+      ? 'Pro plan: ' + remaining + ' of ' + limit + ' AI analyses remaining today'
+      : 'Pro plan: 0 analyses left today (resets at midnight UTC)';
   } else {
-    body.style.display = 'none';
-    txt.textContent = 'Click to reveal →';
+    info.textContent = 'Free plan: ' + remaining + ' of ' + limit + ' AI analyses remaining today. ' +
+      (remaining === 0 ? 'Resets tomorrow.' : 'Each analysis helps you think clearer.');
   }
 }
 
-var calmQuestions = [
-  {q:"Will this purchase make your runway LONGER or SHORTER?",opts:["Longer (adds value/saves money)","Shorter (pure spending)","Not sure"]},
-  {q:"If you DON'T buy this, will you forget about it in 72 hours?",opts:["Yes, I'll forget","No, I really need it","Not sure"]},
-  {q:"Is this purchase funded by savings, or by debt/credit?",opts:["Savings (I have the money)","Debt/credit (I don't have it)","Not sure"]},
-  {q:"How many hours of work does this purchase cost you?",opts:["Less than 2 hours","2-8 hours","More than 8 hours"]},
-  {q:"If your runway drops by this amount, are you comfortable?",opts:["Yes, I'm comfortable","No, it makes me anxious","Not sure"]}
-];
+function incrementCalmCount(){
+  var today = new Date().toISOString().slice(0, 10);
+  var cacheKey = 'rrCalmCount_' + today;
+  var used = parseInt(localStorage.getItem(cacheKey) || '0');
+  localStorage.setItem(cacheKey, String(used + 1));
+}
 
-function buildCalmQuestions(){
-  var container = document.getElementById('calm-questions');
-  if(container.children.length > 0) return; // already built
-  var html = '';
-  calmQuestions.forEach(function(item, idx){
-    html += '<div style="background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;margin-bottom:.5rem">';
-    html += '<p style="font-size:.82rem;color:var(--ink);margin-bottom:.5rem;line-height:1.5">' + (idx+1) + '. ' + item.q + '</p>';
-    item.opts.forEach(function(opt, j){
-      html += '<label style="display:block;font-size:.78rem;color:var(--dim);padding:.25rem .5rem;cursor:pointer"><input type="radio" name="calm-q' + idx + '" value="' + j + '" style="margin-right:.4rem">' + opt + '</label>';
+// Submit calm analysis to AI
+async function submitCalmAnalysis(){
+  var name = document.getElementById('calm-item-name').value.trim();
+  var priceStr = document.getElementById('calm-item-price').value.trim();
+  var useMonths = document.getElementById('calm-use-months').value.trim();
+  var reason = document.getElementById('calm-buy-reason').value.trim();
+
+  // Client validation
+  if(!name){alert('Please enter the item name');return;}
+  if(name.length > 200){alert('Item name is too long (max 200 characters)');return;}
+  if(!priceStr){alert('Please enter the price');return;}
+  var price = parseFloat(priceStr);
+  if(isNaN(price) || price <= 0){alert('Please enter a valid price');return;}
+  if(price > 10000000){alert('Price seems too high. Please double-check.');return;}
+  if(useMonths){
+    var months = parseInt(useMonths);
+    if(isNaN(months) || months < 0 || months > 600){alert('Expected use must be 0-600 months');return;}
+  }
+
+  // Pre-check: free user local limit (best-effort, server is source of truth)
+  var isPaid = localStorage.getItem('rrPaid') === 'true';
+  if(!isPaid){
+    var today = new Date().toISOString().slice(0, 10);
+    var used = parseInt(localStorage.getItem('rrCalmCount_' + today) || '0');
+    if(used >= 3){
+      alert('You\'ve used all 3 free AI analyses today. They reset at midnight UTC. Upgrade to Pro for 50/day.');
+      return;
+    }
+  }
+
+  // Get user context from saved data
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem('riskRunwayData')||'{}'); } catch(e){}
+  var dailyExpense = saved && saved.e ? parseFloat(saved.e) : 0;
+  var monthlyIncome = saved && saved.s ? parseFloat(saved.s) : 0;
+  var runwayDaysText = document.getElementById('rh-days').textContent.trim();
+  var runwayDays = runwayDaysText === '∞' ? 9999 : (parseInt(runwayDaysText) || 0);
+
+  // Show loading
+  document.getElementById('calm-input-area').style.display = 'none';
+  document.getElementById('calm-loading').style.display = 'block';
+  document.getElementById('calm-result').style.display = 'none';
+
+  try {
+    var res = await fetch(CALM_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        itemName: name,
+        price: price,
+        buyReason: reason || undefined,
+        useMonths: useMonths || undefined,
+        dailyExpense: dailyExpense || undefined,
+        monthlyIncome: monthlyIncome || undefined,
+        runwayDays: runwayDays,
+        isPaid: isPaid
+      })
     });
-    html += '</div>';
-  });
-  container.innerHTML = html;
+
+    var data = await res.json();
+
+    if(!res.ok){
+      // Hide loading, show error in result area
+      document.getElementById('calm-loading').style.display = 'none';
+      document.getElementById('calm-result').style.display = 'block';
+      var errMsg = data.message || data.error || 'Something went wrong. Please try again.';
+      document.getElementById('calm-result').innerHTML =
+        '<div style="background:#fdf0ee;border:1px solid #f5bcb8;border-radius:8px;padding:1.25rem;text-align:center">' +
+        '<p style="font-size:.9rem;color:#c0392b;margin:0 0 .75rem;font-weight:500">' + errMsg + '</p>' +
+        '<button onclick="resetCalmForm()" style="padding:.6rem 1.5rem;background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:6px;font-size:.85rem;cursor:pointer">Try again</button>' +
+        '</div>';
+      return;
+    }
+
+    // Success
+    incrementCalmCount();
+    calmAnalysisResult = data.data;
+    renderCalmResult(calmAnalysisResult, price, name);
+    updateCalmRateInfo();
+
+  } catch(err){
+    console.error('Calm analysis error:', err);
+    document.getElementById('calm-loading').style.display = 'none';
+    document.getElementById('calm-result').style.display = 'block';
+    document.getElementById('calm-result').innerHTML =
+      '<div style="background:#fdf0ee;border:1px solid #f5bcb8;border-radius:8px;padding:1.25rem;text-align:center">' +
+      '<p style="font-size:.9rem;color:#c0392b;margin:0 0 .75rem">Network error. Please check your connection and try again.</p>' +
+      '<button onclick="resetCalmForm()" style="padding:.6rem 1.5rem;background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:6px;font-size:.85rem;cursor:pointer">Try again</button>' +
+      '</div>';
+  }
 }
 
-function calcCalm(){
-  var scores = [];
-  for(var i=0;i<calmQuestions.length;i++){
-    var radios = document.getElementsByName('calm-q'+i);
-    var checked = -1;
-    for(var j=0;j<radios.length;j++){ if(radios[j].checked){ checked = parseInt(radios[j].value); break; } }
-    if(checked < 0){ alert('Please answer all questions'); return; }
-    scores.push(checked);
-  }
-  // Calculate index: lower score (0) = most rational, higher score (2) = impulsive
-  var total = scores.reduce(function(a,b){return a+b;},0);
-  var maxScore = calmQuestions.length * 2;
-  var idx = Math.round((total / maxScore) * 100);
+function renderCalmResult(ai, price, name){
+  document.getElementById('calm-loading').style.display = 'none';
   var resultEl = document.getElementById('calm-result');
   resultEl.style.display = 'block';
 
-  // Safe math: avoid division by zero and NaN
-  var daysText = document.getElementById('rh-days').textContent.trim();
-  var daysNum = (daysText === '∞') ? 9999 : (parseInt(daysText) || 0);
+  // Map verdict_label to color
+  var labelColors = {
+    'worth reflection': { bg:'#fdf6e8', border:'#f5d99a', text:'#d4840a' },
+    'high cost': { bg:'#fdf0ee', border:'#f5bcb8', text:'#c0392b' },
+    'moderate cost': { bg:'#fdf6e8', border:'#f5d99a', text:'#d4840a' },
+    'knowledge investment': { bg:'#eaf5ef', border:'#b8e8ce', text:'#1a7a4a' },
+    'health investment': { bg:'#eaf5ef', border:'#b8e8ce', text:'#1a7a4a' }
+  };
+  var colorScheme = labelColors[ai.verdict_label] || labelColors['worth reflection'];
 
-  var savedData = null;
-  try { savedData = JSON.parse(localStorage.getItem('riskRunwayData')||'{}'); } catch(e){}
-  var exp = savedData && savedData.e ? parseFloat(savedData.e) : 0;
-  var sampleCost = exp > 0 ? Math.round(exp * 0.08) : 50; // typical impulse purchase
-
-  // Impact: how many runway days this purchase would consume
-  var impactDays = (daysNum > 0 && exp > 0) ? Math.max(1, Math.round(sampleCost / exp * daysNum)) : Math.round(total * 2);
-
-  var msg = '';
-  if(idx <= 33){
-    msg = '✅ <b>Rational Consumption Index: ' + (100-idx) + '%</b><br>Your answers suggest this purchase is well thought out. A $' + sampleCost + ' expense like this would reduce your runway by ~<b>' + impactDays + ' day(s)</b>. You can afford it comfortably.';
-  } else if(idx <= 66){
-    msg = '⚠️ <b>Rational Consumption Index: ' + (100-idx) + '%</b><br>Mixed signals. Before you buy, consider: could you get similar value for less? This purchase would shorten your runway by ~<b>' + impactDays + ' day(s)</b>. Want to sleep on it overnight?';
-  } else {
-    msg = '🚨 <b>Rational Consumption Index: ' + (100-idx) + '%</b><br>Your answers suggest emotional triggers are driving this decision. It would cost you ~<b>' + impactDays + ' day(s)</b> of runway safety. <strong>Recommendation: wait 72 hours</strong> before deciding. If you still want it then, go ahead.';
+  // Build metrics
+  var metrics = ai.objective_metrics || {};
+  var metricsHtml = '';
+  if(metrics.workdays_needed && metrics.workdays_needed !== 'unknown'){
+    metricsHtml += '<div style="flex:1;background:#fff;border-radius:6px;padding:.7rem;text-align:center"><p style="font-size:.62rem;color:var(--dim);letter-spacing:.06em;margin:0 0 .25rem;text-transform:uppercase">Workdays needed</p><p style="font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin:0">' + metrics.workdays_needed + '</p></div>';
+  }
+  if(metrics.runway_days_impact){
+    metricsHtml += '<div style="flex:1;background:#fff;border-radius:6px;padding:.7rem;text-align:center"><p style="font-size:.62rem;color:var(--dim);letter-spacing:.06em;margin:0 0 .25rem;text-transform:uppercase">Runway impact</p><p style="font-family:var(--serif);font-size:1.3rem;color:' + colorScheme.text + ';margin:0">-' + metrics.runway_days_impact + 'd</p></div>';
+  }
+  if(metrics.daily_cost_over_use_period){
+    metricsHtml += '<div style="flex:1;background:#fff;border-radius:6px;padding:.7rem;text-align:center"><p style="font-size:.62rem;color:var(--dim);letter-spacing:.06em;margin:0 0 .25rem;text-transform:uppercase">Daily cost</p><p style="font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin:0">$' + metrics.daily_cost_over_use_period + '/d</p></div>';
   }
 
-  // Add micro-level insight about extending runway through rational choices
-  msg += '<br><br><span style="font-size:.78rem;color:var(--dim)">💡 Micro insight: Every time you choose NOT to make an impulse purchase, you\'re actively <b style="color:var(--green)">extending your runway</b>. Over 10 decisions like this, that\'s +' + (impactDays * 10) + ' days of financial safety.</span>';
+  // Build reflection questions
+  var questionsHtml = '';
+  if(ai.reflection_questions && ai.reflection_questions.length > 0){
+    questionsHtml = '<div style="margin-top:1.25rem"><p style="font-size:.7rem;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;margin:0 0 .5rem">Questions to ask yourself</p><ol style="font-size:.85rem;color:var(--ink);line-height:1.7;padding-left:1.25rem;margin:0">';
+    ai.reflection_questions.forEach(function(q){
+      questionsHtml += '<li style="margin-bottom:.4rem">' + escapeHtml(q) + '</li>';
+    });
+    questionsHtml += '</ol></div>';
+  }
 
-  resultEl.innerHTML = msg;
+  // Knowledge/health framing
+  var khHtml = '';
+  if(ai.knowledge_or_health_framing){
+    khHtml = '<div style="margin-top:1.25rem;background:#eaf5ef;border:1px solid #b8e8ce;border-radius:8px;padding:1rem"><p style="font-size:.7rem;letter-spacing:.08em;color:#1a7a4a;text-transform:uppercase;margin:0 0 .4rem">A different framing</p><p style="font-size:.85rem;color:var(--ink);line-height:1.65;margin:0">' + escapeHtml(ai.knowledge_or_health_framing) + '</p></div>';
+  }
 
-  var btn = document.getElementById('calm-btn');
-  btn.textContent = 'Retake test ↺';
-  btn.onclick = function(){ retakeCalmTest(); };
+  // Equivalent (fun: how many of X)
+  var equivalents = [
+    { name: 'cups of coffee', price: 6 },
+    { name: 'takeout lunches', price: 15 },
+    { name: 'months of gym', price: 50 },
+    { name: 'medical checkups', price: 200 }
+  ];
+  var equivHtml = '<div style="margin-top:1.25rem"><p style="font-size:.7rem;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;margin:0 0 .5rem">Or you could spend it on...</p><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem">';
+  equivalents.forEach(function(e){
+    if(price / e.price >= 1){
+      var count = Math.floor(price / e.price);
+      equivHtml += '<div style="background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:.6rem .75rem;font-size:.78rem;color:var(--ink)">' + count + ' ' + e.name + '</div>';
+    }
+  });
+  equivHtml += '</div></div>';
+
+  // Action buttons
+  var actionHtml = '<div style="display:flex;gap:.5rem;margin-top:1.5rem;flex-wrap:wrap">' +
+    '<button onclick="resetCalmForm()" style="flex:1;min-width:140px;padding:.75rem;background:#fff;color:var(--ink);border:1px solid var(--border);border-radius:6px;font-size:.85rem;cursor:pointer;font-family:var(--sans)">Analyze another →</button>' +
+    '<button onclick="calmFreeze(\'' + escapeAttr(name) + '\',' + price + ')" style="flex:1;min-width:140px;padding:.75rem;background:#fff;color:#0a66c2;border:1px solid #0a66c2;border-radius:6px;font-size:.85rem;cursor:pointer;font-family:var(--sans)">❄️ Freeze 72h</button>' +
+    '</div>' +
+    '<p style="font-size:.7rem;color:var(--dim);text-align:center;margin-top:1rem;line-height:1.5"><i>' + escapeHtml(ai.disclaimer || '') + '</i></p>';
+
+  // Final HTML
+  resultEl.innerHTML =
+    '<div style="background:' + colorScheme.bg + ';border:1px solid ' + colorScheme.border + ';border-radius:8px;padding:1rem;margin-bottom:1rem;text-align:center">' +
+      '<span style="display:inline-block;font-size:.7rem;letter-spacing:.1em;color:' + colorScheme.text + ';font-weight:600;text-transform:uppercase">' + escapeHtml(ai.verdict_label || 'worth reflection') + '</span>' +
+      '<p style="font-size:.95rem;color:var(--ink);margin:.4rem 0 0;line-height:1.5">' + escapeHtml(ai.summary || '') + '</p>' +
+    '</div>' +
+    (metricsHtml ? '<div style="display:flex;gap:.5rem;margin-bottom:1rem">' + metricsHtml + '</div>' : '') +
+    '<div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem">' +
+      '<p style="font-size:.7rem;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;margin:0 0 .5rem">What the numbers say</p>' +
+      '<p style="font-size:.88rem;color:var(--ink);line-height:1.7;margin:0">' + escapeHtml(ai.neutral_analysis || '') + '</p>' +
+    '</div>' +
+    questionsHtml +
+    khHtml +
+    equivHtml +
+    actionHtml;
 }
 
-function retakeCalmTest(){
-  // Clear all radio selections
-  for(var i=0;i<calmQuestions.length;i++){
-    var radios = document.getElementsByName('calm-q'+i);
-    for(var j=0;j<radios.length;j++){ radios[j].checked = false; }
-  }
-  // Hide result, reset button
+function resetCalmForm(){
   document.getElementById('calm-result').style.display = 'none';
-  var btn = document.getElementById('calm-btn');
-  btn.textContent = 'Calculate my rational consumption index →';
-  btn.onclick = calcCalm;
+  document.getElementById('calm-input-area').style.display = 'block';
+  document.getElementById('calm-item-name').value = '';
+  document.getElementById('calm-item-price').value = '';
+  document.getElementById('calm-use-months').value = '';
+  document.getElementById('calm-buy-reason').value = '';
+  calmAnalysisResult = null;
+  window.scrollTo({top: document.getElementById('calm-card').offsetTop - 80, behavior: 'smooth'});
 }
+
+async function calmFreeze(itemName, price){
+  if(!confirm('Freeze this decision for 72 hours? You can come back and re-analyze after the cooling period.')) return;
+
+  var runnerId = localStorage.getItem('rrRunner') || '#0000';
+  var userEmail = localStorage.getItem('rrUserEmail');
+
+  // If no email, prompt for one
+  if(!userEmail){
+    userEmail = prompt('Enter your email to receive a 72-hour reminder (optional, click Cancel to skip):');
+    if(userEmail){
+      userEmail = userEmail.trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)){
+        alert('Invalid email format. Skipping email reminder.');
+        userEmail = null;
+      } else {
+        try{ localStorage.setItem('rrUserEmail', userEmail); }catch(e){}
+      }
+    }
+  }
+
+  // If we have email, send reminder
+  if(userEmail){
+    try {
+      var res = await fetch(CALM_EMAIL_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'calm_reminder',
+          email: userEmail,
+          itemName: itemName,
+          price: price,
+          runnerId: runnerId,
+          lang: 'en'
+        })
+      });
+      var data = await res.json();
+      if(data.success){
+        alert('Frozen. We\'ll email you a reminder in 72 hours.\n\nEmail: ' + userEmail);
+      } else {
+        alert('Frozen locally. (Email reminder could not be set: ' + (data.message||'unknown error') + ')');
+      }
+    } catch(err){
+      console.error(err);
+      alert('Frozen locally. (Email reminder failed due to network error)');
+    }
+  } else {
+    alert('Frozen. Come back in 72 hours and re-analyze. You can use the tool again anytime.');
+  }
+}
+
+// Helper: escape HTML
+function escapeHtml(s){
+  if(s === undefined || s === null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function escapeAttr(s){
+  if(s === undefined || s === null) return '';
+  return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+// Add CSS for spinner animation
+(function addCalmSpinnerCSS(){
+  if(document.getElementById('calm-spinner-style')) return;
+  var style = document.createElement('style');
+  style.id = 'calm-spinner-style';
+  style.textContent = '@keyframes calm-spin{to{transform:rotate(360deg)}}';
+  document.head.appendChild(style);
+})();
+
+// Update rate info on load
+setTimeout(updateCalmRateInfo, 100);
 
 /* ── UPDATE PREVIEW DAYS ON LOAD ── */
 (function updatePreviewDays(){
   var previewEl = document.getElementById('calm-days-preview');
-  var calmdEl = document.getElementById('calm-days');
   var daysText = document.getElementById('rh-days').textContent;
   if(previewEl) previewEl.textContent = daysText;
-  if(calmdEl) calmdEl.textContent = daysText;
 })();
 </script>
 
