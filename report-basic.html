@@ -265,6 +265,61 @@ nav{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-i
     </div>
   </div>
 
+  <!-- BEFORE YOU BUY (AI consumption reflection) -->
+  <div id="calm-card" style="background:#fff;border:2px solid var(--green);border-radius:10px;margin-top:1.5rem;overflow:hidden;box-shadow:0 4px 16px rgba(26,122,74,.12)">
+    <div class="section-head" style="background:var(--green-soft);padding:1rem 1.25rem">
+      <div>
+        <span class="section-title" style="color:var(--green);font-weight:600">🧘 Before You Buy — Talk to AI before you spend</span>
+        <p style="font-size:.72rem;color:#666;margin-top:.3rem;line-height:1.5;max-width:520px">Your runway is <b id="calm-days-preview">—</b> days. Before your next purchase, let our AI show you exactly what it costs in runway.</p>
+      </div>
+    </div>
+
+    <div style="padding:1.5rem 1.25rem">
+      <div id="calm-input-area">
+        <div style="margin-bottom:1rem">
+          <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">What do you want to buy?</label>
+          <input type="text" id="calm-item-name" placeholder="e.g. Nike Zoom Pegasus 41" maxlength="200" style="width:100%;padding:.7rem 1rem;font-size:.95rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem">
+          <div>
+            <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">Price ($)</label>
+            <input type="number" id="calm-item-price" placeholder="1299" min="0" step="0.01" style="width:100%;padding:.7rem 1rem;font-size:.95rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff">
+          </div>
+          <div>
+            <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">Expected use (months)</label>
+            <input type="number" id="calm-use-months" placeholder="12" min="0" max="600" style="width:100%;padding:.7rem 1rem;font-size:.95rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff">
+          </div>
+        </div>
+        <div style="margin-bottom:1.25rem">
+          <label style="display:block;font-size:.7rem;letter-spacing:.06em;color:var(--dim);margin-bottom:.35rem;text-transform:uppercase">Why do you want it? <span style="color:var(--dimmer);font-weight:normal;text-transform:none">(optional)</span></label>
+          <textarea id="calm-buy-reason" rows="2" placeholder="e.g. I want to start running for health reasons" maxlength="500" style="width:100%;padding:.7rem 1rem;font-size:.92rem;font-family:var(--sans);border:1px solid var(--border);border-radius:6px;color:var(--ink);outline:none;background:#fff;resize:vertical;line-height:1.5"></textarea>
+        </div>
+
+        <button id="calm-submit-btn" style="width:100%;padding:.9rem;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:.95rem;cursor:pointer;font-family:var(--sans);font-weight:500;transition:opacity .15s">Let AI help me think →</button>
+
+        <p id="calm-rate-info" style="text-align:center;font-size:.7rem;color:var(--dim);margin-top:.6rem;letter-spacing:.04em"></p>
+      </div>
+
+      <div id="calm-loading" style="display:none;text-align:center;padding:2rem 1rem">
+        <div style="display:inline-block;width:32px;height:32px;border:3px solid var(--green-soft);border-top-color:var(--green);border-radius:50%;animation:calm-spin .8s linear infinite;margin-bottom:1rem"></div>
+        <p style="font-size:.9rem;color:var(--ink);margin:0;font-weight:500">AI is reflecting on your decision...</p>
+        <p style="font-size:.75rem;color:var(--dim);margin-top:.4rem">This usually takes 5-10 seconds</p>
+      </div>
+
+      <div id="calm-result" style="display:none"></div>
+
+      <div id="decision-section" style="display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px dashed var(--border)">
+        <p style="font-size:.7rem;letter-spacing:.08em;color:var(--dim);text-transform:uppercase;text-align:center;margin:0 0 .75rem">⏰ 72 hours later — Did you buy it?</p>
+        <p style="font-size:.85rem;color:var(--ink);text-align:center;margin:0 0 1rem;line-height:1.6">Your decision updates your runway. If you held off, you get those days back. If you bought it, the runway shifts based on whether this purchase was an investment in you (positive) or an impulse (negative).</p>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button data-decision-btn="held_off" data-decision-id="" style="flex:1;min-width:140px;padding:.85rem;background:#fff;color:var(--green);border:1.5px solid var(--green);border-radius:6px;font-size:.88rem;cursor:pointer;font-family:var(--sans);font-weight:500">✅ I held off</button>
+          <button data-decision-btn="bought" data-decision-id="" style="flex:1;min-width:140px;padding:.85rem;background:#fff;color:var(--ink);border:1.5px solid var(--ink);border-radius:6px;font-size:.88rem;cursor:pointer;font-family:var(--sans);font-weight:500">🛒 I bought it</button>
+        </div>
+        <div id="decision-result" style="display:none;margin-top:1rem"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- INSIGHTS -->
   <div class="section">
     <div class="section-head">
@@ -560,6 +615,51 @@ function copyShare(el){
     });
   }
 }
+
+/* ── Update preview days on load ── */
+(function updatePreviewDays(){
+  var previewEl = document.getElementById('calm-days-preview');
+  var rhd = document.getElementById('rh-days');
+  if(previewEl && rhd) previewEl.textContent = rhd.textContent;
+})();
+
+/* ── Show decision section when #decision=ID is in URL ── */
+(function showDecisionFromHash(){
+  var hash = window.location.hash || '';
+  var m = hash.match(/decision=([\w\-]+)/);
+  if(!m) return;
+  var decisionId = decodeURIComponent(m[1]);
+  document.querySelectorAll('[data-decision-btn]').forEach(function(b){
+    b.setAttribute('data-decision-id', decisionId);
+  });
+  var dSec = document.getElementById('decision-section');
+  if(dSec) dSec.style.display = 'block';
+  setTimeout(function(){
+    if(dSec) dSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 300);
+})();
 </script>
+
+<style>@keyframes calm-spin{to{transform:rotate(360deg)}}</style>
+<script src="calm-module.js"></script>
+<script>
+/* ── INIT CALM MODULE (must come after module script) ── */
+window.RiskRunwayCalm.init({
+  cardId: 'calm-card',
+  inputAreaId: 'calm-input-area',
+  resultId: 'calm-result',
+  loadingId: 'calm-loading',
+  rateInfoId: 'calm-rate-info',
+  daysPreviewId: 'calm-days-preview',
+  itemNameId: 'calm-item-name',
+  itemPriceId: 'calm-item-price',
+  useMonthsId: 'calm-use-months',
+  reasonId: 'calm-buy-reason',
+  submitBtnId: 'calm-submit-btn',
+  calmApi: '/api/calm',
+  emailApi: '/api/email'
+});
+</script>
+
 </body>
 </html>

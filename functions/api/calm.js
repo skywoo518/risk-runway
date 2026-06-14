@@ -136,6 +136,8 @@ Respond in this JSON format:
     "runway_days_impact": number,
     "daily_cost_over_use_period": "if useMonths provided: $X/day"
   },
+  "category_impact": "positive (health/career/long-term knowledge investment) | neutral (general consumption) | negative (impulse/health-damaging/zero-value)",
+  "category_reason": "Short 1-sentence reason for the category_impact verdict (e.g. 'Running shoes support long-term cardiovascular health' or 'Generic entertainment with no lasting value')",
   "knowledge_or_health_framing": "If applicable, suggest considering this as an investment in health/knowledge. Otherwise: empty string.",
   "disclaimer": "This is a neutral analysis tool, not financial advice."
 }`;
