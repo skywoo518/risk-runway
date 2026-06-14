@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="rr-turnstile-sitekey" content="1x00000000000000000000AA">
 <title>RunwayAI — Deep Financial Risk Analysis Report</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1115,6 +1116,9 @@ async function emailMyReport(){
   statusEl.style.color = 'var(--amber)';
 
   try {
+    var tt = (window.RiskRunwayCalm && window.RiskRunwayCalm.getTurnstileToken)
+      ? await window.RiskRunwayCalm.getTurnstileToken()
+      : '';
     var res = await fetch('/api/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1132,7 +1136,8 @@ async function emailMyReport(){
           stability: stability,
           conclusion: document.getElementById('conclusion-text').textContent
         },
-        lang: 'en'
+        lang: 'en',
+        turnstileToken: tt
       })
     });
 

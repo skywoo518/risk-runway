@@ -159,6 +159,61 @@
     return { dailyExpense: dailyExpense, monthlyIncome: monthlyIncome, runwayDays: runwayDays };
   }
 
+  // ─── TURNSTILE widget loading ───
+  // Sitekey is provided by init({turnstileSitekey}) or read from <meta name="rr-turnstile-sitekey">
+  // If no sitekey, we send an empty token and rely on server's TURNSTILE_SECRET_KEY check.
+  // For production: sitekey MUST be set (or we silently skip the protection).
+  var turnstileWidgetId = null;
+  function getSitekey(){
+    if(cfg && cfg.turnstileSitekey) return cfg.turnstileSitekey;
+    var m = document.querySelector('meta[name="rr-turnstile-sitekey"]');
+    return m ? m.getAttribute('content') : '';
+  }
+  function loadTurnstileScript(){
+    if(window.turnstile) return Promise.resolve();
+    return new Promise(function(resolve){
+      var s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad';
+      s.async = true;
+      s.defer = true;
+      document.head.appendChild(s);
+      window.onTurnstileLoad = function(){ resolve(); };
+    });
+  }
+  async function getTurnstileToken(){
+    var sitekey = getSitekey();
+    if(!sitekey){
+      // No sitekey configured — send empty (dev mode, server must allow)
+      return '';
+    }
+    if(!window.turnstile){
+      try { await loadTurnstileScript(); } catch(e){ console.warn('Turnstile script load failed', e); return ''; }
+    }
+    // Render an invisible widget in a hidden container
+    return new Promise(function(resolve){
+      var host = document.getElementById('rr-turnstile-host');
+      if(!host){
+        host = document.createElement('div');
+        host.id = 'rr-turnstile-host';
+        host.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
+        document.body.appendChild(host);
+      }
+      try{
+        turnstileWidgetId = window.turnstile.render(host, {
+          sitekey: sitekey,
+          size: 'invisible',
+          callback: function(token){ resolve(token); },
+          'error-callback': function(){ resolve(''); },
+          'expired-callback': function(){ resolve(''); }
+        });
+      } catch(e){
+        console.warn('Turnstile render failed', e);
+        resolve('');
+      }
+    });
+  }
+
+  // ─── submit ───
   async function submit(){
     if(!cfg) return;
     var f = readForm();
@@ -186,6 +241,8 @@
 
     try {
       var apiBase = cfg.calmApi || CALM_API_DEFAULT;
+      // Get Turnstile token (empty string if not configured — dev mode)
+      var turnstileToken = await getTurnstileToken();
       var res = await fetch(apiBase, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -197,7 +254,8 @@
           dailyExpense: ctx.dailyExpense || undefined,
           monthlyIncome: ctx.monthlyIncome || undefined,
           runwayDays: ctx.runwayDays,
-          isPaid: isPaid
+          isPaid: isPaid,
+          turnstileToken: turnstileToken
         })
       });
 
@@ -368,6 +426,7 @@
     if(userEmail){
       try {
         var apiBase = cfg.emailApi || EMAIL_API_DEFAULT;
+        var tt = await getTurnstileToken();
         var res = await fetch(apiBase, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -378,7 +437,8 @@
             price: price,
             runnerId: runnerId,
             decisionId: lastAnalysis.decisionId,
-            lang: 'en'
+            lang: 'en',
+            turnstileToken: tt
           })
         });
         var data = await res.json();
@@ -519,6 +579,7 @@
     // exposed helpers
     getDailyCount: getDailyCount,
     loadDecisions: loadDecisions,
-    computeRunwayDelta: computeRunwayDelta
+    computeRunwayDelta: computeRunwayDelta,
+    getTurnstileToken: getTurnstileToken
   };
 })();

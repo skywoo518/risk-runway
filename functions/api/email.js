@@ -1,73 +1,102 @@
 /**
  * Cloudflare Pages Function: /api/email
- * Sends emails via Resend API.
+ * Sends emails via Resend API with Turnstile + Origin lock + email rate limit.
  *
  * Request body:
- *   type: "report" | "calm_reminder"
- *   email: recipient email
- *   itemName?, price?, runnerId?, lang?, reportData?
+ *   type: "report" | "calm_reminder" | "full_report"
+ *   email: recipient (validated + blocked-list checked)
+ *   turnstileToken: required
  */
+
+import {
+  verifyTurnstile, checkEmailRateLimit, isBlockedEmailDomain,
+  jsonResponse, corsHeaders, getClientIp, getOrigin, isOriginAllowed
+} from './_shared.js';
+
+const ALLOWED_ORIGINS = [
+  'https://fengxianpaodao.com',
+  'https://www.fengxianpaodao.com',
+  'https://skywoo518.github.io',
+];
 
 export async function onRequest(context) {
   const { request, env } = context;
+  const origin = getOrigin(request);
 
-  // CORS
+  // ── 1. CORS preflight ──
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      }
-    });
+    return new Response(null, { status: 204, headers: corsHeaders(origin, ALLOWED_ORIGINS) });
   }
 
+  // ── 2. Method check ──
   if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ success: false, message: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Method not allowed' }, 405, origin, ALLOWED_ORIGINS);
   }
 
-  // Parse body
+  // ── 3. ORIGIN LOCK ──
+  const isServerToServer = request.headers.get('X-Verified-Source') === 'risk-runway-internal';
+  if (!isServerToServer && !isOriginAllowed(origin, ALLOWED_ORIGINS)) {
+    return jsonResponse({ success: false, message: 'Forbidden: origin not allowed.' }, 403, origin, ALLOWED_ORIGINS);
+  }
+
+  // ── 4. Parse body ──
   let body;
   try {
     body = await request.json();
   } catch (e) {
-    return new Response(JSON.stringify({ success: false, message: 'Invalid JSON body' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Invalid JSON body' }, 400, origin, ALLOWED_ORIGINS);
   }
 
   const { type, email } = body;
-  if (!type || !email) {
-    return new Response(JSON.stringify({ success: false, message: 'Missing type or email' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+
+  // ── 5. TURNSTILE VERIFY ──
+  if (!isServerToServer) {
+    const turnstileToken = body.turnstileToken;
+    const turnstileSecret = env.TURNSTILE_SECRET_KEY;
+    if (!turnstileSecret) {
+      console.error('TURNSTILE_SECRET_KEY env var not set');
+      return jsonResponse({ success: false, message: 'Server misconfigured' }, 500, origin, ALLOWED_ORIGINS);
+    }
+    const ip = getClientIp(request);
+    const verify = await verifyTurnstile(turnstileToken, ip, turnstileSecret);
+    if (!verify.success) {
+      return jsonResponse({ success: false, message: 'Human verification failed. Please refresh and try again.' }, 403, origin, ALLOWED_ORIGINS);
+    }
   }
 
-  // Validate email format
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return new Response(JSON.stringify({ success: false, message: 'Invalid email format' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+  // ── 6. Validate type & email ──
+  if (!type) {
+    return jsonResponse({ success: false, message: 'Missing type' }, 400, origin, ALLOWED_ORIGINS);
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return jsonResponse({ success: false, message: 'Invalid or missing email' }, 400, origin, ALLOWED_ORIGINS);
   }
 
-  // Get env vars
+  // ── 7. Block disposable email providers ──
+  if (isBlockedEmailDomain(email)) {
+    return jsonResponse({ success: false, message: 'Disposable email addresses are not allowed. Please use a real email.' }, 400, origin, ALLOWED_ORIGINS);
+  }
+
+  // ── 8. EMAIL RATE LIMIT (5/hr, 20/day per IP) ──
+  const ip = getClientIp(request);
+  const rl = await checkEmailRateLimit(env, ip);
+  if (!rl.allowed) {
+    return jsonResponse({
+      success: false,
+      message: rl.reason === 'hourly'
+        ? `Too many emails from your network. Limit: 5/hour. Please wait.`
+        : `Daily email limit reached (20/day from your network).`
+    }, 429, origin, ALLOWED_ORIGINS);
+  }
+
+  // ── 9. Get Resend config ──
   const resendKey = env.RESEND_API_KEY;
   const fromAddr = env.RESEND_FROM || 'Risk Runway <notice@fengxianpaodao.com>';
-
   if (!resendKey) {
-    return new Response(JSON.stringify({ success: false, message: 'Server misconfigured: missing Resend API key' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Server misconfigured' }, 500, origin, ALLOWED_ORIGINS);
   }
 
-  // Build email content based on type
+  // ── 10. Build email content ──
   let subject = '';
   let html = '';
 
@@ -129,7 +158,6 @@ export async function onRequest(context) {
     const price = body.price || '';
     const runnerId = body.runnerId || '#0000';
     const lang = body.lang || 'en';
-    // decisionId links the email back to a specific freeze record (so the page can show "Did you buy it?")
     const decisionId = body.decisionId || '';
     const decisionUrl = 'https://fengxianpaodao.com/' + (lang === 'zh' ? 'zh/' : '') +
       'report-deep.html#decision=' + encodeURIComponent(decisionId);
@@ -168,13 +196,10 @@ export async function onRequest(context) {
   }
 
   else {
-    return new Response(JSON.stringify({ success: false, message: 'Unknown email type: ' + type }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Unknown email type: ' + type }, 400, origin, ALLOWED_ORIGINS);
   }
 
-  // Send via Resend
+  // ── 11. Send via Resend ──
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -191,30 +216,15 @@ export async function onRequest(context) {
     });
 
     const resData = await res.json();
-
     if (!res.ok) {
       console.error('Resend error:', res.status, JSON.stringify(resData));
-      return new Response(JSON.stringify({
-        success: false,
-        message: 'Email sending failed. Please try again later.'
-      }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-      });
+      return jsonResponse({ success: false, message: 'Email sending failed. Please try again later.' }, 502, origin, ALLOWED_ORIGINS);
     }
 
-    return new Response(JSON.stringify({ success: true, message: 'Email sent successfully' }), {
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: true, message: 'Email sent successfully' }, 200, origin, ALLOWED_ORIGINS);
 
   } catch (err) {
     console.error('Resend fetch failed:', err);
-    return new Response(JSON.stringify({
-      success: false,
-      message: 'Network error sending email. Please try again.'
-    }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Network error sending email. Please try again.' }, 502, origin, ALLOWED_ORIGINS);
   }
 }

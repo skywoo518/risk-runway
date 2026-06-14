@@ -1,111 +1,108 @@
 /**
  * Cloudflare Pages Function: /api/calm
- * Proxies DeepSeek API with rate limiting (IP-based, uses in-memory store)
+ * Proxies DeepSeek API with rate limiting (Cloudflare KV) + Turnstile + Origin lock.
  *
  * Request body:
  *   itemName, price, buyReason?, useMonths?, dailyExpense?, monthlyIncome?, runwayDays?, isPaid?
+ *   turnstileToken: required (verified server-side)
  *
  * Response: { success: true, data: {...} }
  */
 
-// In-memory rate limiter (per-process; Cloudflare Pages functions are ephemeral,
-// but repeated requests from same colo may hit same instance. Good enough for demo.
-// For production, use Cloudflare KV.)
-const ipHits = new Map(); // ip -> { date, count }
+import {
+  verifyTurnstile, checkRateLimitKV, jsonResponse,
+  corsHeaders, getClientIp, getOrigin, isOriginAllowed
+} from './_shared.js';
 
-function getToday() {
-  return new Date().toISOString().slice(0, 10);
-}
+const ALLOWED_ORIGINS = [
+  'https://fengxianpaodao.com',
+  'https://www.fengxianpaodao.com',
+  'https://skywoo518.github.io',
+];
 
-function checkRateLimit(ip, isPaid) {
-  const today = getToday();
-  const limit = isPaid ? 50 : 3;
-  const key = ip + ':' + today;
-  const rec = ipHits.get(key) || { date: today, count: 0 };
-  if (rec.date !== today) {
-    rec.date = today;
-    rec.count = 0;
-  }
-  if (rec.count >= limit) {
-    return { allowed: false, limit, remaining: 0 };
-  }
-  rec.count++;
-  ipHits.set(key, rec);
-  return { allowed: true, limit, remaining: limit - rec.count };
-}
+const FREE_DAILY_LIMIT = 3;
+const PAID_DAILY_LIMIT = 50;
 
 export async function onRequest(context) {
   const { request, env } = context;
+  const origin = getOrigin(request);
 
-  // CORS
+  // ── 1. CORS preflight ──
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      }
-    });
+    return new Response(null, { status: 204, headers: corsHeaders(origin, ALLOWED_ORIGINS) });
   }
 
+  // ── 2. Method check ──
   if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ success: false, message: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Method not allowed' }, 405, origin, ALLOWED_ORIGINS);
   }
 
-  // Parse body
+  // ── 3. ORIGIN LOCK ──
+  // Browser: Origin header in allow-list. Curl/server-to-server needs X-Verified-Source (for cron/internal).
+  const isServerToServer = request.headers.get('X-Verified-Source') === 'risk-runway-internal';
+  if (!isServerToServer && !isOriginAllowed(origin, ALLOWED_ORIGINS)) {
+    return jsonResponse({
+      success: false,
+      message: 'Forbidden: origin not allowed. This API only accepts requests from approved frontends.'
+    }, 403, origin, ALLOWED_ORIGINS);
+  }
+
+  // ── 4. Parse body ──
   let body;
   try {
     body = await request.json();
   } catch (e) {
-    return new Response(JSON.stringify({ success: false, message: 'Invalid JSON body' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Invalid JSON body' }, 400, origin, ALLOWED_ORIGINS);
   }
 
-  // Validate required fields
+  // ── 5. TURNSTILE VERIFY ──
+  if (!isServerToServer) {
+    const turnstileToken = body.turnstileToken;
+    const turnstileSecret = env.TURNSTILE_SECRET_KEY;
+    if (!turnstileSecret) {
+      console.error('TURNSTILE_SECRET_KEY env var not set');
+      return jsonResponse({ success: false, message: 'Server misconfigured: Turnstile secret missing' }, 500, origin, ALLOWED_ORIGINS);
+    }
+    const ip = getClientIp(request);
+    const verify = await verifyTurnstile(turnstileToken, ip, turnstileSecret);
+    if (!verify.success) {
+      return jsonResponse({
+        success: false,
+        message: 'Human verification failed. Please refresh the page and try again.',
+        codes: verify['error-codes'] || []
+      }, 403, origin, ALLOWED_ORIGINS);
+    }
+  }
+
+  // ── 6. Validate required fields ──
   const { itemName, price } = body;
   if (!itemName || itemName.trim().length === 0) {
-    return new Response(JSON.stringify({ success: false, message: 'Missing itemName' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Missing itemName' }, 400, origin, ALLOWED_ORIGINS);
   }
   const priceNum = parseFloat(price);
   if (isNaN(priceNum) || priceNum <= 0) {
-    return new Response(JSON.stringify({ success: false, message: 'Invalid price' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Invalid price' }, 400, origin, ALLOWED_ORIGINS);
   }
 
-  // Rate limit (best-effort IP from headers)
-  const ip = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
+  // ── 7. RATE LIMIT (KV-backed) ──
+  const ip = getClientIp(request);
   const isPaid = !!body.isPaid;
-  const rl = checkRateLimit(ip, isPaid);
+  const limit = isPaid ? PAID_DAILY_LIMIT : FREE_DAILY_LIMIT;
+  const rl = await checkRateLimitKV(env, ip, 'calm', limit);
   if (!rl.allowed) {
     const msg = isPaid
-      ? 'Daily AI analysis limit reached (50/day). Resets at midnight UTC.'
-      : 'Free plan: 3 AI analyses per day. Upgrade to Pro for 50/day.';
-    return new Response(JSON.stringify({ success: false, message: msg }), {
-      status: 429,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+      ? `Daily AI analysis limit reached (${PAID_DAILY_LIMIT}/day). Resets at midnight UTC.`
+      : `Free plan: ${FREE_DAILY_LIMIT} AI analyses per day. Upgrade to Pro for ${PAID_DAILY_LIMIT}/day.`;
+    return jsonResponse({ success: false, message: msg, limit: rl.limit }, 429, origin, ALLOWED_ORIGINS);
   }
 
-  // Get API key from env
+  // ── 8. Get DeepSeek API key ──
   const apiKey = env.DEEPSEEK_API_KEY;
   if (!apiKey) {
-    return new Response(JSON.stringify({ success: false, message: 'Server misconfigured: missing DeepSeek API key' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Server misconfigured: missing DeepSeek API key' }, 500, origin, ALLOWED_ORIGINS);
   }
 
-  // Build DeepSeek prompt
+  // ── 9. Build DeepSeek prompt ──
   const buyReason = body.buyReason || '';
   const useMonths = body.useMonths ? parseInt(body.useMonths) : null;
   const dailyExpense = body.dailyExpense ? parseFloat(body.dailyExpense) : 0;
@@ -153,7 +150,7 @@ ${useMonths ? '- Expected use: ' + useMonths + ' months' : ''}
 
 Please analyze this purchase neutrally. How many days of runway will this cost? Is there a health/knowledge investment angle?`;
 
-  // Call DeepSeek API
+  // ── 10. Call DeepSeek ──
   try {
     const dsRes = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
@@ -175,33 +172,20 @@ Please analyze this purchase neutrally. How many days of runway will this cost? 
     if (!dsRes.ok) {
       const errText = await dsRes.text();
       console.error('DeepSeek API error:', dsRes.status, errText);
-      return new Response(JSON.stringify({
-        success: false,
-        message: 'AI service temporarily unavailable. Please try again in a moment.'
-      }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-      });
+      return jsonResponse({ success: false, message: 'AI service temporarily unavailable. Please try again in a moment.' }, 502, origin, ALLOWED_ORIGINS);
     }
 
     const dsData = await dsRes.json();
-    const content = dsData.choices && dsData.choices[0] && dsData.choices[0].message && dsData.choices[0].message.content;
+    const content = dsData.choices?.[0]?.message?.content;
 
     if (!content) {
-      return new Response(JSON.stringify({
-        success: false,
-        message: 'AI returned empty response. Please try again.'
-      }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-      });
+      return jsonResponse({ success: false, message: 'AI returned empty response. Please try again.' }, 502, origin, ALLOWED_ORIGINS);
     }
 
     let parsed;
     try {
       parsed = JSON.parse(content);
     } catch (e) {
-      // If DeepSeek didn't return clean JSON, wrap it
       parsed = {
         verdict_label: 'worth reflection',
         summary: 'AI analysis received (non-JSON response)',
@@ -223,18 +207,14 @@ Please analyze this purchase neutrally. How many days of runway will this cost? 
       }
     }
 
-    return new Response(JSON.stringify({ success: true, data: parsed }), {
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({
+      success: true,
+      data: parsed,
+      rateLimit: { limit: rl.limit, remaining: rl.remaining }
+    }, 200, origin, ALLOWED_ORIGINS);
 
   } catch (err) {
     console.error('DeepSeek call failed:', err);
-    return new Response(JSON.stringify({
-      success: false,
-      message: 'Network error connecting to AI service. Please try again.'
-    }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return jsonResponse({ success: false, message: 'Network error connecting to AI service. Please try again.' }, 502, origin, ALLOWED_ORIGINS);
   }
 }
