@@ -1,0 +1,15 @@
+name = "risk-runway"
+type = "pages"
+
+[[build.upload.rules]]
+# Static assets
+globs = ["**/*.html", "**/*.css", "**/*.js", "**/*.json", "**/*.png", "**/*.jpg", "**/*.svg", "**/*.ico"]
+fallthrough = true
+
+# Environment variables are set in Cloudflare Pages dashboard, not here.
+# Add them under: Pages project → Settings → Environment variables
+#
+# Required:
+#   DEEPSEEK_API_KEY = sk-...
+#   RESEND_API_KEY   = re_...
+#   RESEND_FROM      = RunwayAI <notice@fengxianpaodao.com>
