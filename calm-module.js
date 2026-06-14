@@ -189,13 +189,14 @@
     if(!window.turnstile){
       try { await loadTurnstileScript(); } catch(e){ console.warn('Turnstile script load failed', e); return ''; }
     }
-    // Render an invisible widget in a hidden container
+    // Render a visible widget container (Turnstile 'flexible' needs to be visible to postMessage)
     return new Promise(function(resolve){
       var host = document.getElementById('rr-turnstile-host');
       if(!host){
         host = document.createElement('div');
         host.id = 'rr-turnstile-host';
-        host.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
+        // Visible container with sensible spacing — Turnstile widget sits inline here
+        host.style.cssText = 'margin:1rem 0;min-height:65px;display:flex;align-items:center;justify-content:center;';
         document.body.appendChild(host);
       }
       // Remove any previous widget first (Turnstile allows only one per container)
@@ -209,7 +210,9 @@
         turnstileWidgetId = window.turnstile.render(host, {
           sitekey: sitekey,
           size: 'flexible',
-          appearance: 'interaction-only',
+          // NOTE: deliberately NOT using appearance:'interaction-only' — it makes the widget
+          // fully transparent which breaks postMessage in some browser+adblock combos.
+          // 'flexible' alone gives a minimal but functional widget.
           callback: function(token){ resolve(token); },
           'error-callback': function(){ resolve(''); },
           'expired-callback': function(){ resolve(''); }
@@ -642,4 +645,4 @@
   };
 })();
 
-// [v2-cache-bust-20260614T1715] force re-upload with new size:'flexible' + cleanup
+// [v3-cache-bust-20260614T1725] visible container (was hidden) + drop appearance:'interaction-only' (breaks postMessage)
